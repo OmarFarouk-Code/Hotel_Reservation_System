@@ -1,4 +1,5 @@
 package hotel.interfaces;
+import hotel.model.enums.*;
 import hotel.model.users.*;
 public interface Payable 
 {
