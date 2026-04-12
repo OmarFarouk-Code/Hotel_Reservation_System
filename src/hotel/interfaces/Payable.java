@@ -1,4 +1,4 @@
-package Files.Interfaces;
+package hotel.interfaces;
 
 public interface Payable 
 {

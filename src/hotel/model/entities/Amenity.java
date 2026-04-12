@@ -1,4 +1,4 @@
-package Files.Classes;
+package hotel.model.entities;
 public class Amenity 
 {
     private String amenityName;

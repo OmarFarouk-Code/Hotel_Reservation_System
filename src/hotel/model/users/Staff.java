@@ -1,12 +1,43 @@
-package Files.Classes;
-import java.time.LocalDate;
+package hotel.model.users;
+import java.util.List;
+import hotel.core.Database;
 
-public abstract class Staff
+public abstract class Staff extends User
 {
-    private String userName;
-    private String password;
-    private LocalDate dateOfBirth;
     private int workingHours;
-    private Role role;
 
+    public Staff() {};
+
+    public Staff(String userName, String password, LocalDate dateOfBirth, String phoneNumber, int workingHours) 
+    {
+        super(userName, password, dateOfBirth, phoneNumber);
+        this.workingHours = workingHours;
+    }
+
+    public int getWorkingHours() {
+        return workingHours;
+    }
+
+    public void setWorkingHours(int workingHours) {
+        this.workingHours = workingHours;
+    }
+
+    public void viewAllGuests() 
+    {
+        ArrayList<Guest> guests = Database.getGuests();
+        for (Guest guest : guests) 
+        {
+            System.out.println(guest.getUserName());
+        }
+    }
+
+    public void viewAllReservations()
+    {
+        ArrayList<Reservation> reservations = Database.getReservations();
+        for (Reservation reservation : reservations) 
+        {
+            System.out.println("Username : " + reservation.getGuest().getUserName());
+            System.out.println("Reservation ID : " + reservation.getId());
+        }
+    }
 }
