@@ -4,39 +4,35 @@ import java.util.List;
 import hotel.core.Database;
 import hotel.model.entities.*;
 import hotel.model.users.*;
-public class  Admin extends Staff
-{
+public class  Admin extends Staff {
     private List<Room> roomList = new ArrayList<>();
     private List<Amenity> amenityList = new ArrayList<>();
-   // ArrayList<Room> roomList = Database.getReservations();
-
+    private List<RoomType> roomTypeList = new ArrayList<>();
+    // ArrayList<Room> roomList = Database.getReservations();
 
 
     //room functions
-    public void createRoom(Room room)
-    {
+    public void createRoom(Room room) {
+        this.roomList = Database.getRooms();
         roomList.add(room);
     }
 
-    Room readRoom(int roomNumber)
-    {
-        for (int i=0;i<roomList.size();i++)
-        {
-            Room room=roomList.get(i);
-            if (room.getRoomNumber()==roomNumber)
-            {
+    Room readRoom(int roomNumber) {
+        this.roomList = Database.getRooms();
+        for (int i = 0; i < roomList.size(); i++) {
+            Room room = roomList.get(i);
+            if (room.getRoomNumber() == roomNumber) {
                 return room;
             }
         }
         System.out.println("Room " + roomNumber + " not found.");
         return null;
     }
-    public void updateRoom(int roomNumber, Room updatedRoom)
-    {
-        for (int i = 0; i < roomList.size(); i++)
-        {
-            if (roomList.get(i).getRoomNumber() == roomNumber)
-            {
+
+    public void updateRoom(int roomNumber, Room updatedRoom) {
+        this.roomList = Database.getRooms();
+        for (int i = 0; i < roomList.size(); i++) {
+            if (roomList.get(i).getRoomNumber() == roomNumber) {
                 roomList.set(i, updatedRoom);
                 System.out.println("Room " + roomNumber + " updated successfully.");
                 return;
@@ -44,13 +40,13 @@ public class  Admin extends Staff
         }
         System.out.println("Update failed: Room " + roomNumber + " does not exist.");
     }
-    public void deleteRoom(int roomNumber)
-    {
-        for (int i=0;i<roomList.size();i++)
-        {
-            if (roomList.get(i).getRoomNumber()==roomNumber)
-            {
+
+    public void deleteRoom(int roomNumber) {
+        this.roomList = Database.getRooms();
+        for (int i = 0; i < roomList.size(); i++) {
+            if (roomList.get(i).getRoomNumber() == roomNumber) {
                 roomList.remove(i);
+                Database.saveData();
                 System.out.println("Room " + roomNumber + " deleted successfully.");
                 return;
             }
@@ -59,52 +55,89 @@ public class  Admin extends Staff
     }
 
 
-
-
     //Amenity Functions
-    public void createAmenity(Amenity amenity)
-    {
+    public void createAmenity(Amenity amenity) {
+        this.amenityList = Database.getAmenities();
         amenityList.add(amenity);
     }
 
-    public Amenity readAmenity(String name)
-    {
-        for (int i=0;i<amenityList.size();i++)
-        {
-            Amenity amenity=amenityList.get(i);
-            if(amenity.getAmenityName().equals(name))
-            {
+    public Amenity readAmenity(String name) {
+        this.amenityList = Database.getAmenities();
+        for (int i = 0; i < amenityList.size(); i++) {
+            if (amenityList.get(i).getAmenityName().equals(name)) {
                 return amenityList.get(i);
             }
         }
         System.out.println("Amenity not found");
         return null;
     }
-    public void updateAmenity(String name,Amenity updatedAmenity)
-    {
-        for (int i=0;i<amenityList.size();i++)
-        {
-            if (amenityList.get(i).getAmenityName().equals(name))
-            {
-              amenityList.set(i,updatedAmenity);
-              System.out.println("Amenity " + name + " updated successfully.");
-              return;
-            }
-        }
-        System.out.println("Amenity not found");
-    }
-    public void deleteAmenity(String name)
-    {
-        for (int i=0;i< amenityList.size();i++)
-        {
-            if (amenityList.get(i).getAmenityName().equals(name))
-            {
-                amenityList.remove(i);
-                System.out.println("Amenity" + name+ " deleted successfully.");
+
+    public void updateAmenity(String name, Amenity updatedAmenity) {
+        this.amenityList = Database.getAmenities();
+        for (int i = 0; i < amenityList.size(); i++) {
+            if (amenityList.get(i).getAmenityName().equals(name)) {
+                amenityList.set(i, updatedAmenity);
+                System.out.println("Amenity " + name + " updated successfully.");
                 return;
             }
         }
         System.out.println("Amenity not found");
+    }
+
+    public void deleteAmenity(String name) {
+        this.amenityList = Database.getAmenities();
+        for (int i = 0; i < amenityList.size(); i++) {
+            if (amenityList.get(i).getAmenityName().equals(name)) {
+                amenityList.remove(i);
+                Database.saveData();
+                System.out.println("Amenity" + name + " deleted successfully.");
+                return;
+            }
+        }
+        System.out.println("Amenity not found");
+    }
+
+
+    //RoomType
+    public void createRoomType(RoomType roomtype) {
+        this.roomTypeList = Database.getRoomTypes();
+        roomTypeList.add(roomtype);
+    }
+
+    public RoomType readRoomType(String typeName) {
+        this.roomTypeList = Database.getRoomTypes();
+        for (int i = 0; i < roomTypeList.size(); i++) {
+            if (roomTypeList.get(i).getTypeName().equals(typeName)) {
+                return roomTypeList.get(i);
+            }
+        }
+        System.out.println("RoomType not found");
+        return null;
+    }
+
+    public void updateRoomType(String typeName, RoomType updatedType) {
+        this.roomTypeList = Database.getRoomTypes();
+        for (int i = 0; i < roomTypeList.size(); i++) {
+            if (roomTypeList.get(i).getTypeName().equals(typeName)) {
+                roomTypeList.set(i, updatedType);
+                System.out.println("RoomType " + typeName + " updated successfully.");
+                return;
+            }
+        }
+        System.out.println("TypeName not found");
+    }
+
+    public void deleteRoomType(String typeName) {
+        this.roomTypeList = Database.getRoomTypes();
+        for (int i = 0; i < roomTypeList.size(); i++)
+        {
+            if (roomTypeList.get(i).getTypeName().equals(typeName)) {
+                roomTypeList.remove(i);
+                Database.saveData();
+                System.out.println("RoomType" + typeName + " deleted successfully.");
+                return;
+            }
+        }
     }
 }
 
