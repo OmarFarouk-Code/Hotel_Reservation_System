@@ -54,14 +54,14 @@ The **Hotel Reservation System** is a backend-only Java application developed as
 
 ### What Milestone 1 Covers
 
-- ✅ Complete enum library
-- ✅ Full physical entity model (Room, RoomType, Amenity)
-- ✅ User inheritance tree (User → Guest / Staff → Admin / Receptionist)
-- ✅ Transactional model (Reservation, Invoice)
-- ✅ Interface contracts (Manageable, Payable)
-- ✅ Centralised in-memory Database
-- ✅ Console test runner proving end-to-end backend correctness
-- ⏳ BookingEngine — deferred to later phase (skeleton defined)
+- ✅ Complete enum library — `AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender` **(Bassel)**
+- ✅ User inheritance tree — `User` → `Guest` / `Staff` → `Admin` / `Receptionist` **(Belal + Adam)**
+- ✅ Transactional model — `Reservation`, `Invoice` **(Mostafa)**
+- ✅ Physical entity classes — `Amenity`, `RoomType`, `Room` **(Omar)**
+- ✅ Interface contracts — `Manageable`, `Payable` **(Omar)**
+- ✅ Centralised in-memory `Database` **(Omar)**
+- ✅ Console test runner proving end-to-end backend correctness **(Omar)**
+- ⏳ `BookingEngine` — deferred to later phase, skeleton defined **(Omar)**
 
 ---
 
@@ -205,7 +205,7 @@ public enum Gender {
 
 ### Entity Classes
 
-Defined by **Bassel**.
+Defined by **Omar**.
 
 #### `Amenity`
 
@@ -439,7 +439,7 @@ Implemented by: `Invoice`
 
 ### Core Infrastructure
 
-Defined by **Omar**.
+Defined by **Omar**. Omar's scope spans the widest range in the project — from physical entity classes (`Amenity`, `RoomType`, `Room`) through to interface contracts, the central database, the console test runner, and the deferred booking engine.
 
 #### `Database`
 
@@ -507,11 +507,11 @@ public class BookingEngine {
 
 | # | Member | Domain | Classes / Interfaces |
 |---|--------|--------|----------------------|
-| 01 | **Bassel** | Foundation & Core Hotel Models | `AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender`, `Amenity`, `RoomType`, `Room` |
+| 01 | **Bassel** | Foundation — Enums | `AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender` |
 | 02 | **Belal** | User Hierarchy & Authentication | `User` *(abstract)*, `Guest`, `Staff` *(abstract)* |
 | 03 | **Adam** | Administration & Operations | `Admin`, `Receptionist` |
 | 04 | **Mostafa** | Booking & Financial Models | `Reservation`, `Invoice` |
-| 05 | **Omar** | Integration, Storage & Console Flow | `Manageable`, `Payable`, `Database`, `Main`, `BookingEngine` |
+| 05 | **Omar** | Entities, Integration, Storage & Console Flow | `Amenity`, `RoomType`, `Room`, `Manageable`, `Payable`, `Database`, `Main`, `BookingEngine` |
 
 ---
 
@@ -520,18 +520,20 @@ public class BookingEngine {
 ```
 Bassel ──────────────────────────────────────────────────────► (no dependencies)
 Belal  ──── depends on ──► Bassel (enums: Gender, AccountStatus, PaymentMethod)
-Adam   ──── depends on ──► Bassel (Room, RoomType, Amenity)
+Adam   ──── depends on ──► Omar   (Room, RoomType, Amenity)
              depends on ──► Belal  (Staff abstract class)
              depends on ──► Omar   (Manageable interface)
-Mostafa ─── depends on ──► Bassel (Room, DiningPackage, Amenity)
+Mostafa ─── depends on ──► Omar   (Room, Amenity)
+             depends on ──► Bassel (DiningPackage enum)
              depends on ──► Belal  (Guest class)
              depends on ──► Omar   (Payable interface)
-Omar   ──── depends on ──► ALL    (Database aggregates every entity type)
+Omar   ──── depends on ──► Bassel (enums for entity fields)
+             depends on ──► ALL    (Database aggregates every entity type)
 ```
 
 **Recommended build order:**
-1. Bassel delivers enums + entities
-2. Omar publishes interface stubs + empty `Database`
+1. Bassel delivers all enums
+2. Omar delivers `Amenity`, `RoomType`, `Room`, `Manageable`, `Payable`, and empty `Database`
 3. Belal delivers user hierarchy
 4. Adam and Mostafa work in parallel
 5. Omar completes `Main` and `BookingEngine`
@@ -646,20 +648,6 @@ The full guest lifecycle covered by the console test runner:
 
 ---
 
-## 🗓 Milestone Plan
-
-| Milestone | Timeline | Owner | Deliverable |
-|-----------|----------|-------|-------------|
-| M1 | Week 1 | Bassel | All enums + `Amenity`, `RoomType`, `Room` |
-| M2 | Week 1–2 | Belal | `User`, `Guest`, `Staff` |
-| M3 | Week 1–2 | Omar | `Manageable`, `Payable`, `Database` skeleton |
-| M4 | Week 2 | Adam | `Admin`, `Receptionist` |
-| M5 | Week 2 | Mostafa | `Reservation`, `Invoice` |
-| M6 | Week 3 | Omar | `Main` console test runner |
-| M7 | Week 3+ | Omar | `BookingEngine` full implementation |
-
----
-
 ## 🤝 Contributing
 
 ### Git Workflow
@@ -667,8 +655,9 @@ The full guest lifecycle covered by the console test runner:
 ```
 main
  └── feature/<member>/<classname>
-       e.g. feature/bassel/RoomType
+       e.g. feature/omar/RoomType
             feature/omar/Database
+            feature/bassel/DiningPackage
 ```
 
 1. **Branch** off `main` using the naming convention above
