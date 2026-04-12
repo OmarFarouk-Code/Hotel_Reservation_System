@@ -1,4 +1,4 @@
-package Files.Classes;
+package hotel.model.entities;
 import java.util.ArrayList; // This is the dynamic array class
 import java.util.List;
 public class Room
