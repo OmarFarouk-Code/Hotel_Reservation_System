@@ -1,4 +1,5 @@
-package Files.Interfaces;
+package hotel.interfaces;
+import hotel.model.entities.*;
 //Interface defining management operations for Rooms, Amenities, and Room Types.
 
 public interface Manageable 

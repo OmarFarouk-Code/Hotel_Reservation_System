@@ -1,12 +1,12 @@
 package hotel.core;
+import hotel.model.entities.*;
+import hotel.model.staff.*;
+import hotel.model.users.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Database 
 {
-    
-    private static final Random random = new Random();
-
     private static List<Guest> guests = new ArrayList<>();
     private static List<Room> rooms = new ArrayList<>();
     private static List<Reservation> reservations = new ArrayList<>();

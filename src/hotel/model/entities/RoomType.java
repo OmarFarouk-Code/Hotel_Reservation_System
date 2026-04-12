@@ -1,4 +1,4 @@
-package Files.Classes;
+package hotel.model.entities;
 public class RoomType 
 {
     private String typeName;
