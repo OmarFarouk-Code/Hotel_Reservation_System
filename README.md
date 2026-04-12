@@ -648,20 +648,6 @@ The full guest lifecycle covered by the console test runner:
 
 ---
 
-## 🗓 Milestone Plan
-
-| Milestone | Timeline | Owner | Deliverable |
-|-----------|----------|-------|-------------|
-| M1 | Week 1 | Bassel | All 5 enums (`AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender`) |
-| M2 | Week 1 | Omar | `Amenity`, `RoomType`, `Room`, `Manageable`, `Payable`, `Database` skeleton |
-| M3 | Week 1–2 | Belal | `User`, `Guest`, `Staff` |
-| M4 | Week 2 | Adam | `Admin`, `Receptionist` |
-| M5 | Week 2 | Mostafa | `Reservation`, `Invoice` |
-| M6 | Week 3 | Omar | `Main` console test runner |
-| M7 | Week 3+ | Omar | `BookingEngine` full implementation |
-
----
-
 ## 🤝 Contributing
 
 ### Git Workflow
