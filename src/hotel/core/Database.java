@@ -5,7 +5,9 @@ import hotel.model.users.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*; // Import this for File IO
-
+import hotel.model.reservation.Invoices;
+import hotel.model.reservation.Reservation;
+import hotel.Guest;
 public class Database
 {
     private static List<Guest> guests = new ArrayList<>();

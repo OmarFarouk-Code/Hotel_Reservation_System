@@ -1,7 +1,10 @@
 package hotel.model.users;
 import java.util.List;
 import hotel.core.Database;
-
+import java.time.LocalDate;
+import hotel.Guest;
+import java.util.ArrayList;
+import hotel.model.reservation.Reservation;
 public abstract class Staff extends User
 {
     private int workingHours;

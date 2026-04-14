@@ -83,6 +83,6 @@ public class RoomType implements Serializable
     }
 
     public double getEffectivePrice() {
-        return pricePerNight * seasonMultiplier;
+        return basePrice * seasonMultiplier;
     }
 }
