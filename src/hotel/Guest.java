@@ -29,7 +29,7 @@ public class Guest extends User {
             roomperefrences.add(input.nextLine());
             System.out.println("Please enter the preferred room type");
             System.out.println("1.Pool, 2.Sea view, 3.Garden");
-      roomoptions=RoomType.valueOf(input.next().toUpperCase());
+            roomoptions=RoomType.valueOf(input.next().toUpperCase());
             roomperefrences.add(String.valueOf(roomoptions));
             System.out.println("Account has been successfully created Welcome "+UserName);
 
