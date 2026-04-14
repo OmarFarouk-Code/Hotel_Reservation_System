@@ -1,7 +1,8 @@
 package hotel.model.entities;
+import java.io.Serializable;
 import java.util.ArrayList; // This is the dynamic array class
 import java.util.List;
-public class Room
+public class Room implements Serializable
 {
     private int roomNumber;
     private int floor;

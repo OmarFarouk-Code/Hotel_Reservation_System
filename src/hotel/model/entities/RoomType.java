@@ -1,24 +1,37 @@
 package hotel.model.entities;
 import hotel.model.enums.*;
-public class RoomType 
+
+import java.io.Serializable;
+
+public class RoomType implements Serializable
 {
     private String typeName;
     private RoomView roomView;
     private double pricePerNight;
     private String description;
     private double seasonMultiplier;
+    private double basePrice;
     private int maxCapacity;
+
 
     public RoomType() {}
 
-    public RoomType(String typeName, RoomView roomView, double pricePerNight, String description, double seasonMultiplier , int maxCapacity ) 
+    public RoomType(String typeName, double pricePerNight, String description, double seasonMultiplier,double basePrice)
     {
         this.typeName = typeName;
         this.roomView = roomView;
         this.pricePerNight = pricePerNight;
         this.description = description;
         this.seasonMultiplier = seasonMultiplier;
-        this.maxCapacity = maxCapacity;
+        this.basePrice=basePrice;
+    }
+
+    public double getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(double basePrice) {
+        this.basePrice = basePrice;
     }
 
     public String getTypeName() {
