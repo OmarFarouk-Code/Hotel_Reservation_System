@@ -8,6 +8,7 @@ public class Room implements Serializable
     private int floor;
     private RoomType roomType;
     private List<Amenity> amenities;
+    private List<Review> reviews;
 
     public Room() 
     {
@@ -20,6 +21,7 @@ public class Room implements Serializable
         this.floor = floor;
         this.roomType = roomType;
         amenities = new ArrayList<>();
+        reviews = new ArrayList<>();
     }
 
     public int getRoomNumber() {
@@ -56,6 +58,25 @@ public class Room implements Serializable
 
     public void removeAmenity(Amenity amenity) {
         amenities.remove(amenity);
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void addReview (Review review) {
+        reviews.add(review);
+    }
+
+    public double calculateAverageRating() {
+        if (reviews.isEmpty()) {
+            return 0.0; // No reviews, average rating is 0
+        }
+        double totalRating = 0;
+        for (Review review : reviews) {
+            totalRating += review.getScore();
+        }
+        return totalRating / reviews.size();
     }
 
 }
