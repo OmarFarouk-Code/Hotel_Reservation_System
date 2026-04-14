@@ -8,9 +8,9 @@ public abstract class Staff extends User
 
     public Staff() {};
 
-    public Staff(String userName, String password, LocalDate dateOfBirth, String phoneNumber, int workingHours) 
+    public Staff(String UserName, String password, LocalDate dateOfBirth, String phoneNumber, int workingHours)
     {
-        super(userName, password, dateOfBirth, phoneNumber);
+        super(UserName, password, dateOfBirth, phoneNumber);
         this.workingHours = workingHours;
     }
 
@@ -41,3 +41,4 @@ public abstract class Staff extends User
         }
     }
 }
+
