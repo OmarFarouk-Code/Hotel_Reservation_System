@@ -16,7 +16,7 @@ public class RoomType implements Serializable
 
     public RoomType() {}
 
-    public RoomType(String typeName, double pricePerNight, String description, double seasonMultiplier,double basePrice)
+    public RoomType(String typeName, double pricePerNight, RoomView roomView, String description, double seasonMultiplier,double basePrice)
     {
         this.typeName = typeName;
         this.roomView = roomView;
