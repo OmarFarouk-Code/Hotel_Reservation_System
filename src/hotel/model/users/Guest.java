@@ -1,9 +1,7 @@
-package hotel;
-
-import hotel.model.enums.RoomType;
+package hotel.model.users;
+import hotel.model.enums.*;
 import hotel.model.enums.UserType;
-import hotel.model.users.User;
-
+import hotel.model.entities.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
