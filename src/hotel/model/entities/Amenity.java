@@ -1,5 +1,8 @@
 package hotel.model.entities;
-public class Amenity 
+
+import java.io.Serializable;
+
+public class Amenity implements Serializable
 {
     private String amenityName;
     private String description;
