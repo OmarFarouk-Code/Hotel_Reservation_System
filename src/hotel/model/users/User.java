@@ -2,6 +2,8 @@ package hotel.model.users;
 import hotel.core.Database;
 import hotel.model.enums.Gender;
 import hotel.model.enums.UserType;
+import hotel.model.staff.Admin;
+import hotel.model.staff.Receptionist;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -9,9 +11,6 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import static hotel.core.Database.guests;
-
 public abstract class User implements Serializable  
 {
     protected String UserName;
@@ -155,7 +154,7 @@ public abstract class User implements Serializable
         boolean found=false;
         List<Guest> guestList = Database.getGuests();
         for(int i=0; i<Database.getGuests().size();i++) {
-        if(guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getpassword().equals(password)){
+        if(guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)){
             found=true;
         }
         }
@@ -168,9 +167,9 @@ public abstract class User implements Serializable
         }
     }if(Typeofuser==UserType.RECEPTIONIST) {
             boolean found = false;
-            List<Guest> guestList = Database.getReceptionist();
+            List<Receptionist> guestList = Database.getReceptionist();
             for (int i = 0; i < Database.getReceptionist().size(); i++) {
-                if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getpassword().equals(password)) {
+                if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)) {
                     found = true;
                 }
             }
@@ -181,11 +180,12 @@ public abstract class User implements Serializable
                 System.out.println("Access Denied,Please try again !");
                 Login();
             }
+        }
             if(Typeofuser==UserType.ADMIN) {
                 boolean found = false;
-                List<Guest> guestList = Database.getAdmin();
+                List<Admin> guestList = Database.getAdmin();
                 for (int i = 0; i < Database.getAdmin().size(); i++) {
-                    if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getpassword().equals(password)) {
+                    if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)) {
                         found = true;
                     }
                 }

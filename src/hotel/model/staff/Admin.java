@@ -16,10 +16,15 @@ public class  Admin extends Staff implements Manageable
     private List<Invoice> invoicesList;
     // ArrayList<Room> roomList = Database.getReservations();
 
-    public Admin(String userName, String password, LocalDate dateOfbirth, String address)
+    /*public Admin(String userName, String password, LocalDate dateOfbirth, String address)
     {
-        super(userName, password, dateOfbirth, address, null);
+        super(userName, password, dateOfbirth, address);
+    }*/
+    public Admin()
+    {
+
     }
+
 
     //room functions
     public void createRoom(Room room)
@@ -205,14 +210,13 @@ public class  Admin extends Staff implements Manageable
         this.invoicesList=Database.getInvoices();
         double total = 0;
         LocalDate cutoffDate = LocalDate.now().minusDays(days);
-
         System.out.println("\n--- Financial Report (Last " + days + " Days) ---");
         for (int i=0;i< invoicesList.size();i++) {
             // Assumes Invoices class has getDate() and getAmount()
-            if (invoicesList.get(i).getDate().isAfter(cutoffDate)||invoicesList.get(i).getDate().isEqual(cutoffDate))
+            if (invoicesList.get(i).getPaymentDate().isAfter(cutoffDate)||invoicesList.get(i).getPaymentDate().isEqual(cutoffDate))
             {
-                total += invoicesList.get(i).getAmount();
-                System.out.println("ID: " + invoicesList.get(i).getInvoiceId() + " | Date: " + invoicesList.get(i).getDate() + " | Amount: $" + invoicesList.get(i).getAmount());
+                total += invoicesList.get(i).getTotalAmount();
+                System.out.println("ID: " + invoicesList.get(i).getInvoiceID() + " | Date: " + invoicesList.get(i).getPaymentDate() + " | Amount: $" + invoicesList.get(i).getTotalAmount());
             }
         }
         System.out.println("----------------------------------------------");

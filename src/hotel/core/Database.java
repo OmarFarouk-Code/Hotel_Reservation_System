@@ -5,25 +5,34 @@ import hotel.model.users.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*; // Import this for File IO
-import hotel.model.reservation.Invoices;
-import hotel.model.reservation.Reservation;
-import hotel.Guest;
+import hotel.model.bookings.Invoice;
+import hotel.model.bookings.Reservation;
+import hotel.model.users.Guest;
 public class Database
 {
     private static List<Guest> guests = new ArrayList<>();
+    private static List<Admin> admin = new ArrayList<>();
+    private static List<Receptionist> receptionist = new ArrayList<>();
     private static List<Room> rooms = new ArrayList<>();
     private static List<Reservation> reservations = new ArrayList<>();
-    private static List<Invoices> invoices = new ArrayList<>();
+    private static List<Invoice> invoices = new ArrayList<>();
     private static List<RoomType> roomTypes = new ArrayList<>();
     private static List<Amenity> amenities = new ArrayList<>();
+
 
     private Database() {}
 
     // --- Basic Getters ---
     public static List<Guest> getGuests() { return guests; }
+    public static List<Admin> getAdmin() {
+        return admin;
+    }
+    public static List<Receptionist> getReceptionist() {
+        return receptionist;
+    }
     public static List<Room> getRooms() { return rooms; }
     public static List<Reservation> getReservations() { return reservations; }
-    public static List<Invoices> getInvoices() { return invoices; }
+    public static List<Invoice> getInvoices() { return invoices; }
     public static List<RoomType> getRoomTypes() { return roomTypes; }
     public static List<Amenity> getAmenities() { return amenities; }
     private static final String FILE_NAME = "hotel_data.dat";
@@ -32,7 +41,7 @@ public class Database
     public static void saveData() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
             // Create an array or a custom object to hold EVERYTHING
-            Object[] allData = {guests, rooms, reservations, invoices, roomTypes, amenities};
+            Object[] allData = {guests, rooms, reservations,invoices, roomTypes, amenities,receptionist,admin};
             oos.writeObject(allData);
             System.out.println("Data saved successfully!");
         } catch (IOException e) {
@@ -61,9 +70,11 @@ public class Database
                 guests = (List<Guest>) allData[0];
                 rooms = (List<Room>) allData[1];
                 reservations = (List<Reservation>) allData[2];
-                invoices = (List<Invoices>) allData[3];
+                invoices = (List<Invoice>) allData[3];
                 roomTypes = (List<RoomType>) allData[4];
                 amenities = (List<Amenity>) allData[5];
+                receptionist=(List<Receptionist>) allData[6];
+                admin=(List<Admin>) allData[7];
 
                 System.out.println("Data loaded successfully.");
             }
