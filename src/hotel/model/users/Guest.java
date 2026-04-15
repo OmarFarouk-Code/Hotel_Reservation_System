@@ -20,6 +20,10 @@ public class Guest extends User implements Serializable {
         this.roomprefrences = new ArrayList<String>();
     }
 
+    public setGuest(Guest guest)
+    {
+        this.guest=guest;
+    }
 
     public AccountStatus getAccountStatus() {
         return accountStatus;

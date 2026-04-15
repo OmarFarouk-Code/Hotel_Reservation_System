@@ -3,18 +3,21 @@ import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
 import hotel.model.entities.*;
+import hotel.model.bookings.Invoice;
 import hotel.model.users.*;
 import java.time.LocalDate;
 import hotel.interfaces.*;
 public class  Admin extends Staff implements Manageable
 {
 
-    private List<Room> roomList = new ArrayList<>();
-    private List<Amenity> amenityList = new ArrayList<>();
-    private List<RoomType> roomTypeList = new ArrayList<>();
+    private List<Room> roomList;
+    private List<Amenity> amenityList;
+    private List<RoomType> roomTypeList;
+    private List<Invoice> invoicesList;
     // ArrayList<Room> roomList = Database.getReservations();
 
-    public Admin(String userName, String password, LocalDate dateOfbirth, String address) {
+    public Admin(String userName, String password, LocalDate dateOfbirth, String address)
+    {
         super(userName, password, dateOfbirth, address, null);
     }
 
@@ -26,8 +29,8 @@ public class  Admin extends Staff implements Manageable
         Database.saveData();
     }
 
-   public Room readRoom(int roomNumber)
-   {
+    public Room readRoom(int roomNumber)
+    {
         this.roomList = Database.getRooms();
         for (int i = 0; i < roomList.size(); i++)
         {
@@ -182,6 +185,7 @@ public class  Admin extends Staff implements Manageable
     public void setSeasonalMultiplier(String roomType,double multiplier)
     {
         this.roomTypeList = Database.getRoomTypes();
+        if (multiplier < 0) { System.out.println("Error: Multiplier cannot be negative"); return; }
         for(int i=0;i<roomTypeList.size();i++)
         {
             if(roomTypeList.get(i).getTypeName().equals(roomType))
@@ -190,11 +194,29 @@ public class  Admin extends Staff implements Manageable
                 double newPrice=multiplier*oldPrice;
                 roomTypeList.get(i).setPricePerNight(newPrice);
                 Database.saveData();
-
                 System.out.println("Seasonal Update for " + roomType + ":");
                 System.out.println("Old Price: $" + oldPrice + " | New Price: $" +  newPrice+ " (x" + multiplier + ")");
                 return;
             }
         }
+    }
+
+    public void generateFinancialReport(int days) {
+        this.invoicesList=Database.getInvoices();
+        double total = 0;
+        LocalDate cutoffDate = LocalDate.now().minusDays(days);
+
+        System.out.println("\n--- Financial Report (Last " + days + " Days) ---");
+        for (int i=0;i< invoicesList.size();i++) {
+            // Assumes Invoices class has getDate() and getAmount()
+            if (invoicesList.get(i).getDate().isAfter(cutoffDate)||invoicesList.get(i).getDate().isEqual(cutoffDate))
+            {
+                total += invoicesList.get(i).getAmount();
+                System.out.println("ID: " + invoicesList.get(i).getInvoiceId() + " | Date: " + invoicesList.get(i).getDate() + " | Amount: $" + invoicesList.get(i).getAmount());
+            }
+        }
+        System.out.println("----------------------------------------------");
+        System.out.println("TOTAL REVENUE: $" + total);
+        System.out.println("----------------------------------------------\n");
     }
 }
