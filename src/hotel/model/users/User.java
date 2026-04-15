@@ -167,8 +167,8 @@ public abstract class User implements Serializable
         }
     }if(Typeofuser==UserType.RECEPTIONIST) {
             boolean found = false;
-            List<Receptionist> guestList = Database.getReceptionist();
-            for (int i = 0; i < Database.getReceptionist().size(); i++) {
+            List<Receptionist> guestList = Database.getReceptionists();
+            for (int i = 0; i < Database.getReceptionists().size(); i++) {
                 if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)) {
                     found = true;
                 }
@@ -183,8 +183,8 @@ public abstract class User implements Serializable
         }
             if(Typeofuser==UserType.ADMIN) {
                 boolean found = false;
-                List<Admin> guestList = Database.getAdmin();
-                for (int i = 0; i < Database.getAdmin().size(); i++) {
+                List<Admin> guestList = Database.getAdmins();
+                for (int i = 0; i < Database.getAdmins().size(); i++) {
                     if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)) {
                         found = true;
                     }
