@@ -40,7 +40,7 @@ public abstract class Staff extends User
         for (Reservation reservation : reservations) 
         {
             System.out.println("Username : " + reservation.getGuest().getUserName());
-            System.out.println("Reservation ID : " + reservation.get());
+            System.out.println("Reservation ID : " + reservation.getId());
         }
     }
 }
