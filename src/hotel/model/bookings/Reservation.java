@@ -1,3 +1,4 @@
+package hotel.model.bookings;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -6,7 +7,6 @@ import java.util.List;
 import hotel.model.users.*;
 import hotel.model.entities.*;
 import hotel.model.enums.*;
-
 public class Reservation implements Serializable
 {
     private int reservationID;
@@ -50,4 +50,67 @@ public class Reservation implements Serializable
         this.diningpackage = diningpackage;
     }
 
+    public int getReservationID() {
+        return reservationID;
+    }
+
+    public Guest getGuest() {
+        return guest;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public LocalDate getCheckinDate() {
+        return CheckinDate;
+    }
+
+    public LocalDate getCheckoutDate() {
+        return CheckoutDate;
+    }
+
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public DiningPackage getDiningpackage() {
+        return diningpackage;
+    }
+
+    public List<Amenity> getSelectedAmenities() {
+        return selectedAmenities;
+    }
+
+    public void setReservationID(int reservationID) {
+        this.reservationID = reservationID;
+    }
+
+    public void setGuest(Guest guest) {
+        this.guest = guest;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public void setCheckinDate(LocalDate checkinDate) {
+        CheckinDate = checkinDate;
+    }
+
+    public void setCheckoutDate(LocalDate checkoutDate) {
+        CheckoutDate = checkoutDate;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
+    }
+
+    public void setDiningpackage(DiningPackage diningpackage) {
+        this.diningpackage = diningpackage;
+    }
+
+    public void setSelectedAmenities(List<Amenity> selectedAmenities) {
+        this.selectedAmenities = selectedAmenities;
+    }
 }
