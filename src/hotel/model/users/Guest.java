@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Guest extends User {
+public class Guest extends User implements Serializable {
     private double balance;
     private List<String> roomperefrences;
     private RoomType roomoptions;

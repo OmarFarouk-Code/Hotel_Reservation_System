@@ -6,7 +6,7 @@ import hotel.model.users.*;
 import hotel.model.entities.*;
 import hotel.model.enums.*;
 
-public class Reservation
+public class Reservation implements Serializable
 {
     private int reservationID;
     private Guest guest;

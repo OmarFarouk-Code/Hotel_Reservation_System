@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public abstract class User 
+public abstract class User implements Serializable  
 {
     protected String UserName;
     private String password;
