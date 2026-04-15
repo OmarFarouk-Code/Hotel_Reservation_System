@@ -2,28 +2,30 @@ package hotel.model.users;
 import hotel.model.enums.*;
 import hotel.model.enums.UserType;
 import hotel.model.entities.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-public class Guest extends User implements Serializable {
+public class Guest extends User implements Serializable
+{
 
     private double balance;
     private List<String> roomprefrences;
     private RoomType roomoptions;
     private int failedLoginAttempts;
     private AccountStatus accountStatus;
-
+    private Guest guest;
     public Guest(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber , double balance , List<String> roomprefrences ) {
         super(userName, password, dateOfbirth, address , phoneNumber);
         this.balance = balance;
         this.roomprefrences = new ArrayList<String>();
     }
 
-    public setGuest(Guest guest)
+    public Guest getGuest()
     {
-        this.guest=guest;
+        return this;
     }
+
 
     public AccountStatus getAccountStatus() {
         return accountStatus;
