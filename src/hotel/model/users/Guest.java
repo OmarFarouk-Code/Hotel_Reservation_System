@@ -1,7 +1,11 @@
 package hotel.model.users;
+import hotel.core.Database;
 import hotel.model.enums.*;
 import hotel.model.enums.UserType;
 import hotel.model.entities.*;
+
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -9,7 +13,6 @@ import java.util.Scanner;
 public class Guest extends User implements Serializable {
 
     private double balance;
-    private List<String> roomprefrences;
     private RoomType roomoptions;
     private int failedLoginAttempts;
     private AccountStatus accountStatus;
@@ -17,14 +20,18 @@ public class Guest extends User implements Serializable {
     public Guest(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber , double balance , List<String> roomprefrences ) {
         super(userName, password, dateOfbirth, address , phoneNumber);
         this.balance = balance;
-        this.roomprefrences = new ArrayList<String>();
     }
 
-    public setGuest(Guest guest)
+    public Guest getGuest()
     {
-        this.guest=guest;
+       return this;
     }
-
+    public String getUserName() {
+        return UserName;
+    };
+    public String getpassword() {
+        return password;
+    };
     public AccountStatus getAccountStatus() {
         return accountStatus;
     }
@@ -37,20 +44,12 @@ public class Guest extends User implements Serializable {
         return roomoptions;
     }
 
-    public List<String> getRoomperefrences() {
-        return roomprefrences;
-    }
-
     public double getBalance() {
         return balance;
     }
 
     public void setBalance(double balance) {
         this.balance = balance;
-    }
-
-    public void setRoomperefrences(List<String> roomperefrences) {
-        this.roomprefrences = roomperefrences;
     }
 
     public void setRoomoptions(RoomType roomoptions) {
@@ -77,14 +76,8 @@ public class Guest extends User implements Serializable {
             }
             input.nextLine();//used to leave line
             List<String> roomperefrences = new ArrayList<String>();
-            System.out.println("**room preferences**");
-            System.out.println("Please enter your preferred floor");
-            roomperefrences.add(input.nextLine());
-            System.out.println("Please enter the preferred room type");
-            System.out.println("1.Pool, 2.Sea view, 3.Garden");
-            roomoptions=RoomType.valueOf(input.next().toUpperCase());
-            roomperefrences.add(String.valueOf(roomoptions));
             System.out.println("Account has been successfully created Welcome "+UserName);
+        Database.saveData();
 
 
         }

@@ -1,6 +1,7 @@
 package hotel.model.enums;
 
 public enum UserType {
-    STAFF,
+    Admin,
+    RECEPTIONIST,
     GUEST;
 }
