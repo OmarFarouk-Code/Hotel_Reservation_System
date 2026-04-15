@@ -1,6 +1,7 @@
 package hotel.model.users;
 import hotel.model.enums.UserType;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
