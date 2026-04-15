@@ -1,21 +1,24 @@
-package hotel;
-
-import hotel.model.entities.RoomType;
-import hotel.model.enums.AccountStatus;
+package hotel.model.users;
+import hotel.model.enums.*;
 import hotel.model.enums.UserType;
-import hotel.model.users.User;
-
+import hotel.model.entities.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Guest extends User {
+public class Guest extends User implements Serializable {
+
     private double balance;
-    private List<String> roomperefrences;
+    private List<String> roomprefrences;
     private RoomType roomoptions;
-    private String address;
     private int failedLoginAttempts;
     private AccountStatus accountStatus;
+
+    public Guest(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber , double balance , List<String> roomprefrences ) {
+        super(userName, password, dateOfbirth, address , phoneNumber);
+        this.balance = balance;
+        this.roomprefrences = new ArrayList<String>();
+    }
 
 
     public AccountStatus getAccountStatus() {
@@ -26,17 +29,12 @@ public class Guest extends User {
         return failedLoginAttempts;
     }
 
-    @Override
-    public String getAddress() {
-        return address;
-    }
-
     public RoomType getRoomoptions() {
         return roomoptions;
     }
 
     public List<String> getRoomperefrences() {
-        return roomperefrences;
+        return roomprefrences;
     }
 
     public double getBalance() {
@@ -48,17 +46,13 @@ public class Guest extends User {
     }
 
     public void setRoomperefrences(List<String> roomperefrences) {
-        this.roomperefrences = roomperefrences;
+        this.roomprefrences = roomperefrences;
     }
 
     public void setRoomoptions(RoomType roomoptions) {
         this.roomoptions = roomoptions;
     }
 
-    @Override
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     public void setFailedLoginAttempts(int failedLoginAttempts) {
         this.failedLoginAttempts = failedLoginAttempts;
@@ -67,8 +61,6 @@ public class Guest extends User {
     public void setAccountStatus(AccountStatus accountStatus) {
         this.accountStatus = accountStatus;
     }
-
-
 
     Scanner input =new Scanner(System.in);
 

@@ -1,20 +1,19 @@
 package hotel.model.users;
 import java.util.List;
 import hotel.core.Database;
+import hotel.model.bookings.*;
 import java.time.LocalDate;
-import hotel.Guest;
-import java.util.ArrayList;
-import hotel.model.reservation.Reservation;
+
+
 public abstract class Staff extends User
 {
     private int workingHours;
 
     public Staff() {};
 
-    public Staff(String UserName, String password, LocalDate dateOfBirth, String phoneNumber, int workingHours)
-    {
-        super(UserName, password, dateOfBirth, phoneNumber);
-        this.workingHours = workingHours;
+    public Staff(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber , int workingHours) {
+       super(userName, password, dateOfbirth, address , phoneNumber);  
+       this.workingHours = workingHours;
     }
 
     public int getWorkingHours() {
