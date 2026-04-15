@@ -14,6 +14,13 @@ public class  Admin extends Staff implements Manageable
     private List<RoomType> roomTypeList = new ArrayList<>();
     // ArrayList<Room> roomList = Database.getReservations();
 
+    public Admin(String userName, String password, LocalDate dateOfbirth, String address) {
+        this.UserName = userName;
+        this.setPassword(password);
+        this.setDateOfbirth(dateOfbirth);
+        this.setAddress(address);
+        this.Typeofuser = hotel.model.enums.UserType.ADMIN;
+    }
 
     //room functions
     public void createRoom(Room room)
