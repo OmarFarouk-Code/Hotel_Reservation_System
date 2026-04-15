@@ -5,7 +5,8 @@ import hotel.core.Database;
 import hotel.model.entities.*;
 import hotel.model.users.*;
 import java.time.LocalDate;
-public class  Admin extends Staff
+import hotel.interfaces.*;
+public class  Admin extends Staff implements Manageable
 {
 
     private List<Room> roomList = new ArrayList<>();
