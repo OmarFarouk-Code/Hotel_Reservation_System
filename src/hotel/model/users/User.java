@@ -161,23 +161,44 @@ public abstract class User implements Serializable
         }
         if(found) {
             System.out.println("Access Granted,Welcome " + UserName);
+            //homepage for guest
         }else {
             System.out.println("Access Denied,Please try again !");
             Login();
         }
-    }if(Typeofuser==UserType.RECEPTIONIST){
-            boolean found=false;
-            List<Guest> guestList = Database.getGuests();
-            for(int i=0; i<Database.getGuests().size();i++) {
-                if(guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getpassword().equals(password)){
-                    found=true;
+    }if(Typeofuser==UserType.RECEPTIONIST) {
+            boolean found = false;
+            List<Guest> guestList = Database.getReceptionist();
+            for (int i = 0; i < Database.getReceptionist().size(); i++) {
+                if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getpassword().equals(password)) {
+                    found = true;
                 }
             }
-            if(found) {
+            if (found) {
                 System.out.println("Access Granted,Welcome " + UserName);
-            }else {
+                //Homepage of receptionist
+            } else {
                 System.out.println("Access Denied,Please try again !");
                 Login();
+            }
+            if(Typeofuser==UserType.ADMIN) {
+                boolean found = false;
+                List<Guest> guestList = Database.getAdmin();
+                for (int i = 0; i < Database.getAdmin().size(); i++) {
+                    if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getpassword().equals(password)) {
+                        found = true;
+                    }
+                }
+                if (found) {
+                    System.out.println("Access Granted,Welcome " + UserName);
+                    //Homepage of admin
+                } else {
+                    System.out.println("Access Denied,Please try again !");
+                    Login();
+                }
+
+
+        }
 
 
         }
@@ -191,4 +212,4 @@ public abstract class User implements Serializable
 
 
 
-}
+
