@@ -54,13 +54,16 @@ The **Hotel Reservation System** is a backend-only Java application developed as
 
 ### What Milestone 1 Covers
 
-- ✅ Complete enum library — `AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender` **(Bassel)**
-- ✅ User inheritance tree — `User` → `Guest` / `Staff` → `Admin` / `Receptionist` **(Belal + Adam)**
-- ✅ Transactional model — `Reservation`, `Invoice` **(Mostafa)**
-- ✅ Physical entity classes — `Amenity`, `RoomType`, `Room` **(Omar)**
+- ✅ Complete enum library — `AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender`, `RoomView` **(Omar)**
+- ✅ Physical entity classes — `Amenity`, `RoomType`, `Room`, `Review` **(Omar)**
 - ✅ Interface contracts — `Manageable`, `Payable` **(Omar)**
-- ✅ Centralised in-memory `Database` **(Omar)**
-- ✅ Console test runner proving end-to-end backend correctness **(Omar)**
+- ✅ Centralised in-memory `Database` with file persistence **(Omar)**
+- ✅ Folder structure, file pathing, and UML diagram **(Omar)**
+- ✅ Team coordination and code integration **(Omar)**
+- ✅ User inheritance tree — `User` → `Staff` **(Belal)**
+- ✅ Administration — `Admin` **(Belal)**
+- ✅ Transactional model — `Reservation`, `Invoice` **(Mostafa)**
+- ✅ Staff operations — `Admin` CRUD methods, `Receptionist` **(Adam)**
 - ⏳ `BookingEngine` — deferred to later phase, skeleton defined **(Omar)**
 
 ---
@@ -82,13 +85,13 @@ The system is organised into four strictly ordered tiers. Dependencies always fl
 │  Reservation  ·  Invoice                                    │
 ├─────────────────────────────────────────────────────────────┤
 │  TIER 1 — Foundation                                        │
-│  Enums  ·  Amenity  ·  RoomType  ·  Room                   │
+│  Enums  ·  Amenity  ·  RoomType  ·  Room  ·  Review        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ### UML Diagram Highlights
 
-- `Room` aggregates `RoomType` (1) and `List<Amenity>` (0..*)
+- `Room` aggregates `RoomType` (1) and `List<Amenity>` (0..*) and `List<Review>` (0..*)
 - `Guest` and `Staff` both extend the abstract `User`
 - `Admin` extends `Staff` and **implements** `Manageable`
 - `Invoice` **implements** `Payable`
@@ -110,12 +113,15 @@ hotel-reservation-system/
 │       │   │   ├── DiningPackage.java
 │       │   │   ├── Gender.java
 │       │   │   ├── PaymentMethod.java
-│       │   │   └── ReservationStatus.java
+│       │   │   ├── ReservationStatus.java
+│       │   │   ├── RoomView.java
+│       │   │   └── UserType.java
 │       │   │
 │       │   ├── entities/
 │       │   │   ├── Amenity.java
 │       │   │   ├── Room.java
-│       │   │   └── RoomType.java
+│       │   │   ├── RoomType.java
+│       │   │   └── Review.java
 │       │   │
 │       │   ├── users/
 │       │   │   ├── User.java           ← abstract
@@ -126,7 +132,7 @@ hotel-reservation-system/
 │       │   │   ├── Admin.java
 │       │   │   └── Receptionist.java
 │       │   │
-│       │   └── bookings/
+│       │   └── reservation/
 │       │       ├── Reservation.java
 │       │       └── Invoice.java
 │       │
@@ -149,7 +155,7 @@ hotel-reservation-system/
 
 ### Enumerations
 
-All enums live in `hotel.model.enums`. Defined by **Bassel**.
+All enums live in `hotel.model.enums`. Defined by **Omar**.
 
 #### `AccountStatus`
 ```java
@@ -164,7 +170,10 @@ Tracks guest account state. Accounts are `LOCKED` after exceeding the failed log
 #### `DiningPackage`
 ```java
 public enum DiningPackage {
-    BREAKFAST_ONLY, HALF_BOARD, FULL_BOARD, ALL_INCLUSIVE;
+    BREAKFAST_ONLY,
+    HALF_BOARD,
+    FULL_BOARD,
+    ALL_INCLUSIVE;
 
     private double pricePerNight;
 
@@ -203,6 +212,15 @@ public enum Gender {
 
 ---
 
+#### `RoomView`
+```java
+public enum RoomView {
+    SEA_VIEW, GARDEN, POOL
+}
+```
+
+---
+
 ### Entity Classes
 
 Defined by **Omar**.
@@ -227,6 +245,8 @@ Represents a bookable facility (e.g. minibar, safe, jacuzzi) that a guest can at
 | `-` | `basePrice : double` | Nightly base rate |
 | `-` | `description : String` | Type description |
 | `-` | `seasonalMultiplier : double` | Pricing multiplier (set by Admin) |
+| `-` | `roomView : RoomView` | View type for this room category |
+| `-` | `maxCapacity : int` | Maximum guest occupancy |
 | `+` | `getEffectivePrice() : double` | Returns `basePrice × seasonalMultiplier` |
 
 ---
@@ -240,10 +260,22 @@ Represents a bookable facility (e.g. minibar, safe, jacuzzi) that a guest can at
 | `-` | `isAvailable : boolean` | Availability flag |
 | `-` | `roomType : RoomType` | Associated room type |
 | `-` | `amenities : List<Amenity>` | Attached amenities |
+| `-` | `reviews : List<Review>` | Guest reviews for this room |
 | `+` | `addAmenity(Amenity) : void` | Add an amenity to this room |
 | `+` | `removeAmenity(Amenity) : void` | Remove an amenity |
 | `+` | `markAvailable() : void` | Set `isAvailable = true` |
 | `+` | `markUnavailable() : void` | Set `isAvailable = false` |
+| `+` | `addReview(Review) : void` | Attach a guest review |
+| `+` | `calculateAverageRating() : double` | Average score across all reviews |
+
+---
+
+#### `Review`
+
+| Modifier | Member | Description |
+|----------|--------|-------------|
+| `-` | `score : int` | Numeric rating |
+| `-` | `comment : String` | Guest comment text |
 
 ---
 
@@ -260,10 +292,11 @@ Base class for all system users. Cannot be instantiated directly.
 | `-` | `userName : String` |
 | `-` | `password : String` |
 | `-` | `dateOfBirth : LocalDate` |
-| `-` | `phoneNumber : String` |
-| `-` | `email : String` |
-| `+` | `login(username, password) : boolean` |
-| `+` | `resetPassword(email) : void` |
+| `-` | `address : String` |
+| `-` | `typeOfUser : UserType` |
+| `+` | `register() : void` |
+| `+` | `passwordcheck(String) : boolean` |
+| `+` | `Datechecker(String) : boolean` |
 
 ---
 
@@ -273,14 +306,11 @@ Base class for all system users. Cannot be instantiated directly.
 |----------|--------|-------|
 | `-` | `balance : double` | Debited on invoice payment |
 | `-` | `address : String` | |
-| `-` | `gender : Gender` | |
 | `-` | `roomPreferences : List<String>` | Preference tags |
+| `-` | `roomOptions : RoomType` | Preferred room type |
 | `-` | `failedLoginAttempts : int` | Triggers account lock |
 | `-` | `accountStatus : AccountStatus` | `ACTIVE` or `LOCKED` |
-| `+` | `register() : void` | Self-registration |
-| `+` | `viewReservation() : void` | View own bookings |
-| `+` | `checkout(reservationId) : void` | Initiate checkout |
-| `+` | `payInvoice(invoiceId, method) : void` | Settle an invoice |
+| `+` | `registerExtension() : void` | Collects guest-specific fields |
 
 ---
 
@@ -300,7 +330,7 @@ Defined by **Adam**.
 
 #### `Admin` *(extends Staff, implements Manageable)*
 
-Full CRUD access over Rooms, RoomTypes, and Amenities, plus financial reporting.
+Full CRUD access over Rooms, RoomTypes, and Amenities, plus seasonal pricing.
 
 **Room CRUD**
 ```java
@@ -375,7 +405,7 @@ Defined by **Mostafa**.
 
 | Modifier | Member |
 |----------|--------|
-| `-` | `invoiceID : integer` |
+| `-` | `invoiceID : int` |
 | `-` | `reservation : Reservation` |
 | `-` | `isPaid : boolean` |
 | `-` | `totalAmount : double` |
@@ -387,7 +417,7 @@ Defined by **Mostafa**.
 | `+` | `getTotal() : double` |
 | `+` | `generateItemizedSummary() : String` |
 
-> `getTotal()` returns `totalAmount - discountAmount`  
+> `getTotal()` returns `totalAmount - discountAmount`
 > `pay()` deducts from `guest.balance`, sets `isPaid = true`, records method and date
 
 ---
@@ -439,11 +469,11 @@ Implemented by: `Invoice`
 
 ### Core Infrastructure
 
-Defined by **Omar**. Omar's scope spans the widest range in the project — from physical entity classes (`Amenity`, `RoomType`, `Room`) through to interface contracts, the central database, the console test runner, and the deferred booking engine.
+Defined by **Omar**. Omar's scope is the widest in the project — spanning enums, all physical entity classes, interface contracts, folder structure and file pathing, the UML diagram, the centralised database with file persistence, the console test runner, ongoing code integration, and teammate coordination throughout the milestone.
 
 #### `Database`
 
-Centralised static in-memory storage hub. All collections are static and shared across the entire application.
+Centralised static in-memory storage hub with file persistence. All collections are static and shared across the entire application.
 
 ```java
 public class Database {
@@ -453,13 +483,11 @@ public class Database {
     private static List<Invoice>     invoices     = new ArrayList<>();
     private static List<RoomType>    roomTypes    = new ArrayList<>();
     private static List<Amenity>     amenities    = new ArrayList<>();
-    private static Map<String, Double> promoCodes = new HashMap<>();
 
-    public static void   initializeData()                        { ... }
+    public static void saveData()                                { ... }
+    public static void loadData()                                { ... }
     public static Guest  findGuestByUsername(String username)    { ... }
     public static Room   findRoomByNumber(int roomNumber)        { ... }
-    public static void   loadFromFiles()                         { ... }
-    public static void   saveToFiles()                           { ... }
 }
 ```
 
@@ -507,36 +535,29 @@ public class BookingEngine {
 
 | # | Member | Domain | Classes / Interfaces |
 |---|--------|--------|----------------------|
-| 01 | **Bassel** | Foundation — Enums | `AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender` |
-| 02 | **Belal** | User Hierarchy & Authentication | `User` *(abstract)*, `Guest`, `Staff` *(abstract)* |
-| 03 | **Adam** | Administration & Operations | `Admin`, `Receptionist` |
+| 01 | **Omar** | Foundation, Infrastructure & Integration | `AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender`, `RoomView`, `UserType`, `Amenity`, `RoomType`, `Room`, `Review`, `Manageable`, `Payable`, `Database`, `Main`, `BookingEngine` · folder structure · file pathing · UML diagram · code integration · team coordination |
+| 02 | **Belal** | User Hierarchy & Authentication | `User` *(abstract)*, `Guest`, `Staff` *(abstract)*, `Admin` |
+| 03 | **Adam** | Administration & Operations | `Admin` CRUD methods, `Receptionist` |
 | 04 | **Mostafa** | Booking & Financial Models | `Reservation`, `Invoice` |
-| 05 | **Omar** | Entities, Integration, Storage & Console Flow | `Amenity`, `RoomType`, `Room`, `Manageable`, `Payable`, `Database`, `Main`, `BookingEngine` |
 
 ---
 
 ## 🔗 Dependency Map
 
 ```
-Bassel ──────────────────────────────────────────────────────► (no dependencies)
-Belal  ──── depends on ──► Bassel (enums: Gender, AccountStatus, PaymentMethod)
-Adam   ──── depends on ──► Omar   (Room, RoomType, Amenity)
+Omar   ──────────────────────────────────────────────────────► (no external dependencies)
+Belal  ──── depends on ──► Omar   (enums: Gender, AccountStatus, UserType, RoomType entity)
+Adam   ──── depends on ──► Omar   (Room, RoomType, Amenity, Database, Manageable interface)
              depends on ──► Belal  (Staff abstract class)
-             depends on ──► Omar   (Manageable interface)
-Mostafa ─── depends on ──► Omar   (Room, Amenity)
-             depends on ──► Bassel (DiningPackage enum)
+Mostafa ─── depends on ──► Omar   (Room, Amenity, Database, Payable interface)
              depends on ──► Belal  (Guest class)
-             depends on ──► Omar   (Payable interface)
-Omar   ──── depends on ──► Bassel (enums for entity fields)
-             depends on ──► ALL    (Database aggregates every entity type)
 ```
 
 **Recommended build order:**
-1. Bassel delivers all enums
-2. Omar delivers `Amenity`, `RoomType`, `Room`, `Manageable`, `Payable`, and empty `Database`
-3. Belal delivers user hierarchy
-4. Adam and Mostafa work in parallel
-5. Omar completes `Main` and `BookingEngine`
+1. Omar delivers all enums, entity classes, interfaces, and empty `Database`
+2. Belal delivers user hierarchy (`User`, `Guest`, `Staff`)
+3. Adam and Mostafa work in parallel
+4. Omar completes `Main`, integration testing, and `BookingEngine`
 
 ---
 
@@ -582,7 +603,6 @@ $ java -cp out hotel.core.Main
   ✔ 3 room types loaded
   ✔ 10 rooms loaded
   ✔ 5 amenities loaded
-  ✔ 2 promo codes loaded
 
 [GUEST] Registering new guest: alice_smith
   ✔ Guest registered successfully
@@ -657,7 +677,8 @@ main
  └── feature/<member>/<classname>
        e.g. feature/omar/RoomType
             feature/omar/Database
-            feature/bassel/DiningPackage
+            feature/mostafa/Reservation
+            feature/adam/Receptionist
 ```
 
 1. **Branch** off `main` using the naming convention above
@@ -676,12 +697,13 @@ main
 | Collections use `ArrayList<T>` | Initialised in constructor, never null |
 | Only `Database` uses `static` | All other classes are instance-based |
 | Packages match folder structure | `hotel.model.enums`, `hotel.core`, etc. |
+| All entity classes implement `Serializable` | Required for `Database` file persistence |
 
 ---
 
 <div align="center">
 
-*Hotel Reservation System — OOP Course Project, Spring 2026*  
+*Hotel Reservation System — OOP Course Project, Spring 2026*
 *Ain Shams University · University of East London*
 
 </div>
