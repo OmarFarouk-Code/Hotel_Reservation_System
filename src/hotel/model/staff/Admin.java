@@ -3,18 +3,23 @@ import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
 import hotel.model.entities.*;
-import hotel.model.reservation.Invoices;
+import hotel.model.bookings.Invoice;
 import hotel.model.users.*;
 import java.time.LocalDate;
-public class  Admin extends Staff
+import hotel.interfaces.*;
+public class  Admin extends Staff implements Manageable
 {
 
     private List<Room> roomList;
     private List<Amenity> amenityList;
     private List<RoomType> roomTypeList;
-    private List<Invoices> invoicesList;
+    private List<Invoice> invoicesList;
     // ArrayList<Room> roomList = Database.getReservations();
 
+    public Admin(String userName, String password, LocalDate dateOfbirth, String address)
+    {
+        super(userName, password, dateOfbirth, address, null);
+    }
 
     //room functions
     public void createRoom(Room room)
@@ -189,7 +194,6 @@ public class  Admin extends Staff
                 double newPrice=multiplier*oldPrice;
                 roomTypeList.get(i).setPricePerNight(newPrice);
                 Database.saveData();
-
                 System.out.println("Seasonal Update for " + roomType + ":");
                 System.out.println("Old Price: $" + oldPrice + " | New Price: $" +  newPrice+ " (x" + multiplier + ")");
                 return;

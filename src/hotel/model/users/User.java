@@ -1,19 +1,35 @@
 package hotel.model.users;
 import hotel.model.enums.UserType;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public abstract class User 
+public abstract class User implements Serializable  
 {
-    protected String UserName;
+    private String UserName;
     private String password;
     private LocalDate dateOfbirth;
     private String address;
-    protected UserType Typeofuser=null;
+    private String phoneNumber;
+    private UserType Typeofuser=null;
+
+    public User() {}
+
+    public User(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber) {
+        this.UserName = userName;
+        this.password = password;
+        this.dateOfbirth = dateOfbirth;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
+
+     public UserType getTypeofuser() {
+        return Typeofuser;
+    }
 
     Scanner input =new Scanner(System.in);
 
