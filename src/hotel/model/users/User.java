@@ -1,5 +1,9 @@
 package hotel.model.users;
+import hotel.core.Database;
+import hotel.model.enums.Gender;
 import hotel.model.enums.UserType;
+import hotel.model.staff.Admin;
+import hotel.model.staff.Receptionist;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -7,15 +11,15 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 public abstract class User implements Serializable  
 {
-    private String UserName;
-    private String password;
+    protected String UserName;
+    protected String password;
     private LocalDate dateOfbirth;
     private String address;
     private String phoneNumber;
     private UserType Typeofuser=null;
+    private Gender theGender;
 
     public User() {}
 
@@ -117,6 +121,8 @@ public abstract class User implements Serializable
             passwordcheck(password);
         }
         System.out.println("Password has been created successfully");
+        System.out.println("Please enter your Gender");
+        theGender=Gender.valueOf(input.next().toUpperCase());
         System.out.println("Please enter your date of birth YYYY-MM-DD");
         String userInput = input.nextLine();
         if(!Datechecker(userInput)){
@@ -130,7 +136,74 @@ public abstract class User implements Serializable
 
         if (Typeofuser == UserType.GUEST) {
             registerextention();
+            Database.saveData();
         }
+        Database.saveData();
+    }
+
+    public void Login(){
+        System.out.println("Please choose weather you 1.Guest 2.Staff");
+        Typeofuser = UserType.valueOf(input.next().toUpperCase());//handling errors
+        input.nextLine();//avoid skipping input
+        System.out.println("Please enter your Username and password");
+        System.out.print("Username: ");
+        UserName=input.nextLine();
+        System.out.print("Password: ");
+        password=input.nextLine();
+        if(Typeofuser== UserType.GUEST){
+        boolean found=false;
+        List<Guest> guestList = Database.getGuests();
+        for(int i=0; i<Database.getGuests().size();i++) {
+        if(guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)){
+            found=true;
+        }
+        }
+        if(found) {
+            System.out.println("Access Granted,Welcome " + UserName);
+            //homepage for guest
+        }else {
+            System.out.println("Access Denied,Please try again !");
+            Login();
+        }
+    }if(Typeofuser==UserType.RECEPTIONIST) {
+            boolean found = false;
+            List<Receptionist> guestList = Database.getReceptionist();
+            for (int i = 0; i < Database.getReceptionist().size(); i++) {
+                if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)) {
+                    found = true;
+                }
+            }
+            if (found) {
+                System.out.println("Access Granted,Welcome " + UserName);
+                //Homepage of receptionist
+            } else {
+                System.out.println("Access Denied,Please try again !");
+                Login();
+            }
+        }
+            if(Typeofuser==UserType.ADMIN) {
+                boolean found = false;
+                List<Admin> guestList = Database.getAdmin();
+                for (int i = 0; i < Database.getAdmin().size(); i++) {
+                    if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)) {
+                        found = true;
+                    }
+                }
+                if (found) {
+                    System.out.println("Access Granted,Welcome " + UserName);
+                    //Homepage of admin
+                } else {
+                    System.out.println("Access Denied,Please try again !");
+                    Login();
+                }
+
+
+        }
+
+
+        }
+
+
     }
 
 
@@ -140,5 +213,3 @@ public abstract class User implements Serializable
 
 
 
-
-}
