@@ -21,6 +21,10 @@ public abstract class User
         this.UserName = userName;
     }
 
+    public String getUserName() {
+        return UserName;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -52,7 +56,11 @@ public abstract class User
             return false;
         }
     }
-    public abstract void registerextention();
+
+    public void registerextention()
+    {
+
+    }
 
     public boolean passwordcheck(String Password) {
         boolean uppercase = false;

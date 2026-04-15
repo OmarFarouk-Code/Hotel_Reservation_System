@@ -5,7 +5,8 @@ import hotel.core.Database;
 import hotel.model.entities.*;
 import hotel.model.users.*;
 import java.time.LocalDate;
-public class  Admin extends Staff {
+public class  Admin extends Staff
+{
 
     private List<Room> roomList = new ArrayList<>();
     private List<Amenity> amenityList = new ArrayList<>();
@@ -172,6 +173,8 @@ public class  Admin extends Staff {
         }
         System.out.println("RoomType not found");
     }
+
+
     public void setSeasonalMultiplier(String roomType,double multiplier)
     {
         this.roomTypeList = Database.getRoomTypes();
