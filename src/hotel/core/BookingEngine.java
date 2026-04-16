@@ -1,18 +1,21 @@
-    package hotel.core;
+package hotel.core;
 
-    import hotel.model.*;
-    import hotel.interfaces.*;
-    import hotel.core.Database;
-    import hotel.model.bookings.PromoCode;
-    import hotel.model.entities.Room;
-    import hotel.model.entities.RoomType;
-    import hotel.model.enums.RoomView;
-    import hotel.model.staff.Receptionist;
-    import java.util.ArrayList;
-    import java.util.List;
+import hotel.core.Database;
+import hotel.interfaces.*;
+import hotel.model.*;
+import hotel.model.bookings.PromoCode;
+import hotel.model.entities.Room;
+import hotel.model.entities.RoomType;
+import hotel.model.enums.RoomView;
+import hotel.model.staff.Receptionist;
 
-    public  class BookingEngine
-    {
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BookingEngine {
+
     Database database;
         public List<Room> filterRooms(String roomType, RoomView roomview,double maxPrice)
         {
@@ -48,8 +51,11 @@
                     }
                 }
             }
+
                 System.out.println("Promo code is not found");
                 return 1;
+
+
         }
 
     }
