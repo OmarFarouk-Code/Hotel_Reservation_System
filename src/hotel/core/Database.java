@@ -1,4 +1,5 @@
 package hotel.core;
+import hotel.model.bookings.PromoCode;
 import hotel.model.entities.*;
 import hotel.model.staff.*;
 import hotel.model.users.*;
@@ -18,6 +19,15 @@ public class Database
     private static List<Amenity> amenities = new ArrayList<>();
     private static List<Admin> admins=new ArrayList<>();
     private static List<Receptionist> receptionists=new ArrayList<>();
+    private static List<PromoCode> promoCodes = new ArrayList<>();
+
+    public static List<PromoCode> getPromoCodes() {
+        return promoCodes;
+    }
+
+    public static void setPromoCodes(List<PromoCode> promoCodes) {
+        Database.promoCodes = promoCodes;
+    }
 
 
     private Database() {}
@@ -37,7 +47,7 @@ public class Database
     public static void saveData() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
             // Create an array or a custom object to hold EVERYTHING
-            Object[] allData = {guests, rooms, reservations, invoices, roomTypes, amenities,admins,receptionists};
+            Object[] allData = {guests, rooms, reservations, invoices, roomTypes, amenities,admins,receptionists,promoCodes};
             oos.writeObject(allData);
             System.out.println("Data saved successfully!");
         } catch (IOException e) {
@@ -71,7 +81,7 @@ public class Database
                 amenities = (List<Amenity>) allData[5];
                 admins = (List<Admin>) allData[6];
                 receptionists = (List<Receptionist>) allData[7];
-
+                promoCodes=(List<PromoCode>) allData[8];
 
                 System.out.println("Data loaded successfully.");
             }

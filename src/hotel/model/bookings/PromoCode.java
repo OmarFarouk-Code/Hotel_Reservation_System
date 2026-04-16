@@ -1,0 +1,35 @@
+package hotel.model.bookings;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+
+public class PromoCode implements Serializable {
+    private static final long serialVersionUID = 1L; // Good practice for serialization
+
+    private String code;
+    private double discountPercentage; // e.g., 0.10 for 10%
+    private LocalDate expiryDate;
+    private boolean isActive;
+
+    public PromoCode(String code, double discountPercentage, LocalDate expiryDate) {
+        this.code = code.toUpperCase();
+        this.discountPercentage = discountPercentage;
+        this.expiryDate = expiryDate;
+        this.isActive = true;
+    }
+
+    // Getters and Setters
+    public String getCode() { return code; }
+    public double getDiscountPercentage() { return discountPercentage; }
+    public LocalDate getExpiryDate() { return expiryDate; }
+    public boolean isActive() {
+        return isActive && LocalDate.now().isBefore(expiryDate);
+    }
+
+    public void setActive(boolean active) { isActive = active; }
+
+    @Override
+    public String toString() {
+        return "PromoCode{" + "code='" + code + '\'' + ", discount=" + (discountPercentage * 100) + "%}";
+    }
+}
