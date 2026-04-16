@@ -141,7 +141,8 @@ public abstract class User implements Serializable
         Database.saveData();
     }
 
-    public void Login(){
+    public void Login()
+    {
         System.out.println("Please choose weather you 1.Guest 2.Admin 3.Receptionist");
         Typeofuser = UserType.valueOf(input.next().toUpperCase());//handling errors
         input.nextLine();//avoid skipping input
@@ -301,12 +302,9 @@ public abstract class User implements Serializable
                         input.nextLine();
                         ResetPassword(AUsername, Usercategory);
                     }
-
                 }
-
-                }
-
-                }
+    }
+}
 
 
 

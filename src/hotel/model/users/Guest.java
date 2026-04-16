@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Scanner;
 public class Guest extends User implements Serializable
 {
-
     private double balance;
     protected static int GuestId=100;
     protected int UniqueId;
