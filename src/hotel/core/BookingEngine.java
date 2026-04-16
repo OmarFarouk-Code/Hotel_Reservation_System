@@ -8,7 +8,6 @@
     import hotel.model.entities.RoomType;
     import hotel.model.enums.RoomView;
     import hotel.model.staff.Receptionist;
-
     import java.util.ArrayList;
     import java.util.List;
 
@@ -49,11 +48,8 @@
                     }
                 }
             }
-
                 System.out.println("Promo code is not found");
                 return 1;
-
-
         }
 
     }
