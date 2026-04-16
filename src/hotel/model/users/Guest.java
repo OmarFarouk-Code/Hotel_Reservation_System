@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Scanner;
 public class Guest extends User implements Serializable
 {
-
     private double balance;
     private List<String> roomprefrences;
     private RoomType roomoptions;

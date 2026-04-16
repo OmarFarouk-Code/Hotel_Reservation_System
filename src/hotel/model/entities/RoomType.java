@@ -66,7 +66,7 @@ public class RoomType implements Serializable
         this.seasonMultiplier = seasonMultiplier;
     }
 
-    private RoomView getRoomView() {
+    public RoomView getRoomView() {
         return roomView;
     }
 
