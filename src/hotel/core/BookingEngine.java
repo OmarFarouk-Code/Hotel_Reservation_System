@@ -14,12 +14,13 @@
 
     public  class BookingEngine
     {
-    Database database;
+        Database database;
+
         public List<Room> filterRooms(String roomType, RoomView roomview,double maxPrice)
         {
             if (roomview == null) {
                 System.out.println("Search Blocked: RoomView is required.");
-                return new ArrayList<>(); // Return an empty list so the GUI doesn't crash
+                return new ArrayList<>(); // Return an empty list so the GUI qqqcleadoesn't crash
             }
             ArrayList<Room> results=new ArrayList<>();
             List<Room> Rooms=Database.getRooms();
