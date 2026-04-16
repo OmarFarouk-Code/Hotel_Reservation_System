@@ -16,6 +16,8 @@ public class Database
     private static List<Invoice> invoices = new ArrayList<>();
     private static List<RoomType> roomTypes = new ArrayList<>();
     private static List<Amenity> amenities = new ArrayList<>();
+    private static List<Admin> admins=new ArrayList<>();
+    private static List<Receptionist> receptionists=new ArrayList<>();
 
 
     private Database() {}
@@ -27,13 +29,15 @@ public class Database
     public static List<Invoice> getInvoices() { return invoices; }
     public static List<RoomType> getRoomTypes() { return roomTypes; }
     public static List<Amenity> getAmenities() { return amenities; }
+    public static List<Admin> getAdmins(){return admins;}
+    public static List<Receptionist> getReceptionists(){return receptionists;}
     private static final String FILE_NAME = "hotel_data.dat";
 
     // Call this whenever you change something (Create, Update, Delete)
     public static void saveData() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
             // Create an array or a custom object to hold EVERYTHING
-            Object[] allData = {guests, rooms, reservations, invoices, roomTypes, amenities};
+            Object[] allData = {guests, rooms, reservations, invoices, roomTypes, amenities,admins,receptionists};
             oos.writeObject(allData);
             System.out.println("Data saved successfully!");
         } catch (IOException e) {
@@ -65,6 +69,9 @@ public class Database
                 invoices = (List<Invoice>) allData[3];
                 roomTypes = (List<RoomType>) allData[4];
                 amenities = (List<Amenity>) allData[5];
+                admins = (List<Admin>) allData[6];
+                receptionists = (List<Receptionist>) allData[7];
+
 
                 System.out.println("Data loaded successfully.");
             }

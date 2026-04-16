@@ -113,4 +113,7 @@ public class Reservation implements Serializable
     public void setSelectedAmenities(List<Amenity> selectedAmenities) {
         this.selectedAmenities = selectedAmenities;
     }
+
+    public void comfirmReservation() {
+    }
 }

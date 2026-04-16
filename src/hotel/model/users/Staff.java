@@ -1,4 +1,5 @@
 package hotel.model.users;
+import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
 import hotel.model.bookings.*;
@@ -39,7 +40,7 @@ public abstract class Staff extends User
         for (Reservation reservation : reservations) 
         {
             System.out.println("Username : " + reservation.getGuest().getUserName());
-            System.out.println("Reservation ID : " + reservation.getId());
+            System.out.println("Reservation ID : " + reservation.get());
         }
     }
 }
