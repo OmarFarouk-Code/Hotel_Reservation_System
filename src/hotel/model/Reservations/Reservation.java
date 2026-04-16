@@ -32,7 +32,7 @@ public class Reservation {
     }
     public double calcamenitytotal() {
         double total = 0;
-        lesa mesh aaref/fahem aamel eh hena
+        for (Amenity a : selectedAmenities) total += a.getAmenityPrice();
         return total;
     }
     public void updatediningpack(DinigPackage dp){this.diningpackage = dp;}
