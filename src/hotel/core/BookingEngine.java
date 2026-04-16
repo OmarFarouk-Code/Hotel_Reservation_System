@@ -8,7 +8,6 @@ import hotel.model.entities.Room;
 import hotel.model.entities.RoomType;
 import hotel.model.enums.RoomView;
 import hotel.model.staff.Receptionist;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -47,7 +46,6 @@ public class BookingEngine {
                     } else {
                         System.out.println("Promo code is expired");
                         return 1;
-
                     }
                 }
             }
@@ -57,5 +55,4 @@ public class BookingEngine {
 
 
         }
-
     }
