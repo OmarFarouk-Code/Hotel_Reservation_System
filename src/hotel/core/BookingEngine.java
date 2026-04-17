@@ -3,12 +3,16 @@ package hotel.core;
 import hotel.core.Database;
 import hotel.interfaces.*;
 import hotel.model.*;
-import hotel.model.bookings.PromoCode;
 import hotel.model.entities.Room;
 import hotel.model.entities.RoomType;
+import hotel.model.enums.DiningPackage;
+import hotel.model.enums.PaymentMethod;
+import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.RoomView;
 import hotel.model.staff.Receptionist;
-
+import hotel.model.users.Guest;
+import hotel.model.bookings.*;
+import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -38,7 +42,8 @@ public class BookingEngine
             }
             return results;
         }
-        public double validatePromocode(String code) {
+        public double validatePromocode(String code) 
+        {
             List<PromoCode> promos = Database.getPromoCodes();
             for (int i = 0; i < Database.getPromoCodes().size(); i++) {
                 if (promos.get(i).getCode().equals(code)) {
@@ -53,47 +58,65 @@ public class BookingEngine
                 }
             }
 
-                System.out.println("Promo code is not found");
-                return 1;
-
+            System.out.println("Promo code is not found");
+            return 1; 
 
         }
 
         public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
-        if (checkIn == null || checkOut == null) {
-            throw new IllegalArgumentException("Dates cannot be null.");
-        }
-        if (checkIn.isAfter(checkOut)) {
-            throw new IllegalArgumentException("Check-in date cannot be after check-out date.");
-        }
+            
+            if (checkIn == null || checkOut == null) {
+                throw new IllegalArgumentException("Dates cannot be null.");
+            }
+            if (checkIn.isAfter(checkOut)) {
+                throw new IllegalArgumentException("Check-in date cannot be after check-out date.");
+            }
 
-        List<Room> available = new ArrayList<>();
-
-        if (Database.rooms != null) {
-            for (Room room : Database.rooms) {
-                if (room.isAvailable) {
-                    available.add(room);
+            
+            List<Room> available = new ArrayList<>();
+            if (Database.getRooms() != null) {
+                for (Room room : Database.getRooms()) {
+                    boolean isBooked = false;
+                    
+                    
+                    if (Database.getReservations() != null) {
+                        for (Reservation res : Database.getReservations()) {
+        
+                            if (res.getRoom().getRoomNumber() == room.getRoomNumber()) {
+                                
+                                if (!(checkOut.isBefore(res.getCheckinDate()) || checkIn.isAfter(res.getCheckoutDate()))) {
+                                    isBooked = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    
+            
+                    if (!isBooked) {
+                        available.add(room);
+                    }
                 }
             }
+            return available;
         }
 
-        return available;
-    }
-
+        //NOT COMPLETE
     public void viewAllRooms() {
         System.out.println("--- All Hotel Rooms ---");
 
-        if (Database.rooms == null || Database.rooms.isEmpty()) {
+        if (Database.getRooms() == null || Database.getRooms().isEmpty()) {
             System.out.println("No rooms are currently in the system.");
             return;
         }
 
-        for (Room room : Database.rooms) {
+        for (Room room : Database.getRooms()) {
             System.out.println("Room " + room.getRoomNumber()
                     + " | Type: " + room.getRoomType().getTypeName()
                     + " | Available: " + room.isAvailable);
         }
     }
+
 
     public List<Room> sortRooms(List<Room> rooms, boolean ascending) {
         if (rooms == null || rooms.isEmpty()) {
@@ -114,7 +137,9 @@ public class BookingEngine
         return rooms;
     }
 
-    public List<String> suggestPackages() {
+
+    public List<String> viewAllDiningPackages() 
+    {
         List<String> packages = new ArrayList<>();
         packages.add("Breakfast Only - Start your day right!");
         packages.add("Half Board - Breakfast and Dinner included.");
@@ -123,7 +148,11 @@ public class BookingEngine
         return packages;
     }
 
-    public double calculateRoomCost(Room room, LocalDate checkIn, LocalDate checkOut) {
+    
+
+    public double calculateRoomCost(Room room, LocalDate checkIn, LocalDate checkOut) 
+    {
+        
         if (room == null) {
             throw new IllegalArgumentException("Room cannot be null.");
         }
@@ -133,11 +162,182 @@ public class BookingEngine
         if (checkIn.isAfter(checkOut) || checkIn.isEqual(checkOut)) {
             throw new IllegalArgumentException("Check-out date must be at least one day after check-in.");
         }
-
+    
         long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
         double pricePerNight = room.getRoomType().getEffectivePrice();
-
-        return nights * pricePerNight;
+        
+        RoomView view = room.getRoomType().getRoomView(); 
+        double viewSurcharge = 0.0;
+        
+        if (view != null) {
+            switch (view) {
+                case SEA_VIEW:
+                    viewSurcharge = 1000; 
+                    break;
+                case POOL:
+                    viewSurcharge = 500; 
+                    break;
+                case GARDEN:
+                    viewSurcharge = 0; 
+                    break;
+            }
+        }
+        
+        return nights * (pricePerNight + viewSurcharge);
     }
+
+    //NOT COMPLETE - MUST PRINT PRICES FOR PACKAGES SUGGESTED TOO
+    public List<String> suggestPackages(Guest guest) 
+    {
+        List<String> suggestions = new ArrayList<>();
+
+        
+        if (guest == null || guest.getRoompreferences() == null || guest.getRoompreferences().isEmpty()) 
+        {
+            suggestions.add("Special Offer: Stay in our hotel for 3 nights with a standard BREAKFAST_ONLY package.");
+            return suggestions;
+        }
+ 
+        boolean lovesFood = false;
+        boolean wantsRelaxation = false;
+
+        for (String pref : guest.getRoompreferences()) {
+            String lowerPref = pref.toLowerCase(); 
+            
+            
+            if (lowerPref.contains("food") || lowerPref.contains("dining") || lowerPref.contains("eat")) {
+                lovesFood = true;
+            }
+            
+            if (lowerPref.contains("relax") || lowerPref.contains("sea") || lowerPref.contains("quiet")) {
+                wantsRelaxation = true;
+            }
+        }
+
+    
+        if (lovesFood && wantsRelaxation) {
+            suggestions.add("Perfect Match: Stay in our hotel for 5 nights in a SEA_VIEW room with an ALL_INCLUSIVE dining package!");
+        } else if (lovesFood) {
+            suggestions.add("Perfect Match: Stay in our hotel for 3 nights and enjoy unlimited meals with a FULL_BOARD dining package.");
+        } else if (wantsRelaxation) {
+            suggestions.add("Perfect Match: Stay in our hotel for 4 nights to relax with a HALF_BOARD dining package.");
+        } else {
+            suggestions.add("Perfect Match: Stay in our hotel for 3 nights with our BREAKFAST_ONLY package.");
+        }
+
+        return suggestions;
+    }
+
+    
+    public Reservation createDraftReservation( Guest guest , Room room , LocalDate checkIn , LocalDate checkOut , DiningPackage diningPackage, int numChildren, int numAdults , Receptionist receptionist ) throws IllegalArgumentException
+    {
+        if (guest == null || room == null || checkIn == null || checkOut == null || diningPackage == null || receptionist == null || numChildren < 0 || numAdults < 0) {
+            throw new IllegalArgumentException("All reservation details must be provided.");
+        }
+        if (checkIn.isAfter(checkOut) || checkIn.isEqual(checkOut)) {
+            throw new IllegalArgumentException("Check-out date must be at least one day after check-in.");
+        }
+
+         if (!getAvailableRooms(checkIn, checkOut).contains(room)) {
+            throw new IllegalArgumentException("Selected room is not available for the given dates.");
+        }
+
+        if ( (numChildren + numAdults) > room.getRoomType().getMaxCapacity()) {
+            throw new IllegalArgumentException("Number of guests exceeds room capacity.");
+        }
+
+        int reservationID = Database.getReservations().size() + 1;
+        Reservation reservation = new Reservation(reservationID, guest, room, checkIn, checkOut, diningPackage, numChildren, numAdults);
+        Database.getReservations().add(reservation);
+        Database.saveData();
+        receptionist.addDraftReservation(reservation); 
+        
+        return reservation;
+       
+    }
+
+
+    public double calculateDiningCost(DiningPackage packageType, int nights) 
+    {
+        if (packageType == null || nights <= 0) {
+            return 0.0; 
+        }
+
+        double packagePricePerNight = 0.0;
+
+    
+        switch (packageType) {
+            case BREAKFAST_ONLY:
+                packagePricePerNight = 0;
+                break;
+            case HALF_BOARD:
+                packagePricePerNight = 300;
+                break;
+            case FULL_BOARD:
+                packagePricePerNight = 500;
+                break;
+            case ALL_INCLUSIVE:
+                packagePricePerNight = 700;
+                break;
+        }
+
+        return packagePricePerNight * nights;
+    }
+
+    public boolean confirmReservation( int reservationID , PaymentMethod paymentMethod)
+    {
+        List<Reservation> reservations = Database.getReservations();
+        for (Reservation res : reservations)
+        {
+            if (res.getReservationID() == reservationID)
+            {
+                if (paymentMethod == null )
+                {
+                    System.out.println("Payment method is required to confirm reservation.");
+                    return false;
+                }
+                if (res.getStatus() != ReservationStatus.PENDING)
+                {
+                    System.out.println("Only pending reservations can be confirmed.");
+                    return false;
+                }
+
+                
+
+            }
+        }
+    }
+
+    public Invoice generateInvoice(Reservation reservation , String promoCode)
+    {
+
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceID(Database.getInvoices().size() + 1);
+        invoice.setReservation(reservation);
+        invoice.setPaid(false);
+
+        double roomCost = calculateRoomCost(reservation.getRoom(), reservation.getCheckinDate(), reservation.getCheckoutDate());
+        double diningCost = calculateDiningCost(reservation.getDiningPackage(), ChronoUnit.DAYS.between(reservation.getCheckinDate(), reservation.getCheckoutDate()));
+        double amenityCost = calculateAmenityCost( reservation.getSelectedAmenities());
+        
+        double subtotal = roomCost + diningCost + amenityCost;
+        double discountMultiplier = validatePromocode(promoCode); 
+        double totalCost = subtotal * discountMultiplier;
+
+        invoice.setTotalAmount(totalCost);
+        invoice.setPaymentDate(LocalDate.now());
+        invoice.setAppliedPromoCode(promoCode);
+        invoice.setDiscountAmount((roomCost + diningCost + amenityCost) - totalCost);
+        return invoice;
+    }    
+
+
+
+
+
+
+
+
+
 
 }
