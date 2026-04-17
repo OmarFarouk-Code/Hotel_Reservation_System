@@ -2,7 +2,6 @@ package hotel.model.users;
 import hotel.core.Database;
 import hotel.model.bookings.Reservation;
 import hotel.model.enums.*;
-import hotel.model.enums.UserType;
 import hotel.model.entities.*;
 
 import java.io.Serializable;
@@ -51,7 +50,7 @@ public class Guest extends User implements Serializable
         return roomoptions;
     }
 
-    public List<String> getRoomperefrences() {
+    public List<String> getRoompreferences() {
         return roomprefrences;
     }
 
@@ -63,7 +62,7 @@ public class Guest extends User implements Serializable
         this.balance = balance;
     }
 
-    public void setRoomperefrences(List<String> roomperefrences) {
+    public void setRoompreferences(List<String> roomperefrences) {
         this.roomprefrences = roomperefrences;
     }
 

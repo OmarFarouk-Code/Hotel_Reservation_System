@@ -1,4 +1,5 @@
 package hotel.model.staff;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
@@ -13,6 +14,24 @@ import hotel.model.bookings.Reservation;
 import hotel.model.users.Guest;
 
 public class Receptionist extends Staff {
+    private List<Reservation> draftReservations;
+
+    public Receptionist(String name, String password, String address, Gender gender, LocalDate dateOfBirth,  String phoneNumber , int WorkingHours) {
+        super(name, password, address, gender, dateOfBirth, phoneNumber, WorkingHours);
+        this.draftReservations = new ArrayList<>();
+    }
+
+    public List<Reservation> getDraftReservations() {
+        return draftReservations;
+    }
+
+    public void addDraftReservation(Reservation reservation) {
+        this.draftReservations.add(reservation);
+    }
+
+    public void removeDraftReservation(Reservation reservation) {
+        this.draftReservations.remove(reservation);
+    }
 
 
     public void manageCheckIn(int reservationID) {

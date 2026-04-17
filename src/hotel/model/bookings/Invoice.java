@@ -17,6 +17,20 @@ public class Invoice implements Payable
     String appliedPromoCode;
     double discountAmount;
 
+    public Invoice() {
+    }
+
+    public Invoice(int invoiceID, Reservation reservation, boolean isPaid, double totalAmount, PaymentMethod paymentMethod, LocalDate paymentDate, String appliedPromoCode, double discountAmount) {
+        this.invoiceID = invoiceID;
+        this.reservation = reservation;
+        this.isPaid = isPaid;
+        this.totalAmount = totalAmount;
+        this.paymentMethod = paymentMethod;
+        this.paymentDate = paymentDate;
+        this.appliedPromoCode = appliedPromoCode;
+        this.discountAmount = discountAmount;
+    }
+
     public int getInvoiceID() {
         return invoiceID;
     }

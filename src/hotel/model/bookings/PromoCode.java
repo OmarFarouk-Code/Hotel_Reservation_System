@@ -26,6 +26,9 @@ public class PromoCode implements Serializable {
         return isActive && LocalDate.now().isBefore(expiryDate);
     }
 
+    public void setCode(String code) { this.code = code.toUpperCase(); }
+    public void setDiscountPercentage(double discountPercentage) { this.discountPercentage = discountPercentage; }
+    public void setExpiryDate(LocalDate expiryDate) { this.expiryDate = expiryDate; }
     public void setActive(boolean active) { isActive = active; }
 
     @Override
