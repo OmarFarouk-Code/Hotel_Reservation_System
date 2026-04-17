@@ -16,16 +16,22 @@ public class Reservation implements Serializable
     private LocalDate CheckoutDate;
     private ReservationStatus status;
     private DiningPackage diningpackage;
-    private List<Amenity> selectedAmenities;
+    private List<Amenity> requestedAmenities;
+    private double cancellationPenalty;
+    private int numChildren;
+    private int numAdults;
 
-    public Reservation(int id, Guest guest, Room room,LocalDate in , LocalDate out) {
+    public Reservation(int id, Guest guest, Room room,LocalDate in , LocalDate out , DiningPackage diningpackage, int numChildren, int numAdults) {
         this.reservationID = id;
         this.guest = guest;
         this.room = room;
         this.CheckinDate = in;
         this.CheckoutDate = out;
         this.status = ReservationStatus.PENDING;
-        this.selectedAmenities = new ArrayList<Amenity>();
+        this.requestedAmenities = new ArrayList<Amenity>();
+        this.diningpackage = diningpackage;
+        this.numChildren = numChildren;
+        this.numAdults = numAdults;
     }
 
     public void confirmreservation() { status = ReservationStatus.CONFIRMED; }
@@ -79,7 +85,7 @@ public class Reservation implements Serializable
     }
 
     public List<Amenity> getSelectedAmenities() {
-        return selectedAmenities;
+        return requestedAmenities;
     }
 
     public void setReservationID(int reservationID) {
@@ -111,9 +117,33 @@ public class Reservation implements Serializable
     }
 
     public void setSelectedAmenities(List<Amenity> selectedAmenities) {
-        this.selectedAmenities = selectedAmenities;
+        this.requestedAmenities = selectedAmenities;
     }
 
-    public void comfirmReservation() {
+    public double getCancellationPenalty() {
+        return cancellationPenalty;
+    }
+
+    public void setCancellationPenalty(double cancellationPenalty) {
+        this.cancellationPenalty = cancellationPenalty;
+    }
+
+    public int getNumChildren() {
+        return numChildren;
+    }
+    
+    public void setNumChildren(int numChildren) {
+        this.numChildren = numChildren;
+    }
+
+    public int getNumAdults() {
+        return numAdults;
+    }
+
+    public void setNumAdults(int numAdults) {
+        this.numAdults = numAdults;
+    }
+
+    public void confirmReservation() {
     }
 }
