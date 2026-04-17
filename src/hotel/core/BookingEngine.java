@@ -186,35 +186,6 @@ public class BookingEngine
         return nights * (pricePerNight + viewSurcharge);
     }
 
-
-
-    public double calculateDiningCost(DiningPackage packageType, int nights) 
-    {
-        if (packageType == null || nights <= 0) {
-            return 0.0; 
-        }
-
-        double packagePricePerNight = 0.0;
-
-    
-        switch (packageType) {
-            case BREAKFAST_ONLY:
-                packagePricePerNight = 0;
-                break;
-            case HALF_BOARD:
-                packagePricePerNight = 300;
-                break;
-            case FULL_BOARD:
-                packagePricePerNight = 500;
-                break;
-            case ALL_INCLUSIVE:
-                packagePricePerNight = 700;
-                break;
-        }
-
-        return packagePricePerNight * nights;
-    }
-
     //NOT COMPLETE - MUST PRINT PRICES FOR PACKAGES SUGGESTED TOO
     public List<String> suggestPackages(Guest guest) 
     {
@@ -284,6 +255,35 @@ public class BookingEngine
         return reservation;
        
     }
+
+
+    public double calculateDiningCost(DiningPackage packageType, int nights) 
+    {
+        if (packageType == null || nights <= 0) {
+            return 0.0; 
+        }
+
+        double packagePricePerNight = 0.0;
+
+    
+        switch (packageType) {
+            case BREAKFAST_ONLY:
+                packagePricePerNight = 0;
+                break;
+            case HALF_BOARD:
+                packagePricePerNight = 300;
+                break;
+            case FULL_BOARD:
+                packagePricePerNight = 500;
+                break;
+            case ALL_INCLUSIVE:
+                packagePricePerNight = 700;
+                break;
+        }
+
+        return packagePricePerNight * nights;
+    }
+
 
 
 
