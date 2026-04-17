@@ -3,15 +3,15 @@ package hotel.core;
 import hotel.core.Database;
 import hotel.interfaces.*;
 import hotel.model.*;
-import hotel.model.bookings.PromoCode;
-import hotel.model.bookings.Reservation;
 import hotel.model.entities.Room;
 import hotel.model.entities.RoomType;
 import hotel.model.enums.DiningPackage;
+import hotel.model.enums.PaymentMethod;
+import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.RoomView;
 import hotel.model.staff.Receptionist;
 import hotel.model.users.Guest;
-
+import hotel.model.bookings.*;
 import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -42,7 +42,8 @@ public class BookingEngine
             }
             return results;
         }
-        public double validatePromocode(String code) {
+        public double validatePromocode(String code) 
+        {
             List<PromoCode> promos = Database.getPromoCodes();
             for (int i = 0; i < Database.getPromoCodes().size(); i++) {
                 if (promos.get(i).getCode().equals(code)) {
@@ -57,9 +58,8 @@ public class BookingEngine
                 }
             }
 
-                System.out.println("Promo code is not found");
-                return 1;
-
+            System.out.println("Promo code is not found");
+            return 1; 
 
         }
 
@@ -284,7 +284,52 @@ public class BookingEngine
         return packagePricePerNight * nights;
     }
 
+    public boolean confirmReservation( int reservationID , PaymentMethod paymentMethod)
+    {
+        List<Reservation> reservations = Database.getReservations();
+        for (Reservation res : reservations)
+        {
+            if (res.getReservationID() == reservationID)
+            {
+                if (paymentMethod == null )
+                {
+                    System.out.println("Payment method is required to confirm reservation.");
+                    return false;
+                }
+                if (res.getStatus() != ReservationStatus.PENDING)
+                {
+                    System.out.println("Only pending reservations can be confirmed.");
+                    return false;
+                }
 
+                
+
+            }
+        }
+    }
+
+    public Invoice generateInvoice(Reservation reservation , String promoCode)
+    {
+
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceID(Database.getInvoices().size() + 1);
+        invoice.setReservation(reservation);
+        invoice.setPaid(false);
+
+        double roomCost = calculateRoomCost(reservation.getRoom(), reservation.getCheckinDate(), reservation.getCheckoutDate());
+        double diningCost = calculateDiningCost(reservation.getDiningPackage(), ChronoUnit.DAYS.between(reservation.getCheckinDate(), reservation.getCheckoutDate()));
+        double amenityCost = calculateAmenityCost( reservation.getSelectedAmenities());
+        
+        double subtotal = roomCost + diningCost + amenityCost;
+        double discountMultiplier = validatePromocode(promoCode); 
+        double totalCost = subtotal * discountMultiplier;
+
+        invoice.setTotalAmount(totalCost);
+        invoice.setPaymentDate(LocalDate.now());
+        invoice.setAppliedPromoCode(promoCode);
+        invoice.setDiscountAmount((roomCost + diningCost + amenityCost) - totalCost);
+        return invoice;
+    }    
 
 
 
