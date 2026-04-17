@@ -258,7 +258,32 @@ public class BookingEngine
     }
 
     
+    public Reservation createDraftReservation( Guest guest , Room room , LocalDate checkIn , LocalDate checkOut , DiningPackage diningPackage, int numChildren, int numAdults , Receptionist receptionist ) throws IllegalArgumentException
+    {
+        if (guest == null || room == null || checkIn == null || checkOut == null || diningPackage == null || receptionist == null || numChildren < 0 || numAdults < 0) {
+            throw new IllegalArgumentException("All reservation details must be provided.");
+        }
+        if (checkIn.isAfter(checkOut) || checkIn.isEqual(checkOut)) {
+            throw new IllegalArgumentException("Check-out date must be at least one day after check-in.");
+        }
 
+         if (!getAvailableRooms(checkIn, checkOut).contains(room)) {
+            throw new IllegalArgumentException("Selected room is not available for the given dates.");
+        }
+
+        if ( (numChildren + numAdults) > room.getRoomType().getMaxCapacity()) {
+            throw new IllegalArgumentException("Number of guests exceeds room capacity.");
+        }
+
+        int reservationID = Database.getReservations().size() + 1;
+        Reservation reservation = new Reservation(reservationID, guest, room, checkIn, checkOut, diningPackage, numChildren, numAdults);
+        Database.getReservations().add(reservation);
+        Database.saveData();
+        receptionist.addDraftReservation(reservation); 
+        
+        return reservation;
+       
+    }
 
 
 
