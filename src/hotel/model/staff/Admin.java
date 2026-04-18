@@ -27,17 +27,37 @@ public class  Admin extends Staff implements Manageable
 
 
     //room functions
-    public void createRoom(Room room)
+    public void createRoom(Room room) throws Exception
     {
         this.roomList = Database.getRooms();
+        if (room == null) {
+            throw new Exception("System Error: Attempted to create a null room.");
+        }
+
+        // 2. Validate internal room data
+        if (room.getRoomNumber() <= 0) {
+            throw new Exception("Invalid Data: Room number must be greater than 0.");
+        }
+        for(Room r:roomList)
+        {
+            if(r.getRoomNumber()==room.getRoomNumber())
+            {
+                throw new Exception("Cannot add room: Number "+r.getRoomNumber()+" is already taken");
+            }
+        }
+
         roomList.add(room);
         Database.saveData();
     }
 
-    public Room readRoom(int roomNumber)
+    public Room readRoom(int roomNumber) throws Exception
     {
+        if(roomNumber<=0)
+        {
+            throw new Exception("Invalid Data: Room number must be greater than 0");
+        }
         this.roomList = Database.getRooms();
-        for (int i = 0; i < roomList.size(); i++)
+        for (int i=0;i<roomList.size();i++)
         {
             Room room = roomList.get(i);
             if (room.getRoomNumber() == roomNumber)
@@ -45,13 +65,20 @@ public class  Admin extends Staff implements Manageable
                 return room;
             }
         }
-        System.out.println("Room " + roomNumber + " not found.");
-        return null;
+        throw new Exception ("Search Error: Room "+roomNumber+" wasn't found");
     }
 
-    public void updateRoom(int roomNumber, Room updatedRoom)
+    public void updateRoom(int roomNumber, Room updatedRoom) throws Exception
     {
         this.roomList = Database.getRooms();
+        if(roomNumber<=0)
+        {
+            throw new Exception("Invalid Data: Room number must be greater than 0");
+        }
+        if(updatedRoom==null)
+        {
+            throw new Exception("System Error: Attempted to create a null room.");
+        }
         for (int i = 0; i < roomList.size(); i++)
         {
             if (roomList.get(i).getRoomNumber() == roomNumber)
@@ -62,12 +89,16 @@ public class  Admin extends Staff implements Manageable
                 return;
             }
         }
-        System.out.println("Update failed: Room " + roomNumber + " does not exist.");
+        throw new Exception("Update Failed: Room "+ roomNumber + " does not exist in the system.");
     }
 
-    public void deleteRoom(int roomNumber)
+    public void deleteRoom(int roomNumber) throws Exception
     {
         this.roomList = Database.getRooms();
+        if(roomNumber<=0)
+        {
+            throw new Exception("Invalid Data: Room number must be greater than 0");
+        }
         for (int i = 0; i < roomList.size(); i++)
         {
             if (roomList.get(i).getRoomNumber() == roomNumber)
@@ -75,152 +106,180 @@ public class  Admin extends Staff implements Manageable
                 roomList.remove(i);
                 Database.saveData();
                 System.out.println("Room " + roomNumber + " deleted successfully.");
+                //should check if room is occupied if it is then the room cannot be deleted
                 return;
             }
         }
-        System.out.println("Room not found");
+        throw new Exception("Delete Failed: Room "+ roomNumber + " does not exist in the system.");
     }
 
 
     //Amenity Functions
-    public void createAmenity(Amenity amenity)
-    {
+    // Amenity Functions
+    public void createAmenity(Amenity amenity) throws Exception {
         this.amenityList = Database.getAmenities();
+        if (amenity == null) {
+            throw new Exception("System Error: Attempted to create a null amenity.");
+        }
+
+        for (Amenity a : amenityList) {
+            if (a.getAmenityName().equalsIgnoreCase(amenity.getAmenityName())) {
+                throw new Exception("Cannot add amenity: " + a.getAmenityName() + " already exists.");
+            }
+        }
         amenityList.add(amenity);
         Database.saveData();
     }
 
-    public Amenity readAmenity(String name) {
+    public Amenity readAmenity(String name) throws Exception {
         this.amenityList = Database.getAmenities();
-        for (int i = 0; i < amenityList.size(); i++)
-        {
-            if (amenityList.get(i).getAmenityName().equals(name))
-            {
-                return amenityList.get(i);
+        for (Amenity a : amenityList) {
+            if (a.getAmenityName().equalsIgnoreCase(name)) {
+                return a;
             }
         }
-        System.out.println("Amenity not found");
-        return null;
+        throw new Exception("Search Error: Amenity '" + name + "' not found.");
     }
 
-    public void updateAmenity(String name, Amenity updatedAmenity) {
+    public void updateAmenity(String name, Amenity updatedAmenity) throws Exception {
         this.amenityList = Database.getAmenities();
-        for (int i = 0; i < amenityList.size(); i++)
-        {
-            if (amenityList.get(i).getAmenityName().equals(name))
-            {
+        for (int i = 0; i < amenityList.size(); i++) {
+            if (amenityList.get(i).getAmenityName().equalsIgnoreCase(name)) {
                 amenityList.set(i, updatedAmenity);
                 Database.saveData();
-                System.out.println("Amenity " + name + " updated successfully.");
                 return;
             }
         }
-        System.out.println("Amenity not found");
+        throw new Exception("Update Failed: Amenity '" + name + "' does not exist.");
     }
 
-    public void deleteAmenity(String name) {
+    public void deleteAmenity(String name) throws Exception {
         this.amenityList = Database.getAmenities();
-        for (int i = 0; i < amenityList.size(); i++)
-        {
-            if (amenityList.get(i).getAmenityName().equals(name))
-            {
+        for (int i = 0; i < amenityList.size(); i++) {
+            if (amenityList.get(i).getAmenityName().equalsIgnoreCase(name)) {
                 amenityList.remove(i);
                 Database.saveData();
-                System.out.println("Amenity " + name + " deleted successfully.");
                 return;
             }
         }
-        System.out.println("Amenity not found");
+        throw new Exception("Delete Failed: Amenity '" + name + "' not found.");
     }
 
 
     //RoomType
-    public void createRoomType(RoomType roomtype) {
+// RoomType Functions
+    public void createRoomType(RoomType roomtype) throws Exception {
         this.roomTypeList = Database.getRoomTypes();
+
+        if (roomtype == null) {
+            throw new Exception("System Error: Attempted to create a null Room Type.");
+        }
+
+        // Guard: Prevent duplicate room type names
+        for (RoomType type : roomTypeList) {
+            if (type.getTypeName().equalsIgnoreCase(roomtype.getTypeName())) {
+                throw new Exception("Creation Failed: Room Type '" + type.getTypeName() + "' already exists.");
+            }
+        }
+
         roomTypeList.add(roomtype);
         Database.saveData();
     }
 
-    public RoomType readRoomType(String typeName)
-    {
+    public RoomType readRoomType(String typeName) throws Exception {
         this.roomTypeList = Database.getRoomTypes();
-        for (int i = 0; i < roomTypeList.size(); i++)
-        {
-            if (roomTypeList.get(i).getTypeName().equals(typeName))
-            {
-                return roomTypeList.get(i);
+
+        for (RoomType type : roomTypeList) {
+            if (type.getTypeName().equalsIgnoreCase(typeName)) {
+                return type;
             }
         }
-        System.out.println("RoomType not found");
-        return null;
+
+        // Throwing instead of returning null makes the GUI catch the error
+        throw new Exception("Search Error: Room Type '" + typeName + "' not found.");
     }
 
-    public void updateRoomType(String typeName, RoomType updatedType)
-    {
+    public void updateRoomType(String typeName, RoomType updatedType) throws Exception {
         this.roomTypeList = Database.getRoomTypes();
-        for (int i = 0; i < roomTypeList.size(); i++)
-        {
-            if (roomTypeList.get(i).getTypeName().equals(typeName))
-            {
+
+        if (updatedType == null) {
+            throw new Exception("System Error: Updated data is empty.");
+        }
+
+        for (int i = 0; i < roomTypeList.size(); i++) {
+            if (roomTypeList.get(i).getTypeName().equalsIgnoreCase(typeName)) {
                 roomTypeList.set(i, updatedType);
                 Database.saveData();
-                System.out.println("RoomType " + typeName + " updated successfully.");
                 return;
             }
         }
-        System.out.println("TypeName not found");
+        throw new Exception("Update Failed: Room Type '" + typeName + "' does not exist.");
     }
 
-    public void deleteRoomType(String typeName)
-    {
+    public void deleteRoomType(String typeName) throws Exception {
         this.roomTypeList = Database.getRoomTypes();
-        for (int i = 0; i < roomTypeList.size(); i++)
-        {
-            if (roomTypeList.get(i).getTypeName().equals(typeName)) {
+
+        for (int i = 0; i < roomTypeList.size(); i++) {
+            if (roomTypeList.get(i).getTypeName().equalsIgnoreCase(typeName)) {
+
+                // SAFETY CHECK: Ensure no existing rooms are using this type
+                for (Room r : Database.getRooms()) {
+                    if (r.getRoomType().getTypeName().equalsIgnoreCase(typeName)) {
+                        throw new Exception("Delete Failed: Cannot delete '" + typeName + "' because rooms are still assigned to it.");
+                    }
+                }
+
                 roomTypeList.remove(i);
                 Database.saveData();
-                System.out.println("RoomType " + typeName + " deleted successfully.");
                 return;
             }
         }
-        System.out.println("RoomType not found");
+        throw new Exception("Delete Failed: Room Type '" + typeName + "' not found.");
     }
 
 
-    public void setSeasonalMultiplier(String roomType,double multiplier)
+    public void setSeasonalMultiplier(String roomType, double multiplier) throws Exception
     {
         this.roomTypeList = Database.getRoomTypes();
-        if (multiplier < 0) { System.out.println("Error: Multiplier cannot be negative"); return; }
-        for(int i=0;i<roomTypeList.size();i++)
-        {
-            if(roomTypeList.get(i).getTypeName().equals(roomType))
-            {
-                double oldPrice=roomTypeList.get(i).getBasePrice();
-                double newPrice=multiplier*oldPrice;
-                roomTypeList.get(i).setPricePerNight(newPrice);
+
+        if (multiplier < 0) {
+            throw new Exception("Invalid Data: Multiplier cannot be negative.");
+        }
+
+        for (RoomType type : roomTypeList) {
+            if (type.getTypeName().equalsIgnoreCase(roomType)) {
+                double oldPrice = type.getBasePrice();
+                double newPrice = multiplier * oldPrice;
+                type.setPricePerNight(newPrice);
                 Database.saveData();
-                System.out.println("Seasonal Update for " + roomType + ":");
-                System.out.println("Old Price: $" + oldPrice + " | New Price: $" +  newPrice+ " (x" + multiplier + ")");
                 return;
             }
         }
+        throw new Exception("Update Failed: Room Type '" + roomType + "' not found.");
     }
 
-    public void generateFinancialReport(int days) {
-        this.invoicesList=Database.getInvoices();
+    public void generateFinancialReport(int days) throws Exception
+    {
+        if (days < 0) {
+            throw new Exception("Invalid Input: Days cannot be negative.");
+        }
+
+        this.invoicesList = Database.getInvoices();
         double total = 0;
         LocalDate cutoffDate = LocalDate.now().minusDays(days);
+
+        // If there's no data, we should let the user know via exception or return
+        if (invoicesList.isEmpty()) {
+            throw new Exception("Report Error: No invoices found in the database.");
+        }
+
         System.out.println("\n--- Financial Report (Last " + days + " Days) ---");
-        for (int i=0;i< invoicesList.size();i++) {
-            // Assumes Invoices class has getDate() and getAmount()
-            if (invoicesList.get(i).getPaymentDate().isAfter(cutoffDate)||invoicesList.get(i).getPaymentDate().isEqual(cutoffDate))
-            {
-                total += invoicesList.get(i).getTotalAmount();
-                System.out.println("ID: " + invoicesList.get(i).getInvoiceID() + " | Date: " + invoicesList.get(i).getPaymentDate() + " | Amount: $" + invoicesList.get(i).getTotalAmount());
+        for (Invoice inv : invoicesList) {
+            if (inv.getPaymentDate().isAfter(cutoffDate) || inv.getPaymentDate().isEqual(cutoffDate)) {
+                total += inv.getTotalAmount();
+                System.out.println("ID: " + inv.getInvoiceID() + " | Date: " + inv.getPaymentDate() + " | Amount: $" + inv.getTotalAmount());
             }
         }
-        System.out.println("----------------------------------------------");
         System.out.println("TOTAL REVENUE: $" + total);
-        System.out.println("----------------------------------------------\n");
     }
 }
