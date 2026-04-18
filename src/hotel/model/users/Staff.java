@@ -27,7 +27,7 @@ public abstract class Staff extends User
 
     public void viewAllGuests() 
     {
-        ArrayList<Guest> guests = Database.getGuests();
+        List<Guest> guests = Database.getGuests();
         for (Guest guest : guests) 
         {
             System.out.println(guest.getUserName());
@@ -36,11 +36,11 @@ public abstract class Staff extends User
 
     public void viewAllReservations()
     {
-        ArrayList<Reservation> reservations = Database.getReservations();
+        List<Reservation> reservations = Database.getReservations();
         for (Reservation reservation : reservations) 
         {
             System.out.println("Username : " + reservation.getGuest().getUserName());
-            System.out.println("Reservation ID : " + reservation.get());
+            System.out.println("Reservation ID : " + reservation.getReservationID());
         }
     }
 }

@@ -18,6 +18,9 @@ public class Guest extends User implements Serializable
     private RoomType roomoptions;
     private int failedLoginAttempts;
     private AccountStatus accountStatus;
+    private LocalDate dateOfbirth;
+    private String address;
+    private String phoneNumber;
     public Guest(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber , double balance , List<String> roomprefrences ) {
         super(userName, password, dateOfbirth, address , phoneNumber);
         this.balance = balance;
@@ -28,8 +31,35 @@ public class Guest extends User implements Serializable
         return UniqueId;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public void setUniqueId(int uniqueId) {
         UniqueId = uniqueId;
+    }
+
+
+    public LocalDate getDateOfbirth() {
+        return dateOfbirth;
+    }
+
+
+    public void setDateOfbirth(LocalDate dateOfbirth) {
+        this.dateOfbirth = dateOfbirth;
+    }
+
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Guest getGuest()
@@ -79,6 +109,32 @@ public class Guest extends User implements Serializable
         this.accountStatus = accountStatus;
     }
 
+
+
+
+    public boolean passwordcheck(String Password) {
+        boolean uppercase = false;
+        boolean number = false;
+        boolean both = false;
+        for (char x : password.toCharArray()) {
+            if (Character.isUpperCase(x)) uppercase = true;//check that has capital letter
+            if (Character.isDigit(x)) number = true;//check that there ia a number
+
+            if (uppercase && number) {
+                both = true;
+                break;
+            }
+        }
+        if (both) {
+            if (password.length() >= 8) {
+                return true;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
+
     private transient Scanner input = new Scanner(System.in);
     public void printreservationdetails(int idcounter,List<Reservation> Reservations){
         System.out.println("Your Reservation");
@@ -119,24 +175,35 @@ public class Guest extends User implements Serializable
 
 
 
-
-
-
-
-
-
-    public void registerextention() {
-            System.out.println("Please enter your Balance");
-            balance = input.nextDouble();
-            while (balance < 0) {
-                System.out.println("Invalid Balance, Try again!");
-                balance = input.nextDouble();
+        public void register() {
+            System.out.println("Please enter a username ");
+            UserName = input.nextLine();
+            System.out.println("Please enter a password");
+            System.out.println("** Password rules **");
+            System.out.println("Password must be more than 8 characters");
+            System.out.println("Password must at least contain 1 number and 1 capital letter");
+            password = input.nextLine();
+            while(!passwordcheck(password)){
+                System.out.println("You didn't Satisfy password rules,try again");
+                password = input.nextLine();
+                passwordcheck(password);
             }
-            UniqueId=GuestId+1;
-            GuestId=GuestId+1;
-            System.out.println("Your ID: "+UniqueId);
-            System.out.println("Account has been successfully created Welcome "+UserName);
-
+            System.out.println("Password has been created successfully");
+            System.out.println("Please enter your Gender");
+            theGender=Gender.valueOf(input.next().toUpperCase());
+            System.out.println("Please enter your date of birth YYYY-MM-DD");
+            String userInput = input.nextLine();
+            if(!Datechecker(userInput)){
+                System.out.println("Invalid date format, please re-enter it (YYYY-MM-DD)");
+                userInput = input.nextLine();
+            }
+            dateOfbirth = LocalDate.parse(userInput);
+            input.nextLine();//used to leave line
+            System.out.println("Please enter your phone number");
+            phoneNumber=input.nextLine();
+            System.out.println("Please enter your address");
+            address=input.nextLine();
+            Database.saveData();
 
         }
 
