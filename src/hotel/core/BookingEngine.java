@@ -113,7 +113,7 @@ public class BookingEngine
         for (Room room : Database.getRooms()) {
             System.out.println("Room " + room.getRoomNumber()
                     + " | Type: " + room.getRoomType().getTypeName()
-                    + " | Available: " + room.isAvailable);
+                    + " | Available: " + room.isAvailable);//Error
         }
     }
 
@@ -317,7 +317,7 @@ public class BookingEngine
         invoice.setPaid(false);
 
         double roomCost = calculateRoomCost(reservation.getRoom(), reservation.getCheckinDate(), reservation.getCheckoutDate());
-        double diningCost = calculateDiningCost(reservation.getDiningPackage(), ChronoUnit.DAYS.between(reservation.getCheckinDate(), reservation.getCheckoutDate()));
+        double diningCost = calculateDiningCost(reservation.getDiningpackage(), ChronoUnit.DAYS.between(reservation.getCheckinDate(), reservation.getCheckoutDate()));
         double amenityCost = calculateAmenityCost( reservation.getSelectedAmenities());
         
         double subtotal = roomCost + diningCost + amenityCost;
@@ -331,13 +331,37 @@ public class BookingEngine
         return invoice;
     }    
 
+    public double calculateCancellationPenalty(int ReservationId,LocalDate cancelDate){
+            boolean found=false;
+            List<Reservation> Reservations = Database.getReservations();
+            List<Invoice>Invoices=Database.getInvoices();
+            for(int i=0;i<Database.getReservations().size();i++) {
+                if (Reservations.get(i).getReservationID() == ReservationId) {
+                    found = true;
+                    if (ChronoUnit.DAYS.between(cancelDate, Reservations.get(i).getCheckinDate()) <= 3) {//Used to calculate the difference in days
+                        for (int j = 0; j < Database.getInvoices().size(); j++) {
+                            if (Invoices.get(j).getReservation().getReservationID() == ReservationId) {
+                                System.out.println("Unfortunately,30% of the total reservation amount will be deducted as cancellation fees due to late cancellation");
+                                System.out.print("cancellation penalty : - "+(Invoices.get(j).getTotalAmount() * 0.30));
+                                return (Invoices.get(j).getTotalAmount() * 0.30);
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            if(found) {
+            System.out.println("There will be no cancellation penalty");
+            System.out.println("Cancellation penalty : 0 ");
+            return 0.0;
+            }
+            else {
+            System.out.println("This reservation Id is not found in the data base");
+            return -1.0;
+            }
 
 
-
-
-
-
-
-
+            }
 
 }
