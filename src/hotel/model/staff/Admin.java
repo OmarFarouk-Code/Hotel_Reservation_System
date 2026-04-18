@@ -82,7 +82,7 @@ public class  Admin extends Staff implements Manageable
     }
 
 
-    //Amenity Functions
+
     public void createAmenity(Amenity amenity)
     {
         this.amenityList = Database.getAmenities();
@@ -134,7 +134,7 @@ public class  Admin extends Staff implements Manageable
     }
 
 
-    //RoomType
+
     public void createRoomType(RoomType roomtype) {
         this.roomTypeList = Database.getRoomTypes();
         roomTypeList.add(roomtype);

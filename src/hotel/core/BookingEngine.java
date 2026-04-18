@@ -3,6 +3,7 @@ package hotel.core;
 import hotel.core.Database;
 import hotel.interfaces.*;
 import hotel.model.*;
+import hotel.model.entities.Amenity;
 import hotel.model.entities.Room;
 import hotel.model.entities.RoomType;
 import hotel.model.enums.DiningPackage;
@@ -17,6 +18,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+
+import static hotel.core.Database.invoices;
 
 public class BookingEngine 
 {
@@ -113,7 +116,7 @@ public class BookingEngine
         for (Room room : Database.getRooms()) {
             System.out.println("Room " + room.getRoomNumber()
                     + " | Type: " + room.getRoomType().getTypeName()
-                    + " | Available: " + room.isAvailable);
+                    + " | Available: " + room.isAvailable);//Error
         }
     }
 
@@ -317,7 +320,7 @@ public class BookingEngine
         invoice.setPaid(false);
 
         double roomCost = calculateRoomCost(reservation.getRoom(), reservation.getCheckinDate(), reservation.getCheckoutDate());
-        double diningCost = calculateDiningCost(reservation.getDiningPackage(), ChronoUnit.DAYS.between(reservation.getCheckinDate(), reservation.getCheckoutDate()));
+        double diningCost = calculateDiningCost(reservation.getDiningpackage(), ChronoUnit.DAYS.between(reservation.getCheckinDate(), reservation.getCheckoutDate()));
         double amenityCost = calculateAmenityCost( reservation.getSelectedAmenities());
         
         double subtotal = roomCost + diningCost + amenityCost;
@@ -331,12 +334,81 @@ public class BookingEngine
         return invoice;
     }    
 
+    public double calculateCancellationPenalty(int ReservationId,LocalDate cancelDate){
+            boolean found=false;
+            List<Reservation> Reservations = Database.getReservations();
+            List<Invoice>Invoices=Database.getInvoices();
+            for(int i=0;i<Database.getReservations().size();i++) {
+                if (Reservations.get(i).getReservationID() == ReservationId) {
+                    found = true;
+                    if (ChronoUnit.DAYS.between(cancelDate, Reservations.get(i).getCheckinDate()) <= 3) {//Used to calculate the difference in days
+                        for (int j = 0; j < Database.getInvoices().size(); j++) {
+                            if (Invoices.get(j).getReservation().getReservationID() == ReservationId) {
+                                System.out.println("Unfortunately,30% of the total reservation amount will be deducted as cancellation fees due to late cancellation");
+                                System.out.print("cancellation penalty : - "+(Invoices.get(j).getTotalAmount() * 0.30));
+                                return (Invoices.get(j).getTotalAmount() * 0.30);
+                            }
+                        }
+                    }
+                }
+            }
 
+            if(found) {
+            System.out.println("There will be no cancellation penalty");
+            System.out.println("Cancellation penalty : 0 ");
+            return 0.0;
+            }
+            else {
+            System.out.println("This reservation Id is not found in the data base");
+            return -1.0;
+            }
+        }
+        public double calculateAmenityCost(List<Amenity> selectedAmenities)
+        {
+            double total=0.0;
+            List<Amenity> amenityList=Database.getAmenities();
+            if (selectedAmenities==null||selectedAmenities.isEmpty())
+            {
+                return  total;
+            }
+            for (Amenity a :selectedAmenities)
+            {
+                total+=a.getAmenityPrice();
+            }
+            return total;
+        }
 
+    public double calculateTotalRevenue() {
+        double total = 0.0;
+        // No parameters means we check EVERYTHING in the database
+        for (Invoice inv : Database.getInvoices()) {
+            if (inv.isPaid()) {
+                total += inv.getTotalAmount();
+            }
+        }
+        return total;
+    }
+        public double calcualteTotalRevenue(LocalDate startDate,LocalDate endDate) throws Exception
+    {
+        if(endDate.isBefore(startDate))
+        {
+            throw new Exception("Invalid Range: End date cannot be before Start date");
+        }
 
-
-
-
+        List <Invoice> invoices=Database.getInvoices();
+        double revenue=0;
+        for(Invoice i:invoices)
+        {
+            if (i.isPaid()) {
+                LocalDate paymentDate=i.getPaymentDate();
+                if(paymentDate.isEqual(startDate)|| paymentDate.isEqual(endDate)||(paymentDate.isBefore(endDate)&& paymentDate.isAfter(startDate)))
+                {
+                    revenue+=i.getTotalAmount();
+                }
+            }
+        }
+        return revenue;
+    }
 
 
 
