@@ -16,8 +16,9 @@ import hotel.model.bookings.Reservation;
 public class Receptionist extends Staff {
     private List<Reservation> draftReservations;
 
-    public Receptionist(String name, String password, String address, Gender gender, LocalDate dateOfBirth,  String phoneNumber , int WorkingHours) {
-        super(name, password, address, gender, dateOfBirth, phoneNumber, WorkingHours);
+    public Receptionist(String name, String password, LocalDate dateOfBirth, String address, String phoneNumber, int workingHours) 
+    {
+        super(name, password, dateOfBirth, address, phoneNumber, workingHours);
         this.draftReservations = new ArrayList<>();
     }
 
@@ -43,15 +44,12 @@ public class Receptionist extends Staff {
                 reservation.get(i).setStatus(ReservationStatus.CONFIRMED);
                 Database.saveData();
                 System.out.println("Reservation is confirmed");
-                //should make room unvavailable
                 return;
             }
         }
         System.out.println("Reservation ID not found");
 
     }
-
-
 
     public void manageCheckOut(int reservationID) {
         List<Reservation> reservations = Database.getReservations();

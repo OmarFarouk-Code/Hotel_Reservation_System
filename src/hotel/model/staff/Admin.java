@@ -14,16 +14,17 @@ public class  Admin extends Staff implements Manageable
     private List<Amenity> amenityList;
     private List<RoomType> roomTypeList;
     private List<Invoice> invoicesList;
-    // ArrayList<Room> roomList = Database.getReservations();
 
-    public Admin(String userName, String password, LocalDate dateOfbirth, String address)
+    public Admin(String userName, String password, LocalDate dateOfbirth, String address, String phoneNumber, int workingHours) 
     {
-        super(userName, password, dateOfbirth, address);
+        super(userName, password, dateOfbirth, address, phoneNumber, workingHours);
+        this.roomList = Database.getRooms();
+        this.amenityList = Database.getAmenities();
+        this.roomTypeList = Database.getRoomTypes();
+        this.invoicesList = Database.getInvoices();
     }
 
     public Admin() { }
-
-
 
     //room functions
     public void createRoom(Room room) throws Exception
