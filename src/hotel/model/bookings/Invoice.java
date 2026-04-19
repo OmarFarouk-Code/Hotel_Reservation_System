@@ -1,8 +1,6 @@
 package hotel.model.bookings;
-import hotel.model.entities.*;
 import hotel.interfaces.*;
 import hotel.model.enums.PaymentMethod;
-import hotel.interfaces.*;
 import hotel.model.users.Guest;
 import java.time.LocalDate;
 import java.io.Serializable;

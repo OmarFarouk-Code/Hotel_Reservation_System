@@ -3,12 +3,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
-import hotel.model.entities.*;
-import hotel.model.enums.Gender;
+
 import hotel.model.enums.ReservationStatus;
-import hotel.model.users.*;
-import hotel.model.entities.*;
-import hotel.model.staff.*;
 import hotel.model.users.*;
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;

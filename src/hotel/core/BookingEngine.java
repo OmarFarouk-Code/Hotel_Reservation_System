@@ -1,8 +1,5 @@
 package hotel.core;
 
-import hotel.core.Database;
-import hotel.interfaces.*;
-import hotel.model.*;
 import hotel.model.entities.Amenity;
 import hotel.model.entities.Room;
 import hotel.model.entities.RoomType;
@@ -15,7 +12,6 @@ import hotel.model.users.Guest;
 import hotel.model.bookings.*;
 import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 

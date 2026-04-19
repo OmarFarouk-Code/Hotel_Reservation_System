@@ -8,7 +8,6 @@ import hotel.model.staff.Receptionist;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public abstract class User implements Serializable  

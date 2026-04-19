@@ -3,13 +3,10 @@ import hotel.core.Database;
 import hotel.model.bookings.Reservation;
 import hotel.model.enums.*;
 import hotel.model.entities.*;
-
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-public class Guest extends User implements Serializable
+public class Guest extends User
 {
     private double balance;
     protected static int GuestId=100;
