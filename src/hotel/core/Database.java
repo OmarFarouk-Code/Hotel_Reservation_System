@@ -8,6 +8,7 @@ import java.io.*; // Import this for File IO
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
 import hotel.model.users.Guest;
+
 public class Database
 {
     private static List<Guest> guests = new ArrayList<>();

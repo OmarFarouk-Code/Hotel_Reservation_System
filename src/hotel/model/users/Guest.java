@@ -51,13 +51,40 @@ public class Guest extends User
         this.input = input;
     }
 
+    public void GuestHomepage() {
+        int choice = 0;
+        System.out.println("Welcome to the Guest menu");
+        while (choice != 2 && choice != 1 && choice != 3) {
+            System.out.println("Please enter number: 1.Regiester | 2.Login");
+            choice = input.nextInt();
+            input.nextLine();
+            if (choice == 1) {
+                register();
+            }
+            if(choice==2) {
+                Login();
+            }
+            }
+        }
+
+        public void GuestMainMenu(){
+        System.out.println("Please choose what do you need to do ");
+        //to be continued
+
+        }
+
+
+
+
+
+
 
 
     public boolean passwordcheck(String Password) {
         boolean uppercase = false;
         boolean number = false;
         boolean both = false;
-        for (char x : password.toCharArray()) {
+        for (char x : Password.toCharArray()) {
             if (Character.isUpperCase(x)) uppercase = true;//check that has capital letter
             if (Character.isDigit(x)) number = true;//check that there ia a number
 
@@ -67,7 +94,7 @@ public class Guest extends User
             }
         }
         if (both) {
-            if (password.length() >= 8) {
+            if (Password.length() >= 8) {
                 return true;
             }
         } else {
