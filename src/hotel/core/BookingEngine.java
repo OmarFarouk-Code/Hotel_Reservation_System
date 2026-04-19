@@ -439,6 +439,42 @@ public class BookingEngine
         }
         return revenue;
     }
+    public double calculateTotalReservationCost(Reservation reservation) {
+
+        int nights = reservation.calcnights();
+
+        // Room cost
+        double roomPricePerNight = reservation.getRoom()
+                .getRoomType()
+                .getEffectivePrice();
+        double roomCost = roomPricePerNight * nights;
+
+        // Dining cost
+        double diningCost = 0;
+        if (reservation.getDiningpackage() != null) {
+            diningCost = reservation.getDiningpackage() * nights;
+        }
+
+        // Amenities cost
+        double amenitiesCost = reservation.calcamenitytotal();
+
+        return roomCost + diningCost + amenitiesCost;
+    }
+    public double calculateOccupancyPercentage() {
+
+        int totalRooms = Database.rooms.size();
+        int occupiedRooms = 0;
+
+        for (Room room : Database.rooms) {
+            if (!room.isAvailable()) {
+                occupiedRooms++;
+            }
+        }
+
+        if (totalRooms == 0) return 0;
+
+        return ((double) occupiedRooms / totalRooms) * 100;
+    }
 
 
 
