@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import hotel.model.bookings.Invoice;
 
 public class BookingEngine 
 {
@@ -303,7 +302,7 @@ public class BookingEngine
                     System.out.println("Only pending reservations can be confirmed.");
                     return false;
                 }
-                res.confirmReservation();
+                res.confirmreservation();
                 Database.saveData();
                 System.out.println("Reservation " + reservationID + " has been confirmed with payment method: " + paymentMethod);
                 return true;
