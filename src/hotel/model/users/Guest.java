@@ -203,6 +203,7 @@ public class Guest extends User implements Serializable
             phoneNumber=input.nextLine();
             System.out.println("Please enter your address");
             address=input.nextLine();
+            Database.getGuests().add(this);
             Database.saveData();
 
         }

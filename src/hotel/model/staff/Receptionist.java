@@ -39,7 +39,7 @@ public class Receptionist extends Staff {
         List<Invoice> invoice = Database.getInvoices();
         for (int i = 0; i < reservation.size(); i++) {
             if (reservation.get(i).getReservationID() == (reservationID)) {
-                reservation.get(i).comfirmReservation();
+                reservation.get(i).confirmReservation();
                 reservation.get(i).setStatus(ReservationStatus.CONFIRMED);
                 Database.saveData();
                 System.out.println("Reservation is confirmed");

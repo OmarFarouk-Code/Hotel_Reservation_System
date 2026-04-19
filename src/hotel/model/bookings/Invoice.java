@@ -5,8 +5,9 @@ import hotel.model.enums.PaymentMethod;
 import hotel.interfaces.*;
 import hotel.model.users.Guest;
 import java.time.LocalDate;
+import java.io.Serializable;
 
-public class Invoice implements Payable
+public class Invoice implements Payable , Serializable
 {
     int invoiceID;
     Reservation reservation;
@@ -95,13 +96,25 @@ public class Invoice implements Payable
         this.discountAmount = discountAmount;
     }
 
-    @Override
-    public void pay(Guest guest, PaymentMethod method) {
-
+   @Override
+    public double getTotal() {
+        return totalAmount - discountAmount;
     }
 
     @Override
-    public double getTotal() {
-        return 0;
+    public void pay(Guest guest, PaymentMethod method)
+    {
+        if (guest.getBalance() >= getTotal()) 
+        {
+            guest.setBalance(guest.getBalance() - getTotal());
+            this.isPaid = true;
+            this.paymentMethod = method;
+            this.paymentDate = LocalDate.now();
+            System.out.println("Payment successful.");
+        } 
+        else 
+        {
+            System.out.println("Insufficient guest balance.");
+        }
     }
 }

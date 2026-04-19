@@ -29,7 +29,8 @@ public abstract class User implements Serializable
         return Typeofuser;
     }
 
-    Scanner input =new Scanner(System.in);
+    //HAS TO BE PROTECTED AND TRANSIENT TO AVOID SERIALIZATION ISSUES WITH SCANNER AND TO ALLOW ACCESS IN SUBCLASSES 
+    protected transient Scanner input = new Scanner(System.in);
 
     public void setUserName(String userName) {
         this.UserName = userName;

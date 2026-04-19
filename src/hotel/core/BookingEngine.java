@@ -18,8 +18,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-
-import static hotel.core.Database.invoices;
+import hotel.model.bookings.Invoice;
 
 public class BookingEngine 
 {
@@ -304,11 +303,13 @@ public class BookingEngine
                     System.out.println("Only pending reservations can be confirmed.");
                     return false;
                 }
-
-                
-
+                res.confirmReservation();
+                Database.saveData();
+                System.out.println("Reservation " + reservationID + " has been confirmed with payment method: " + paymentMethod);
+                return true;
             }
         }
+        return false;
     }
 
     public Invoice generateInvoice(Reservation reservation , String promoCode)
@@ -320,7 +321,7 @@ public class BookingEngine
         invoice.setPaid(false);
 
         double roomCost = calculateRoomCost(reservation.getRoom(), reservation.getCheckinDate(), reservation.getCheckoutDate());
-        double diningCost = calculateDiningCost(reservation.getDiningpackage(), ChronoUnit.DAYS.between(reservation.getCheckinDate(), reservation.getCheckoutDate()));
+        double diningCost = calculateDiningCost(reservation.getDiningpackage(), (int)ChronoUnit.DAYS.between(reservation.getCheckinDate(), reservation.getCheckoutDate()));
         double amenityCost = calculateAmenityCost( reservation.getSelectedAmenities());
         
         double subtotal = roomCost + diningCost + amenityCost;
