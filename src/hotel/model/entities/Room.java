@@ -9,6 +9,7 @@ public class Room implements Serializable
     private RoomType roomType;
     private List<Amenity> amenities;
     private List<Review> reviews;
+    private Boolean Available ;
 
     public Room() 
     {
@@ -77,6 +78,9 @@ public class Room implements Serializable
             totalRating += review.getScore();
         }
         return totalRating / reviews.size();
+    }
+    public boolean isAvailable(){
+        return this.Available ;
     }
 
 }
