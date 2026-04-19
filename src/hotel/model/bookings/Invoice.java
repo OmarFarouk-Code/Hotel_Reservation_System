@@ -9,14 +9,14 @@ import java.io.Serializable;
 
 public class Invoice implements Payable , Serializable
 {
-    int invoiceID;
-    Reservation reservation;
-    boolean isPaid;
-    double totalAmount;
-    PaymentMethod paymentMethod;
-    LocalDate paymentDate;
-    String appliedPromoCode;
-    double discountAmount;
+    private int invoiceID;
+    private Reservation reservation;
+    private boolean isPaid;
+    private double totalAmount;
+    private PaymentMethod paymentMethod;
+    private LocalDate paymentDate;
+    private String appliedPromoCode;
+    private double discountAmount;
 
     public Invoice() {
     }
@@ -96,9 +96,9 @@ public class Invoice implements Payable , Serializable
         this.discountAmount = discountAmount;
     }
 
-   @Override
+    @Override
     public double getTotal() {
-        return totalAmount - discountAmount;
+        return totalAmount; // Removed the secondary deduction
     }
 
     @Override

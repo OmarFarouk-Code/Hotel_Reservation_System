@@ -16,14 +16,13 @@ public class  Admin extends Staff implements Manageable
     private List<Invoice> invoicesList;
     // ArrayList<Room> roomList = Database.getReservations();
 
-    /*public Admin(String userName, String password, LocalDate dateOfbirth, String address)
+    public Admin(String userName, String password, LocalDate dateOfbirth, String address)
     {
         super(userName, password, dateOfbirth, address);
-    }*/
-    public Admin()
-    {
-
     }
+
+    public Admin() { }
+
 
 
     //room functions
@@ -246,11 +245,12 @@ public class  Admin extends Staff implements Manageable
             throw new Exception("Invalid Data: Multiplier cannot be negative.");
         }
 
-        for (RoomType type : roomTypeList) {
-            if (type.getTypeName().equalsIgnoreCase(roomType)) {
-                double oldPrice = type.getBasePrice();
-                double newPrice = multiplier * oldPrice;
-                type.setPricePerNight(newPrice);
+        for (RoomType type : roomTypeList) 
+        {
+            if (type.getTypeName().equalsIgnoreCase(roomType)) 
+            {
+                type.setSeasonMultiplier(multiplier); // Fix: Actually update the multiplier
+                type.setPricePerNight(multiplier * type.getBasePrice());
                 Database.saveData();
                 return;
             }
