@@ -12,7 +12,8 @@ public class Room implements Serializable
 
     public Room() 
     {
-        amenities = new ArrayList<>();
+        this.amenities = new ArrayList<>();
+        this.reviews = new ArrayList<>();
     }
 
     public Room( int roomNumber, int floor, RoomType roomType ) 
@@ -20,8 +21,8 @@ public class Room implements Serializable
         this.roomNumber = roomNumber;
         this.floor = floor;
         this.roomType = roomType;
-        amenities = new ArrayList<>();
-        reviews = new ArrayList<>();
+        this.amenities = new ArrayList<>();
+        this.reviews = new ArrayList<>();
     }
 
     public int getRoomNumber() {
