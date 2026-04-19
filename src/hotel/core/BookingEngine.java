@@ -90,7 +90,9 @@ public class BookingEngine
                     {
                         if (res.getRoom().getRoomNumber() == room.getRoomNumber()) 
                         {    
-                            if (!(checkOut.isBefore(res.getCheckinDate()) || checkIn.isAfter(res.getCheckoutDate()))) {
+                            if (!(checkOut.isBefore(res.getCheckinDate()) || checkOut.isEqual(res.getCheckinDate()) || 
+                                checkIn.isAfter(res.getCheckoutDate()) || checkIn.isEqual(res.getCheckoutDate()))) 
+                            {
                                 isBooked = true;
                                 break;
                             }
@@ -363,8 +365,9 @@ public class BookingEngine
             if (Reservations.get(i).getReservationID() == ReservationId)
             {
                 found = true;
-                if (ChronoUnit.DAYS.between(cancelDate, Reservations.get(i).getCheckinDate()) <= 3) 
-                {//Used to calculate the difference in days
+                long daysBetween = ChronoUnit.DAYS.between(cancelDate, Reservations.get(i).getCheckinDate());
+                if (daysBetween >= 0 && daysBetween <= 3) 
+                {
                     for (int j = 0; j < Database.getInvoices().size(); j++) 
                     {
                         if (Invoices.get(j).getReservation().getReservationID() == ReservationId) 
