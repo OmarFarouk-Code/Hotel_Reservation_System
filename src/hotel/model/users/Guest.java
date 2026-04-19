@@ -14,74 +14,12 @@ public class Guest extends User implements Serializable
     private double balance;
     protected static int GuestId=100;
     protected int UniqueId;
-    private List<String> roomprefrences;//has a problem
-    private RoomType roomoptions;
-    private int failedLoginAttempts;
-    private AccountStatus accountStatus;
-    private LocalDate dateOfbirth;
-    private String address;
-    private String phoneNumber;
-    public Guest(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber , double balance , List<String> roomprefrences ) {
-        super(userName, password, dateOfbirth, address , phoneNumber);
+
+    public Guest(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, double balance, int uniqueId, Scanner input) {
+        super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address);
         this.balance = balance;
-        this.roomprefrences = roomprefrences;
-    }
-
-    public int getUniqueId() {
-        return UniqueId;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setUniqueId(int uniqueId) {
         UniqueId = uniqueId;
-    }
-
-
-    public LocalDate getDateOfbirth() {
-        return dateOfbirth;
-    }
-
-
-    public void setDateOfbirth(LocalDate dateOfbirth) {
-        this.dateOfbirth = dateOfbirth;
-    }
-
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Guest getGuest()
-    {
-        return this;
-    }
-
-
-    public AccountStatus getAccountStatus() {
-        return accountStatus;
-    }
-
-    public int getFailedLoginAttempts() {
-        return failedLoginAttempts;
-    }
-
-    public RoomType getRoomoptions() {
-        return roomoptions;
-    }
-
-    public List<String> getRoompreferences() {
-        return roomprefrences;
+        this.input = input;
     }
 
     public double getBalance() {
@@ -92,23 +30,29 @@ public class Guest extends User implements Serializable
         this.balance = balance;
     }
 
-    public void setRoompreferences(List<String> roomperefrences) {
-        this.roomprefrences = roomperefrences;
+    public static int getGuestId() {
+        return GuestId;
     }
 
-    public void setRoomoptions(RoomType roomoptions) {
-        this.roomoptions = roomoptions;
+    public static void setGuestId(int guestId) {
+        GuestId = guestId;
     }
 
-
-    public void setFailedLoginAttempts(int failedLoginAttempts) {
-        this.failedLoginAttempts = failedLoginAttempts;
+    public int getUniqueId() {
+        return UniqueId;
     }
 
-    public void setAccountStatus(AccountStatus accountStatus) {
-        this.accountStatus = accountStatus;
+    public void setUniqueId(int uniqueId) {
+        UniqueId = uniqueId;
     }
 
+    public Scanner getInput() {
+        return input;
+    }
+
+    public void setInput(Scanner input) {
+        this.input = input;
+    }
 
 
 
@@ -178,6 +122,7 @@ public class Guest extends User implements Serializable
         public void register() {
             System.out.println("Please enter a username ");
             UserName = input.nextLine();
+
             System.out.println("Please enter a password");
             System.out.println("** Password rules **");
             System.out.println("Password must be more than 8 characters");
