@@ -21,103 +21,117 @@ import java.util.List;
 
 public class BookingEngine 
 {
-
     Database database;
-        public List<Room> filterRooms(String roomType, RoomView roomview,double maxPrice)
+
+    public List<Room> filterRooms(String roomType, RoomView roomview,double maxPrice)
+    {
+        if (roomview == null) {
+            System.out.println("Search Blocked: RoomView is required.");
+            return new ArrayList<>(); // Return an empty list so the GUI doesn't crash
+        }
+        ArrayList<Room> results=new ArrayList<>();
+        List<Room> Rooms=Database.getRooms();
+        List<RoomType>roomtype=Database.getRoomTypes();
+
+        for (int i=0;i<Rooms.size();i++)
         {
-            if (roomview == null) {
-                System.out.println("Search Blocked: RoomView is required.");
-                return new ArrayList<>(); // Return an empty list so the GUI doesn't crash
-            }
-            ArrayList<Room> results=new ArrayList<>();
-            List<Room> Rooms=Database.getRooms();
-            List<RoomType>roomtype=Database.getRoomTypes();
-            for (int i=0;i<Rooms.size();i++)
+            Room room=Rooms.get(i);
+            RoomType type=room.getRoomType();
+            if(type.getTypeName().equalsIgnoreCase(roomType)&&type.getRoomView().equals(roomview)&&type.getPricePerNight()<=maxPrice)
             {
-                Room room=Rooms.get(i);
-                RoomType type=room.getRoomType();
-                if(type.getTypeName().equalsIgnoreCase(roomType)&&type.getRoomView().equals(roomview)&&type.getPricePerNight()<=maxPrice)
-                {
-                    results.add(room);
-                }
+                results.add(room);
             }
-            return results;
         }
-        public double validatePromocode(String code) 
+        return results;
+    }
+
+    public double validatePromocode(String code) 
+    {
+        List<PromoCode> promos = Database.getPromoCodes();
+
+        for (int i = 0; i < Database.getPromoCodes().size(); i++) 
         {
-            List<PromoCode> promos = Database.getPromoCodes();
-            for (int i = 0; i < Database.getPromoCodes().size(); i++) {
-                if (promos.get(i).getCode().equals(code)) {
-                    if (promos.get(i).isActive()) {
-                        return 1 - (promos.get(i).getDiscountPercentage());
-
-                    } else {
-                        System.out.println("Promo code is expired");
-                        return 1;
-
-                    }
+            if (promos.get(i).getCode().equals(code)) 
+            {
+                if (promos.get(i).isActive()) 
+                {
+                    return 1 - (promos.get(i).getDiscountPercentage());
+                } 
+                else 
+                {
+                    System.out.println("Promo code is expired");
+                    return 1;
                 }
             }
-
-            System.out.println("Promo code is not found");
-            return 1; 
-
         }
+        System.out.println("Promo code is not found");
+        return 1; 
+    }
 
-        public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
-            
-            if (checkIn == null || checkOut == null) {
-                throw new IllegalArgumentException("Dates cannot be null.");
-            }
-            if (checkIn.isAfter(checkOut)) {
-                throw new IllegalArgumentException("Check-in date cannot be after check-out date.");
-            }
+    public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) 
+    {    
+        if (checkIn == null || checkOut == null) {
+            throw new IllegalArgumentException("Dates cannot be null.");
+        }
+        if (checkIn.isAfter(checkOut)) 
+        {
+            throw new IllegalArgumentException("Check-in date cannot be after check-out date.");
+        }  
+        List<Room> available = new ArrayList<>();
 
-            
-            List<Room> available = new ArrayList<>();
-            if (Database.getRooms() != null) {
-                for (Room room : Database.getRooms()) {
-                    boolean isBooked = false;
-                    
-                    
-                    if (Database.getReservations() != null) {
-                        for (Reservation res : Database.getReservations()) {
-        
-                            if (res.getRoom().getRoomNumber() == room.getRoomNumber()) {
-                                
-                                if (!(checkOut.isBefore(res.getCheckinDate()) || checkIn.isAfter(res.getCheckoutDate()))) {
-                                    isBooked = true;
-                                    break;
-                                }
+        if (Database.getRooms() != null) 
+        {
+            for (Room room : Database.getRooms()) 
+            {
+                boolean isBooked = false;
+                if (Database.getReservations() != null) 
+                {
+                    for (Reservation res : Database.getReservations()) 
+                    {
+                        if (res.getRoom().getRoomNumber() == room.getRoomNumber()) 
+                        {    
+                            if (!(checkOut.isBefore(res.getCheckinDate()) || checkIn.isAfter(res.getCheckoutDate()))) {
+                                isBooked = true;
+                                break;
                             }
                         }
                     }
-                    
-            
-                    if (!isBooked) {
-                        available.add(room);
-                    }
+                }
+                if (!isBooked) 
+                {
+                    available.add(room);
                 }
             }
-            return available;
         }
+        return available;
+    }
 
-        //NOT COMPLETE
-    public void viewAllRooms() {
+    public void viewAllRooms() 
+    {
         System.out.println("--- All Hotel Rooms ---");
 
-        if (Database.getRooms() == null || Database.getRooms().isEmpty()) {
+        if (Database.getRooms() == null || Database.getRooms().isEmpty())
+        {
             System.out.println("No rooms are currently in the system.");
             return;
         }
 
+        //Define the dates to check current availability (Today to Tomorrow)
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+        
+        //Get the list of rooms available for these dates
+        List<Room> availableRoomsList = getAvailableRooms(today, tomorrow);
+
         for (Room room : Database.getRooms()) {
+            // 3. Check if the current room is inside the available list
+            boolean isCurrentlyAvailable = availableRoomsList.contains(room);
+
             System.out.println("Room " + room.getRoomNumber()
                     + " | Type: " + room.getRoomType().getTypeName()
-                    + " | Available: " + room.isAvailable);//Error
+                    + " | Available: " + (isCurrentlyAvailable ? "Yes" : "No")); 
         }
     }
-
 
     public List<Room> sortRooms(List<Room> rooms, boolean ascending) {
         if (rooms == null || rooms.isEmpty()) {
@@ -170,8 +184,10 @@ public class BookingEngine
         RoomView view = room.getRoomType().getRoomView(); 
         double viewSurcharge = 0.0;
         
-        if (view != null) {
-            switch (view) {
+        if (view != null) 
+        {
+            switch (view) 
+            {
                 case SEA_VIEW:
                     viewSurcharge = 1000; 
                     break;
@@ -260,14 +276,16 @@ public class BookingEngine
 
     public double calculateDiningCost(DiningPackage packageType, int nights) 
     {
-        if (packageType == null || nights <= 0) {
+        if (packageType == null || nights <= 0) 
+        {
             return 0.0; 
         }
 
         double packagePricePerNight = 0.0;
 
     
-        switch (packageType) {
+        switch (packageType) 
+        {
             case BREAKFAST_ONLY:
                 packagePricePerNight = 0;
                 break;
@@ -334,51 +352,63 @@ public class BookingEngine
         return invoice;
     }    
 
-    public double calculateCancellationPenalty(int ReservationId,LocalDate cancelDate){
-            boolean found=false;
-            List<Reservation> Reservations = Database.getReservations();
-            List<Invoice>Invoices=Database.getInvoices();
-            for(int i=0;i<Database.getReservations().size();i++) {
-                if (Reservations.get(i).getReservationID() == ReservationId) {
-                    found = true;
-                    if (ChronoUnit.DAYS.between(cancelDate, Reservations.get(i).getCheckinDate()) <= 3) {//Used to calculate the difference in days
-                        for (int j = 0; j < Database.getInvoices().size(); j++) {
-                            if (Invoices.get(j).getReservation().getReservationID() == ReservationId) {
-                                System.out.println("Unfortunately,30% of the total reservation amount will be deducted as cancellation fees due to late cancellation");
-                                System.out.print("cancellation penalty : - "+(Invoices.get(j).getTotalAmount() * 0.30));
-                                return (Invoices.get(j).getTotalAmount() * 0.30);
-                            }
+    public double calculateCancellationPenalty(int ReservationId,LocalDate cancelDate)
+    {
+        boolean found=false;
+        List<Reservation> Reservations = Database.getReservations();
+        List<Invoice>Invoices=Database.getInvoices();
+
+        for(int i=0;i<Database.getReservations().size();i++) 
+        {
+            if (Reservations.get(i).getReservationID() == ReservationId)
+            {
+                found = true;
+                if (ChronoUnit.DAYS.between(cancelDate, Reservations.get(i).getCheckinDate()) <= 3) 
+                {//Used to calculate the difference in days
+                    for (int j = 0; j < Database.getInvoices().size(); j++) 
+                    {
+                        if (Invoices.get(j).getReservation().getReservationID() == ReservationId) 
+                        {
+                            System.out.println("Unfortunately,30% of the total reservation amount will be deducted as cancellation fees due to late cancellation");
+                            System.out.print("cancellation penalty : - "+(Invoices.get(j).getTotalAmount() * 0.30));
+                            return (Invoices.get(j).getTotalAmount() * 0.30);
                         }
                     }
                 }
             }
+        }
 
-            if(found) {
+        if(found) 
+        {
             System.out.println("There will be no cancellation penalty");
             System.out.println("Cancellation penalty : 0 ");
             return 0.0;
-            }
-            else {
+        }
+        else 
+        {
             System.out.println("This reservation Id is not found in the data base");
             return -1.0;
-            }
         }
-        public double calculateAmenityCost(List<Amenity> selectedAmenities)
-        {
-            double total=0.0;
-            List<Amenity> amenityList=Database.getAmenities();
-            if (selectedAmenities==null||selectedAmenities.isEmpty())
-            {
-                return  total;
-            }
-            for (Amenity a :selectedAmenities)
-            {
-                total+=a.getAmenityPrice();
-            }
-            return total;
-        }
+    }
 
-    public double calculateTotalRevenue() {
+
+    public double calculateAmenityCost(List<Amenity> selectedAmenities)
+    {
+        double total=0.0;
+        List<Amenity> amenityList = Database.getAmenities();
+        if (selectedAmenities==null||selectedAmenities.isEmpty())
+        {
+            return  total;
+        }
+        for (Amenity a :selectedAmenities)
+        {
+            total+=a.getAmenityPrice();
+        }
+        return total;
+    }
+
+    public double calculateTotalRevenue() 
+    {
         double total = 0.0;
         // No parameters means we check EVERYTHING in the database
         for (Invoice inv : Database.getInvoices()) {
@@ -388,7 +418,8 @@ public class BookingEngine
         }
         return total;
     }
-        public double calcualteTotalRevenue(LocalDate startDate,LocalDate endDate) throws Exception
+
+    public double calcualteTotalRevenue(LocalDate startDate,LocalDate endDate) throws Exception
     {
         if(endDate.isBefore(startDate))
         {
