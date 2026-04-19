@@ -1,5 +1,4 @@
 package hotel.model.staff;
-import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
 import hotel.model.entities.*;
@@ -14,17 +13,17 @@ public class  Admin extends Staff implements Manageable
     private List<Amenity> amenityList;
     private List<RoomType> roomTypeList;
     private List<Invoice> invoicesList;
-    // ArrayList<Room> roomList = Database.getReservations();
 
-    /*public Admin(String userName, String password, LocalDate dateOfbirth, String address)
+    public Admin(String userName, String password, LocalDate dateOfbirth, String address, String phoneNumber, int workingHours) 
     {
-        super(userName, password, dateOfbirth, address);
-    }*/
-    public Admin()
-    {
-
+        super(userName, password, dateOfbirth, address, phoneNumber, workingHours);
+        this.roomList = Database.getRooms();
+        this.amenityList = Database.getAmenities();
+        this.roomTypeList = Database.getRoomTypes();
+        this.invoicesList = Database.getInvoices();
     }
 
+    public Admin() { }
 
     //room functions
     public void createRoom(Room room) throws Exception
@@ -246,11 +245,12 @@ public class  Admin extends Staff implements Manageable
             throw new Exception("Invalid Data: Multiplier cannot be negative.");
         }
 
-        for (RoomType type : roomTypeList) {
-            if (type.getTypeName().equalsIgnoreCase(roomType)) {
-                double oldPrice = type.getBasePrice();
-                double newPrice = multiplier * oldPrice;
-                type.setPricePerNight(newPrice);
+        for (RoomType type : roomTypeList) 
+        {
+            if (type.getTypeName().equalsIgnoreCase(roomType)) 
+            {
+                type.setSeasonMultiplier(multiplier); // Fix: Actually update the multiplier
+                type.setPricePerNight(multiplier * type.getBasePrice());
                 Database.saveData();
                 return;
             }

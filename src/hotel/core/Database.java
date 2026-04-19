@@ -2,7 +2,6 @@ package hotel.core;
 import hotel.model.bookings.PromoCode;
 import hotel.model.entities.*;
 import hotel.model.staff.*;
-import hotel.model.users.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*; // Import this for File IO

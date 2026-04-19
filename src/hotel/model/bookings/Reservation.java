@@ -47,11 +47,14 @@ public class Reservation implements Serializable
 
     public double calcamenitytotal() 
     {
-        System.out.println("enter the number of selected amenities");
-        Scanner input = new Scanner(System.in) ;
-        int selectedAmenities = Integer.parseInt(input.nextLine());
         double total = 0;
-        for (Amenity a < selectedAmenities) total += a.getAmenityPrice();
+        if (requestedAmenities != null) 
+        {
+            for (Amenity amenity : requestedAmenities) 
+            {
+                total += amenity.getAmenityPrice();
+            }
+        }
         return total;
     }
 
@@ -148,6 +151,4 @@ public class Reservation implements Serializable
         this.numAdults = numAdults;
     }
 
-    public void confirmReservation() {
-    }
 }

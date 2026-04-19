@@ -8,7 +8,6 @@ import hotel.model.staff.Receptionist;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public abstract class User implements Serializable  
@@ -29,7 +28,8 @@ public abstract class User implements Serializable
         return Typeofuser;
     }
 
-    Scanner input =new Scanner(System.in);
+    //HAS TO BE PROTECTED AND TRANSIENT TO AVOID SERIALIZATION ISSUES WITH SCANNER AND TO ALLOW ACCESS IN SUBCLASSES 
+    protected transient Scanner input = new Scanner(System.in);
 
     public void setUserName(String userName) {
         this.UserName = userName;

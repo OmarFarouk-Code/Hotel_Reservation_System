@@ -9,11 +9,11 @@ public class Room implements Serializable
     private RoomType roomType;
     private List<Amenity> amenities;
     private List<Review> reviews;
-    private Boolean Available ;
 
     public Room() 
     {
-        amenities = new ArrayList<>();
+        this.amenities = new ArrayList<>();
+        this.reviews = new ArrayList<>();
     }
 
     public Room( int roomNumber, int floor, RoomType roomType ) 
@@ -21,8 +21,8 @@ public class Room implements Serializable
         this.roomNumber = roomNumber;
         this.floor = floor;
         this.roomType = roomType;
-        amenities = new ArrayList<>();
-        reviews = new ArrayList<>();
+        this.amenities = new ArrayList<>();
+        this.reviews = new ArrayList<>();
     }
 
     public int getRoomNumber() {
@@ -78,9 +78,6 @@ public class Room implements Serializable
             totalRating += review.getScore();
         }
         return totalRating / reviews.size();
-    }
-    public boolean isAvailable(){
-        return this.Available ;
     }
 
 }
