@@ -1,5 +1,4 @@
 package hotel.model.users;
-import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
 import hotel.model.bookings.*;
