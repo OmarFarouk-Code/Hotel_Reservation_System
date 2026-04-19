@@ -3,6 +3,7 @@ package hotel.core;
 import hotel.core.Database;
 import hotel.interfaces.*;
 import hotel.model.*;
+import hotel.model.entities.Amenity;
 import hotel.model.entities.Room;
 import hotel.model.entities.RoomType;
 import hotel.model.enums.DiningPackage;
@@ -17,6 +18,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+
+import static hotel.core.Database.invoices;
 
 public class BookingEngine 
 {
@@ -345,7 +348,6 @@ public class BookingEngine
                                 System.out.print("cancellation penalty : - "+(Invoices.get(j).getTotalAmount() * 0.30));
                                 return (Invoices.get(j).getTotalAmount() * 0.30);
                             }
-
                         }
                     }
                 }
@@ -360,8 +362,54 @@ public class BookingEngine
             System.out.println("This reservation Id is not found in the data base");
             return -1.0;
             }
-
-
+        }
+        public double calculateAmenityCost(List<Amenity> selectedAmenities)
+        {
+            double total=0.0;
+            List<Amenity> amenityList=Database.getAmenities();
+            if (selectedAmenities==null||selectedAmenities.isEmpty())
+            {
+                return  total;
             }
+            for (Amenity a :selectedAmenities)
+            {
+                total+=a.getAmenityPrice();
+            }
+            return total;
+        }
+
+    public double calculateTotalRevenue() {
+        double total = 0.0;
+        // No parameters means we check EVERYTHING in the database
+        for (Invoice inv : Database.getInvoices()) {
+            if (inv.isPaid()) {
+                total += inv.getTotalAmount();
+            }
+        }
+        return total;
+    }
+        public double calcualteTotalRevenue(LocalDate startDate,LocalDate endDate) throws Exception
+    {
+        if(endDate.isBefore(startDate))
+        {
+            throw new Exception("Invalid Range: End date cannot be before Start date");
+        }
+
+        List <Invoice> invoices=Database.getInvoices();
+        double revenue=0;
+        for(Invoice i:invoices)
+        {
+            if (i.isPaid()) {
+                LocalDate paymentDate=i.getPaymentDate();
+                if(paymentDate.isEqual(startDate)|| paymentDate.isEqual(endDate)||(paymentDate.isBefore(endDate)&& paymentDate.isAfter(startDate)))
+                {
+                    revenue+=i.getTotalAmount();
+                }
+            }
+        }
+        return revenue;
+    }
+
+
 
 }
