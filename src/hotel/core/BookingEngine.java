@@ -465,8 +465,11 @@ public class BookingEngine
         int totalRooms = Database.rooms.size();
         int occupiedRooms = 0;
 
+        LocalDate In ;
+        LocalDate Out;
+
         for (Room room : Database.rooms) {
-            if (!room.isAvailable()) {
+            if (getAvailableRooms(In , Out)) {
                 occupiedRooms++;
             }
         }
@@ -474,6 +477,29 @@ public class BookingEngine
         if (totalRooms == 0) return 0;
 
         return ((double) occupiedRooms / totalRooms) * 100;
+    }
+    public void processCancellation(int reservationId, LocalDate cancelDate) {
+
+        Reservation reservation = null;
+
+        // Find reservation
+        for (Reservation r : Database.reservations) {
+            if (r.getReservationID() == reservationId) {
+                reservation = r;
+                break;
+            }
+        }
+
+        if (reservation == null) {
+            System.out.println("Reservation not found!");
+            return;
+        }
+
+        // Calculate penalty
+        double penalty = calculateCancellationPenalty(reservation, cancelDate);
+
+        reservation.setCancellationPenalty(penalty);
+        reservation.getCancellationPenalty();
     }
 
 
