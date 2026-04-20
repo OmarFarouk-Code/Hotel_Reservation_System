@@ -1,8 +1,11 @@
 package hotel.model.users;
-import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
 import hotel.model.bookings.*;
+import hotel.model.enums.AccountStatus;
+import hotel.model.enums.Gender;
+import hotel.model.enums.UserType;
+
 import java.time.LocalDate;
 
 
@@ -12,9 +15,9 @@ public abstract class Staff extends User
 
     public Staff() {};
 
-    public Staff(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber , int workingHours) {
-       super(userName, password, dateOfbirth, address , phoneNumber);  
-       this.workingHours = workingHours;
+    public Staff(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, int workingHours) {
+        super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address);
+        this.workingHours = workingHours;
     }
 
     public int getWorkingHours() {

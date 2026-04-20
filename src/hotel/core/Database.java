@@ -2,13 +2,13 @@ package hotel.core;
 import hotel.model.bookings.PromoCode;
 import hotel.model.entities.*;
 import hotel.model.staff.*;
-import hotel.model.users.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*; // Import this for File IO
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
 import hotel.model.users.Guest;
+
 public class Database
 {
     private static List<Guest> guests = new ArrayList<>();
@@ -90,6 +90,7 @@ public class Database
             e.printStackTrace();
         }
     }
+
 }
 
 

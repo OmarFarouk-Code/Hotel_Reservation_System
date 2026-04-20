@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
 import hotel.model.users.*;
 import hotel.model.entities.*;
 import hotel.model.enums.*;
@@ -45,9 +47,14 @@ public class Reservation implements Serializable
 
     public double calcamenitytotal() 
     {
-
         double total = 0;
-        //lesa mesh aaref/fahem aamel eh hena
+        if (requestedAmenities != null) 
+        {
+            for (Amenity amenity : requestedAmenities) 
+            {
+                total += amenity.getAmenityPrice();
+            }
+        }
         return total;
     }
 
@@ -144,6 +151,4 @@ public class Reservation implements Serializable
         this.numAdults = numAdults;
     }
 
-    public void confirmReservation() {
-    }
 }
