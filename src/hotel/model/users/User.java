@@ -1,42 +1,53 @@
 package hotel.model.users;
 import hotel.core.Database;
+import hotel.model.enums.AccountStatus;
 import hotel.model.enums.Gender;
 import hotel.model.enums.UserType;
 import hotel.model.staff.Admin;
 import hotel.model.staff.Receptionist;
-
+import java.util.NoSuchElementException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-public abstract class User implements Serializable  
+public abstract class User implements Serializable
 {
+    private transient Scanner input = new Scanner(System.in);
+
     protected String UserName;
     protected String password;
     private UserType Typeofuser=null;
     protected Gender theGender;
     protected String newpassword;
+    private int failedLoginAttempts =0;
+    private AccountStatus accountStatus;
+    protected LocalDate dateOfbirth;
+    protected String phoneNumber;
+    protected String address;
+
     public User() {}
 
-    public User(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber) {
-        this.UserName = userName;
+    public User(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address) {
+        UserName = userName;
         this.password = password;
-    }
-
-     public UserType getTypeofuser() {
-        return Typeofuser;
-    }
-
-    //HAS TO BE PROTECTED AND TRANSIENT TO AVOID SERIALIZATION ISSUES WITH SCANNER AND TO ALLOW ACCESS IN SUBCLASSES 
-    protected transient Scanner input = new Scanner(System.in);
-
-    public void setUserName(String userName) {
-        this.UserName = userName;
+        Typeofuser = typeofuser;
+        this.theGender = theGender;
+        this.newpassword = newpassword;
+        this.failedLoginAttempts = failedLoginAttempts;
+        this.accountStatus = accountStatus;
+        this.dateOfbirth = dateOfbirth;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
     }
 
     public String getUserName() {
         return UserName;
+    }
+
+    public void setUserName(String userName) {
+        UserName = userName;
     }
 
     public String getPassword() {
@@ -45,6 +56,70 @@ public abstract class User implements Serializable
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public UserType getTypeofuser() {
+        return Typeofuser;
+    }
+
+    public void setTypeofuser(UserType typeofuser) {
+        Typeofuser = typeofuser;
+    }
+
+    public Gender getTheGender() {
+        return theGender;
+    }
+
+    public void setTheGender(Gender theGender) {
+        this.theGender = theGender;
+    }
+
+    public String getNewpassword() {
+        return newpassword;
+    }
+
+    public void setNewpassword(String newpassword) {
+        this.newpassword = newpassword;
+    }
+
+    public int getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+
+    public void setFailedLoginAttempts(int failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts;
+    }
+
+    public AccountStatus getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(AccountStatus accountStatus) {
+        this.accountStatus = accountStatus;
+    }
+
+    public LocalDate getDateOfbirth() {
+        return dateOfbirth;
+    }
+
+    public void setDateOfbirth(LocalDate dateOfbirth) {
+        this.dateOfbirth = dateOfbirth;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public static boolean Datechecker(String dateStr) {
@@ -57,68 +132,86 @@ public abstract class User implements Serializable
     }
 
     public void Login()
+
     {
-        System.out.println("Please choose weather you 1.Guest 2.Admin 3.Receptionist");
-        Typeofuser = UserType.valueOf(input.next().toUpperCase());//handling errors
-        input.nextLine();//avoid skipping input
-        System.out.println("Please enter your Username and password");
-        System.out.print("Username: ");
-        UserName=input.nextLine();
-        System.out.print("Password: ");
-        password=input.nextLine();
+        while(failedLoginAttempts<5){
+
+            if (accountStatus == AccountStatus.LOCKED) {
+                System.out.println("This account is locked. Please contact an administrator.");
+                return;
+            }
+            System.out.println("Please choose: 1.GUEST, 2.ADMIN, 3.RECEPTIONIST");
+            Typeofuser = UserType.valueOf(input.next().toUpperCase());
+            System.out.print("Enter Username: ");
+            String currentName = input.next();
+            System.out.print("Enter Password: ");
+            String currentPass = input.next();
         if(Typeofuser== UserType.GUEST){
         boolean found=false;
         List<Guest> guestList = Database.getGuests();
         for(int i=0; i<Database.getGuests().size();i++) {
-        if(guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)){
+        if(guestList.get(i).getUserName().equals(currentName) && guestList.get(i).getPassword().equals(currentPass)){
             found=true;
             break;
         }
         }
-        if(found) {
-            System.out.println("Access Granted,Welcome " + UserName);
+        if(found && accountStatus==AccountStatus.ACTIVE) {
+            System.out.println("Access Granted,Welcome " + currentName);
             //homepage for guest
+            break;
         }else {
             System.out.println("Access Denied,Please try again !");
-            Login();
+            failedLoginAttempts=failedLoginAttempts+1;
+            Database.saveData();
+
         }
     }if(Typeofuser==UserType.RECEPTIONIST) {
             boolean found = false;
             List<Receptionist> guestList = Database.getReceptionists();
             for (int i = 0; i < Database.getReceptionists().size(); i++) {
-                if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)) {
+                if (guestList.get(i).getUserName().equals(currentName) && guestList.get(i).getPassword().equals(currentPass)) {
                     found = true;
                     break;
                 }
             }
-            if (found) {
-                System.out.println("Access Granted,Welcome " + UserName);
+            if (found && accountStatus==AccountStatus.ACTIVE) {
+                System.out.println("Access Granted,Welcome " + currentName);
                 //Homepage of receptionist
-            } else {
+                break;
+            }  else {
                 System.out.println("Access Denied,Please try again !");
-                Login();
+                failedLoginAttempts=failedLoginAttempts+1;
+                Database.saveData();
+
             }
         }
             if(Typeofuser==UserType.ADMIN) {
                 boolean found = false;
                 List<Admin> guestList = Database.getAdmins();
                 for (int i = 0; i < Database.getAdmins().size(); i++) {
-                    if (guestList.get(i).getUserName().equals(UserName) && guestList.get(i).getPassword().equals(password)) {
+                    if (guestList.get(i).getUserName().equals(currentName) && guestList.get(i).getPassword().equals(currentPass)) {
                         found = true;
                         break;
                     }
                 }
-                if (found) {
-                    System.out.println("Access Granted,Welcome " + UserName);
+                if (found && accountStatus==AccountStatus.ACTIVE) {
+                    System.out.println("Access Granted,Welcome " + currentName);
                     //Homepage of admin
+                    break;
                 } else {
                     System.out.println("Access Denied,Please try again !");
-                    Login();
+                    failedLoginAttempts=failedLoginAttempts+1;
+                    Database.saveData();
+
+                    }
                 }
+            }
 
-
+        if(failedLoginAttempts>=5){
+            System.out.println("Too much unsuccessful login attempts, account is Locked");
+            accountStatus=AccountStatus.LOCKED;
+        Database.saveData();
         }
-
 
         }
         public void passwordconfirmation(String Pass1,String Pass2){

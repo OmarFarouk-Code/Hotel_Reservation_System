@@ -11,74 +11,12 @@ public class Guest extends User
     private double balance;
     protected static int GuestId=100;
     protected int UniqueId;
-    private List<String> roomprefrences;//has a problem
-    private RoomType roomoptions;
-    private int failedLoginAttempts;
-    private AccountStatus accountStatus;
-    private LocalDate dateOfbirth;
-    private String address;
-    private String phoneNumber;
-    public Guest(String userName, String password, LocalDate dateOfbirth, String address , String phoneNumber , double balance , List<String> roomprefrences ) {
-        super(userName, password, dateOfbirth, address , phoneNumber);
+
+    public Guest(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, double balance, int uniqueId, Scanner input) {
+        super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address);
         this.balance = balance;
-        this.roomprefrences = roomprefrences;
-    }
-
-    public int getUniqueId() {
-        return UniqueId;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setUniqueId(int uniqueId) {
         UniqueId = uniqueId;
-    }
-
-
-    public LocalDate getDateOfbirth() {
-        return dateOfbirth;
-    }
-
-
-    public void setDateOfbirth(LocalDate dateOfbirth) {
-        this.dateOfbirth = dateOfbirth;
-    }
-
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Guest getGuest()
-    {
-        return this;
-    }
-
-
-    public AccountStatus getAccountStatus() {
-        return accountStatus;
-    }
-
-    public int getFailedLoginAttempts() {
-        return failedLoginAttempts;
-    }
-
-    public RoomType getRoomoptions() {
-        return roomoptions;
-    }
-
-    public List<String> getRoompreferences() {
-        return roomprefrences;
+        this.input = input;
     }
 
     public double getBalance() {
@@ -89,22 +27,55 @@ public class Guest extends User
         this.balance = balance;
     }
 
-    public void setRoompreferences(List<String> roomperefrences) {
-        this.roomprefrences = roomperefrences;
+    public static int getGuestId() {
+        return GuestId;
     }
 
-    public void setRoomoptions(RoomType roomoptions) {
-        this.roomoptions = roomoptions;
+    public static void setGuestId(int guestId) {
+        GuestId = guestId;
     }
 
-
-    public void setFailedLoginAttempts(int failedLoginAttempts) {
-        this.failedLoginAttempts = failedLoginAttempts;
+    public int getUniqueId() {
+        return UniqueId;
     }
 
-    public void setAccountStatus(AccountStatus accountStatus) {
-        this.accountStatus = accountStatus;
+    public void setUniqueId(int uniqueId) {
+        UniqueId = uniqueId;
     }
+
+    public Scanner getInput() {
+        return input;
+    }
+
+    public void setInput(Scanner input) {
+        this.input = input;
+    }
+
+    public void GuestHomepage() {
+        int choice = 0;
+        System.out.println("Welcome to the Guest menu");
+        while (choice != 2 && choice != 1 && choice != 3) {
+            System.out.println("Please enter number: 1.Regiester | 2.Login");
+            choice = input.nextInt();
+            input.nextLine();
+            if (choice == 1) {
+                register();
+            }
+            if(choice==2) {
+                Login();
+            }
+            }
+        }
+
+        public void GuestMainMenu(){
+        System.out.println("Please choose what do you need to do ");
+        //to be continued
+
+        }
+
+
+
+
 
 
 
@@ -113,7 +84,7 @@ public class Guest extends User
         boolean uppercase = false;
         boolean number = false;
         boolean both = false;
-        for (char x : password.toCharArray()) {
+        for (char x : Password.toCharArray()) {
             if (Character.isUpperCase(x)) uppercase = true;//check that has capital letter
             if (Character.isDigit(x)) number = true;//check that there ia a number
 
@@ -123,7 +94,7 @@ public class Guest extends User
             }
         }
         if (both) {
-            if (password.length() >= 8) {
+            if (Password.length() >= 8) {
                 return true;
             }
         } else {
@@ -175,6 +146,7 @@ public class Guest extends User
         public void register() {
             System.out.println("Please enter a username ");
             UserName = input.nextLine();
+
             System.out.println("Please enter a password");
             System.out.println("** Password rules **");
             System.out.println("Password must be more than 8 characters");
