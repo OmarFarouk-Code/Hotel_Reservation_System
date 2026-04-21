@@ -6,7 +6,6 @@ import hotel.model.enums.DiningPackage;
 import hotel.model.enums.PaymentMethod;
 import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.RoomView;
-import hotel.model.staff.Receptionist;
 import hotel.model.users.Guest;
 import hotel.model.bookings.*;
 import java.time.temporal.ChronoUnit;
@@ -243,7 +242,7 @@ public class BookingEngine
     }
 
     
-    public Reservation createDraftReservation( Guest guest , Room room , LocalDate checkIn , LocalDate checkOut , DiningPackage diningPackage, int numChildren, int numAdults , Receptionist receptionist ) throws IllegalArgumentException
+    public Reservation createDraftReservation( Guest guest , Room room , LocalDate checkIn , LocalDate checkOut , DiningPackage diningPackage, int numChildren, int numAdults ) throws IllegalArgumentException
     {
         if (guest == null || room == null || checkIn == null || checkOut == null || diningPackage == null || receptionist == null || numChildren < 0 || numAdults < 0) {
             throw new IllegalArgumentException("All reservation details must be provided.");
@@ -438,41 +437,103 @@ public class BookingEngine
         }
         return revenue;
     }
+
     public double calculateTotalReservationCost(Reservation reservation) {
+        if (reservation == null || reservation.getRoom() == null) {
+            System.err.println("Error: Invalid reservation data for cost calculation.");
+            return 0.0;
+        }
+        // We use the dates directly from the reservation object
+        long nights = java.time.temporal.ChronoUnit.DAYS.between(
+                reservation.getCheckinDate(),
+                reservation.getCheckoutDate()
+        );
 
-        int nights = reservation.calcnights();
-
-        // Room cost
-        double roomPricePerNight = reservation.getRoom()
-                .getRoomType()
-                .getEffectivePrice();
-        double roomCost = roomPricePerNight * nights;
-
-        // Dining cost
-        double diningCost = 0;
-        if (reservation.getDiningpackage() != null) {
-            diningCost = reservation.getDiningpackage() * nights;
+        // Standard hotel policy: a stay of 0 days (same-day checkout) is charged as 1 night
+        if (nights <= 0) {
+            nights = 1;
         }
 
-        // Amenities cost
-        double amenitiesCost = reservation.calcamenitytotal();
 
-        return roomCost + diningCost + amenitiesCost;
-    }
-    public double calculateOccupancyPercentage() {
+        double roomPricePerNight = reservation.getRoom().getRoomType().getPricePerNight();
+        double totalRoomCost = roomPricePerNight * nights;
 
-        int totalRooms = Database.rooms.size();
-        int occupiedRooms = 0;
 
-        for (Room room : Database.rooms) {
-            if (!room.isAvailable()) {
-                occupiedRooms++;
+        double diningCostPerNight = 0;
+        if (reservation.getDiningpackage() != null) {
+            switch (reservation.getDiningpackage()) {
+                case BREAKFAST_ONLY -> diningCostPerNight = 15.0;
+                case HALF_BOARD     -> diningCostPerNight = 35.0;
+                case FULL_BOARD     -> diningCostPerNight = 60.0;
+                case ALL_INCLUSIVE  -> diningCostPerNight = 100.0;
+                default             -> diningCostPerNight = 0.0;
+            }
+        }
+        double totalDiningCost = diningCostPerNight * nights;
+
+
+        double totalAmenitiesCost = 0;
+        if (reservation.getSelectedAmenities() != null) {
+            for (hotel.model.entities.Amenity amenity : reservation.getSelectedAmenities()) {
+                totalAmenitiesCost += amenity.getAmenityPrice();
             }
         }
 
-        if (totalRooms == 0) return 0;
 
-        return ((double) occupiedRooms / totalRooms) * 100;
+        double grandTotal = totalRoomCost + totalDiningCost + totalAmenitiesCost;
+
+
+        return grandTotal;
+    }
+
+    public double calculateOccupancyPercentage() {
+        java.util.List<hotel.model.entities.Room> allRooms = hotel.core.Database.getRooms();
+        java.util.List<Reservation> allReservations = hotel.core.Database.getReservations();
+
+        if (allRooms == null || allRooms.isEmpty()) {
+            return 0.0;
+        }
+
+        LocalDate today = LocalDate.now();
+
+        java.util.Set<Integer> occupiedRoomNumbers = new java.util.HashSet<>();
+
+        for (Reservation res : allReservations) {
+            boolean isConfirmed = (res.getStatus() == ReservationStatus.CONFIRMED);
+            boolean isCurrentlyStaying = !today.isBefore(res.getCheckinDate()) && today.isBefore(res.getCheckoutDate());
+
+            if (isConfirmed && isCurrentlyStaying) {
+                occupiedRoomNumbers.add(res.getRoom().getRoomNumber());
+            }
+        }
+
+        double totalRooms = allRooms.size();
+        double occupiedCount = occupiedRoomNumbers.size();
+
+        return (occupiedCount / totalRooms) * 100.0;
+    }
+    public void processCancellation(int reservationId, LocalDate cancelDate) {
+
+        Reservation reservation = null;
+
+        // Find reservation
+        for (Reservation r : Database.reservations) {
+            if (r.getReservationID() == reservationId) {
+                reservation = r;
+                break;
+            }
+        }
+
+        if (reservation == null) {
+            System.out.println("Reservation not found!");
+            return;
+        }
+
+        // Calculate penalty
+        double penalty = calculateCancellationPenalty(reservation, cancelDate);
+
+        reservation.setCancellationPenalty(penalty);
+        reservation.getCancellationPenalty();
     }
 
 
