@@ -59,12 +59,13 @@ The **Hotel Reservation System** is a backend-only Java application developed as
 - ✅ Interface contracts — `Manageable`, `Payable` **(Omar)**
 - ✅ Centralised in-memory `Database` with file persistence **(Omar)**
 - ✅ Folder structure, file pathing, and UML diagram **(Omar)**
-- ✅ Team coordination and code integration **(Omar)**
 - ✅ User inheritance tree — `User` → `Staff` **(Belal)**
 - ✅ Administration — `Admin` **(Belal)**
 - ✅ Transactional model — `Reservation`, `Invoice` **(Mostafa)**
 - ✅ Staff operations — `Admin` CRUD methods, `Receptionist` **(Adam)**
-- ⏳ `BookingEngine` — deferred to later phase, skeleton defined **(Omar)**
+- ✅ `BookingEngine` — fully implemented with contributions from all members **(see BookingEngine section)**
+- ✅ System-wide debugging **(Omar, Belal, Adam)**
+- ✅ `Main` console test runner **(Basel, Mostafa)**
 
 ---
 
@@ -132,9 +133,10 @@ hotel-reservation-system/
 │       │   │   ├── Admin.java
 │       │   │   └── Receptionist.java
 │       │   │
-│       │   └── reservation/
+│       │   └── bookings/
 │       │       ├── Reservation.java
-│       │       └── Invoice.java
+│       │       ├── Invoice.java
+│       │       └── PromoCode.java
 │       │
 │       ├── interfaces/
 │       │   ├── Manageable.java
@@ -142,7 +144,7 @@ hotel-reservation-system/
 │       │
 │       └── core/
 │           ├── Database.java
-│           ├── BookingEngine.java      ← deferred
+│           ├── BookingEngine.java
 │           └── Main.java
 │
 ├── README.md
@@ -174,10 +176,6 @@ public enum DiningPackage {
     HALF_BOARD,
     FULL_BOARD,
     ALL_INCLUSIVE;
-
-    private double pricePerNight;
-
-    public double getPricePerNight() { ... }
 }
 ```
 Each value carries a per-night surcharge applied to the reservation total.
@@ -244,10 +242,10 @@ Represents a bookable facility (e.g. minibar, safe, jacuzzi) that a guest can at
 | `-` | `typeName : String` | e.g. "Standard", "Suite" |
 | `-` | `basePrice : double` | Nightly base rate |
 | `-` | `description : String` | Type description |
-| `-` | `seasonalMultiplier : double` | Pricing multiplier (set by Admin) |
+| `-` | `seasonMultiplier : double` | Pricing multiplier (set by Admin) |
 | `-` | `roomView : RoomView` | View type for this room category |
 | `-` | `maxCapacity : int` | Maximum guest occupancy |
-| `+` | `getEffectivePrice() : double` | Returns `basePrice × seasonalMultiplier` |
+| `+` | `getEffectivePrice() : double` | Returns `basePrice × seasonMultiplier` |
 
 ---
 
@@ -257,14 +255,11 @@ Represents a bookable facility (e.g. minibar, safe, jacuzzi) that a guest can at
 |----------|--------|-------------|
 | `-` | `roomNumber : int` | Unique room identifier |
 | `-` | `floor : int` | Floor number |
-| `-` | `isAvailable : boolean` | Availability flag |
 | `-` | `roomType : RoomType` | Associated room type |
 | `-` | `amenities : List<Amenity>` | Attached amenities |
 | `-` | `reviews : List<Review>` | Guest reviews for this room |
 | `+` | `addAmenity(Amenity) : void` | Add an amenity to this room |
 | `+` | `removeAmenity(Amenity) : void` | Remove an amenity |
-| `+` | `markAvailable() : void` | Set `isAvailable = true` |
-| `+` | `markUnavailable() : void` | Set `isAvailable = false` |
 | `+` | `addReview(Review) : void` | Attach a guest review |
 | `+` | `calculateAverageRating() : double` | Average score across all reviews |
 
@@ -291,11 +286,11 @@ Base class for all system users. Cannot be instantiated directly.
 |----------|--------|
 | `-` | `userName : String` |
 | `-` | `password : String` |
-| `-` | `dateOfBirth : LocalDate` |
-| `-` | `address : String` |
 | `-` | `typeOfUser : UserType` |
-| `+` | `register() : void` |
-| `+` | `passwordcheck(String) : boolean` |
+| `-` | `theGender : Gender` |
+| `+` | `Login() : void` |
+| `+` | `ResetPassword(String, UserType) : void` |
+| `+` | `passwordconfirmation(String, String) : void` |
 | `+` | `Datechecker(String) : boolean` |
 
 ---
@@ -306,11 +301,15 @@ Base class for all system users. Cannot be instantiated directly.
 |----------|--------|-------|
 | `-` | `balance : double` | Debited on invoice payment |
 | `-` | `address : String` | |
+| `-` | `phoneNumber : String` | |
+| `-` | `dateOfBirth : LocalDate` | |
 | `-` | `roomPreferences : List<String>` | Preference tags |
 | `-` | `roomOptions : RoomType` | Preferred room type |
 | `-` | `failedLoginAttempts : int` | Triggers account lock |
 | `-` | `accountStatus : AccountStatus` | `ACTIVE` or `LOCKED` |
-| `+` | `registerExtension() : void` | Collects guest-specific fields |
+| `+` | `register() : void` | Collects guest-specific fields |
+| `+` | `ViewReservation(String, int) : void` | View reservations by username and ID |
+| `+` | `ViewReservationbyId() : void` | Fallback lookup by reservation ID |
 
 ---
 
@@ -368,7 +367,7 @@ generateFinancialReport(int days) : void
 
 ```java
 manageCheckIn(int reservationId) : void   // Confirms reservation, marks room unavailable
-manageCheckOut(int reservationId) : void  // Completes reservation, marks room available
+manageCheckOut(int reservationId) : void  // Completes reservation after payment is verified
 ```
 
 ---
@@ -388,16 +387,18 @@ Defined by **Mostafa**.
 | `-` | `checkOutDate : LocalDate` |
 | `-` | `status : ReservationStatus` |
 | `-` | `diningPackage : DiningPackage` |
-| `-` | `selectedAmenities : List<Amenity>` |
+| `-` | `requestedAmenities : List<Amenity>` |
 | `-` | `cancellationPenalty : double` |
-| `+` | `confirmReservation() : void` |
-| `+` | `cancelReservation() : void` |
-| `+` | `completeReservation() : void` |
-| `+` | `calculateNights() : int` |
-| `+` | `calculateAmenityTotal() : double` |
-| `+` | `updateDiningPackage(DiningPackage) : void` |
+| `-` | `numChildren : int` |
+| `-` | `numAdults : int` |
+| `+` | `confirmreservation() : void` |
+| `+` | `cancelreservation() : void` |
+| `+` | `completereservation() : void` |
+| `+` | `calcnights() : int` |
+| `+` | `calcamenitytotal() : double` |
+| `+` | `updatediningpack(DiningPackage) : void` |
 
-> `calculateNights()` uses `ChronoUnit.DAYS.between(checkInDate, checkOutDate)`
+> `calcnights()` uses `ChronoUnit.DAYS.between(CheckinDate, CheckoutDate)`
 
 ---
 
@@ -415,10 +416,21 @@ Defined by **Mostafa**.
 | `-` | `discountAmount : double` |
 | `+` | `pay(Guest, PaymentMethod) : void` |
 | `+` | `getTotal() : double` |
-| `+` | `generateItemizedSummary() : String` |
 
-> `getTotal()` returns `totalAmount - discountAmount`
+> `getTotal()` returns `totalAmount`
 > `pay()` deducts from `guest.balance`, sets `isPaid = true`, records method and date
+
+---
+
+#### `PromoCode`
+
+| Modifier | Member |
+|----------|--------|
+| `-` | `code : String` |
+| `-` | `discountPercentage : double` |
+| `-` | `expiryDate : LocalDate` |
+| `-` | `isActive : boolean` |
+| `+` | `isActive() : boolean` | Returns `true` only if active and not expired |
 
 ---
 
@@ -431,22 +443,22 @@ Defined by **Omar**.
 ```java
 public interface Manageable {
     // Room
-    void createRoom(Room room);
-    Room readRoom(int roomNumber);
-    void updateRoom(int roomNumber, Room updatedRoom);
-    void deleteRoom(int roomNumber);
+    void createRoom(Room room) throws Exception;
+    Room readRoom(int roomNumber) throws Exception;
+    void updateRoom(int roomNumber, Room updatedRoom) throws Exception;
+    void deleteRoom(int roomNumber) throws Exception;
 
     // Amenity
-    void createAmenity(Amenity amenity);
-    Amenity readAmenity(String name);
-    void updateAmenity(String name, Amenity updatedAmenity);
-    void deleteAmenity(String name);
+    void createAmenity(Amenity amenity) throws Exception;
+    Amenity readAmenity(String name) throws Exception;
+    void updateAmenity(String name, Amenity updatedAmenity) throws Exception;
+    void deleteAmenity(String name) throws Exception;
 
     // RoomType
-    void createRoomType(RoomType type);
-    RoomType readRoomType(String typeName);
-    void updateRoomType(String typeName, RoomType updatedType);
-    void deleteRoomType(String typeName);
+    void createRoomType(RoomType type) throws Exception;
+    RoomType readRoomType(String typeName) throws Exception;
+    void updateRoomType(String typeName, RoomType updatedType) throws Exception;
+    void deleteRoomType(String typeName) throws Exception;
 }
 ```
 
@@ -469,11 +481,9 @@ Implemented by: `Invoice`
 
 ### Core Infrastructure
 
-Defined by **Omar**. Omar's scope is the widest in the project — spanning enums, all physical entity classes, interface contracts, folder structure and file pathing, the UML diagram, the centralised database with file persistence, the console test runner, ongoing code integration, and teammate coordination throughout the milestone.
-
 #### `Database`
 
-Centralised static in-memory storage hub with file persistence. All collections are static and shared across the entire application.
+Defined by **Omar**. Centralised static in-memory storage hub with file persistence. All collections are static and shared across the entire application.
 
 ```java
 public class Database {
@@ -483,11 +493,12 @@ public class Database {
     private static List<Invoice>     invoices     = new ArrayList<>();
     private static List<RoomType>    roomTypes    = new ArrayList<>();
     private static List<Amenity>     amenities    = new ArrayList<>();
+    private static List<Admin>       admins       = new ArrayList<>();
+    private static List<Receptionist> receptionists = new ArrayList<>();
+    private static List<PromoCode>   promoCodes   = new ArrayList<>();
 
     public static void saveData()                                { ... }
     public static void loadData()                                { ... }
-    public static Guest  findGuestByUsername(String username)    { ... }
-    public static Room   findRoomByNumber(int roomNumber)        { ... }
 }
 ```
 
@@ -495,37 +506,41 @@ public class Database {
 
 ---
 
-#### `BookingEngine` *(Deferred — Later Phase)*
+#### `BookingEngine`
 
-The `BookingEngine` holds all complex calculation and workflow logic. It is defined now but implemented after all entity models are stable.
+The `BookingEngine` contains all complex calculation and workflow logic. Each method was implemented by the team member indicated below, matching the UML assignment diagram.
 
 ```java
 public class BookingEngine {
-    private Database database;
 
     // Room availability & filtering
-    List<Room>    getAvailableRooms(LocalDate checkIn, LocalDate checkOut)
-    List<Room>    filterRooms(String roomType, double maxPrice)
-    List<Room>    sortRooms(List<Room> rooms, boolean ascending)
-    List<String>  suggestPackages()
+    List<Room>   getAvailableRooms(LocalDate checkIn, LocalDate checkOut)     // Basel
+    List<Room>   filterRooms(String roomType, RoomView roomView, double maxPrice) // Basel
+    void         viewAllRooms()                                                // Basel
+    List<Room>   sortRooms(List<Room> rooms, boolean ascending)               // Basel
+    List<String> viewAllDiningPackages()                                       // Basel (implied)
+    List<String> suggestPackages(Guest guest)                                  // Basel
 
     // Cost calculations
-    double calculateRoomCost(Room room, LocalDate in, LocalDate out)
-    double calculateDiningCost(DiningPackage packageType, int nights)
-    double calculateAmenityCost(List<Amenity> selectedAmenities)
-    double calculateTotalReservationCost(Reservation reservationDraft)
+    double calculateRoomCost(Room room, LocalDate in, LocalDate out)          // Basel
+    double calculateDiningCost(DiningPackage packageType, int nights)         // Omar
+    double calculateAmenityCost(List<Amenity> selectedAmenities)              // Adam
+    double calculateTotalReservationCost(Reservation reservation)             // Mostafa
 
-    // Booking workflow
-    double      validatePromoCode(String code)
-    Reservation createDraftReservation(Guest guest, Room room, LocalDate in, LocalDate out)
-    boolean     confirmReservation(int reservationId, PaymentMethod paymentMethod)
-    void        processCancellation(int reservationId, LocalDate cancelDate)
+    // Booking & payment workflow
+    double      validatePromoCode(String code)                                // Belal
+    Reservation createDraftReservation(Guest, Room, LocalDate, LocalDate,
+                    DiningPackage, int, int, Receptionist)                    // Omar
+    boolean     confirmReservation(int reservationId, PaymentMethod method)   // Omar
+    void        processCancellation(int reservationId, LocalDate cancelDate)  // Mostafa (pending)
+    double      calculateCancellationPenalty(int reservationId,
+                    LocalDate cancelDate)                                      // Belal
+    Invoice     generateInvoice(Reservation reservation, String promoCode)    // Omar
 
     // Financial reporting
-    double  calculateCancellationPenalty(Reservation reservation, LocalDate cancelDate)
-    double  calculateTotalRevenue()
-    double  calculateOccupancyPercentage()
-    Invoice generateInvoice(Reservation reservation)
+    double calculateTotalRevenue()                                             // Adam
+    double calcualteTotalRevenue(LocalDate startDate, LocalDate endDate)      // Adam
+    double calculateOccupancyPercentage()                                      // Mostafa
 }
 ```
 
@@ -533,12 +548,13 @@ public class BookingEngine {
 
 ## 👥 Team & Task Assignment
 
-| # | Member | Domain | Classes / Interfaces |
-|---|--------|--------|----------------------|
-| 01 | **Omar** | Foundation, Infrastructure & Integration | `AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender`, `RoomView`, `UserType`, `Amenity`, `RoomType`, `Room`, `Review`, `Manageable`, `Payable`, `Database`, `Main`, `BookingEngine` · folder structure · file pathing · UML diagram · code integration · team coordination |
-| 02 | **Belal** | User Hierarchy & Authentication | `User` *(abstract)*, `Guest`, `Staff` *(abstract)*, `Admin` |
-| 03 | **Adam** | Administration & Operations | `Admin` CRUD methods, `Receptionist` |
-| 04 | **Mostafa** | Booking & Financial Models | `Reservation`, `Invoice` |
+| # | Member | Domain | Responsibilities |
+|---|--------|--------|-----------------|
+| 01 | **Omar** | Foundation, Infrastructure & Debugging | `AccountStatus`, `DiningPackage`, `PaymentMethod`, `ReservationStatus`, `Gender`, `RoomView`, `UserType`, `Amenity`, `RoomType`, `Room`, `Review`, `Manageable`, `Payable`, `Database`, folder structure, file pathing, UML diagram · `BookingEngine`: `calculateDiningCost`, `createDraftReservation`, `confirmReservation`, `generateInvoice` · **System-wide debugging** |
+| 02 | **Belal** | User Hierarchy, Authentication & Debugging | `User` *(abstract)*, `Guest`, `Staff` *(abstract)* · `BookingEngine`: `validatePromoCode`, `calculateCancellationPenalty` · **System-wide debugging** |
+| 03 | **Adam** | Administration, Operations & Debugging | `Admin` CRUD methods, `Receptionist` · `BookingEngine`: `calculateAmenityCost`, `calculateTotalRevenue` (both overloads) · **System-wide debugging** |
+| 04 | **Mostafa** | Booking, Finance & Console Testing | `Reservation`, `Invoice` · `BookingEngine`: `calculateTotalReservationCost`, `calculateOccupancyPercentage` · **`Main` console test runner** |
+| 05 | **Basel** | Room Logic & Console Testing | `BookingEngine`: `getAvailableRooms`, `filterRooms`, `viewAllRooms`, `sortRooms`, `suggestPackages`, `calculateRoomCost` · **`Main` console test runner** |
 
 ---
 
@@ -551,13 +567,18 @@ Adam   ──── depends on ──► Omar   (Room, RoomType, Amenity, Databa
              depends on ──► Belal  (Staff abstract class)
 Mostafa ─── depends on ──► Omar   (Room, Amenity, Database, Payable interface)
              depends on ──► Belal  (Guest class)
+Basel  ──── depends on ──► Omar   (Room, RoomType, Database)
+             depends on ──► Mostafa (Reservation)
 ```
 
 **Recommended build order:**
 1. Omar delivers all enums, entity classes, interfaces, and empty `Database`
 2. Belal delivers user hierarchy (`User`, `Guest`, `Staff`)
-3. Adam and Mostafa work in parallel
-4. Omar completes `Main`, integration testing, and `BookingEngine`
+3. Adam and Mostafa work in parallel on their entity/staff classes
+4. Basel implements `BookingEngine` room-side methods
+5. Omar completes remaining `BookingEngine` methods and integration
+6. Basel and Mostafa collaborate on `Main` console test runner
+7. Omar, Belal, and Adam perform full system debugging
 
 ---
 
@@ -592,7 +613,7 @@ java -cp out hotel.core.Main
 
 ## ▶️ Running the Project
 
-The `Main` class is the entry point for Milestone 1. It runs a full end-to-end simulation in the console — no GUI required.
+The `Main` class is the entry point for Milestone 1. It runs a full end-to-end simulation in the console — no GUI required. The console test runner was implemented by **Basel** and **Mostafa**.
 
 ```
 $ java -cp out hotel.core.Main
@@ -679,6 +700,7 @@ main
             feature/omar/Database
             feature/mostafa/Reservation
             feature/adam/Receptionist
+            feature/basel/BookingEngine
 ```
 
 1. **Branch** off `main` using the naming convention above
