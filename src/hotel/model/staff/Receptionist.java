@@ -3,8 +3,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
-
+import hotel.model.enums.AccountStatus;
+import hotel.model.enums.Gender;
 import hotel.model.enums.ReservationStatus;
+import hotel.model.enums.UserType;
 import hotel.model.users.*;
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
@@ -12,9 +14,9 @@ import hotel.model.bookings.Reservation;
 public class Receptionist extends Staff {
     private List<Reservation> draftReservations;
 
-    public Receptionist(String name, String password, LocalDate dateOfBirth, String address, String phoneNumber, int workingHours) 
+    public Receptionist(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, int workingHours) 
     {
-        super(name, password, dateOfBirth, address, phoneNumber, workingHours);
+        super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address, workingHours);
         this.draftReservations = new ArrayList<>();
     }
 
