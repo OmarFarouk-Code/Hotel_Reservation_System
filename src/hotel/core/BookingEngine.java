@@ -1,5 +1,4 @@
 package hotel.core;
-
 import hotel.model.entities.Amenity;
 import hotel.model.entities.Room;
 import hotel.model.entities.RoomType;
