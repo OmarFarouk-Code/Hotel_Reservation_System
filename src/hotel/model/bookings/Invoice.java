@@ -115,4 +115,45 @@ public class Invoice implements Payable , Serializable
             System.out.println("Insufficient guest balance.");
         }
     }
+
+    public String generateItemizedSummary() {
+        if (this.reservation == null) {
+            return "Error: No reservation linked to this invoice.";
+        }
+
+        StringBuilder summary = new StringBuilder();
+        long nights = java.time.temporal.ChronoUnit.DAYS.between(
+                reservation.getCheckinDate(),
+                reservation.getCheckoutDate()
+        );
+        if (nights <= 0) nights = 1;
+
+        summary.append("\n--- ITEMIZATION FOR INVOICE #").append(invoiceID).append(" ---\n");
+
+        double roomPrice = reservation.getRoom().getRoomType().getPricePerNight();
+        summary.append(String.format("Room Cost (%d nights @ $%.2f/night): $%.2f\n",
+                nights, roomPrice, (roomPrice * nights)));
+
+        if (reservation.getDiningpackage() != null) {
+            summary.append("Dining Package (").append(reservation.getDiningpackage()).append("): Included in Total\n");
+        }
+
+        if (!reservation.getSelectedAmenities().isEmpty()) {
+            summary.append("Amenities:\n");
+            for (hotel.model.entities.Amenity a : reservation.getSelectedAmenities()) {
+                summary.append(String.format("  - %-15s : $%.2f\n", a.getAmenityName(), a.getAmenityPrice()));
+            }
+        }
+
+        if (this.discountAmount > 0) {
+            summary.append(String.format("Promo Discount (%s): -$%.2f\n",
+                    (appliedPromoCode != null ? appliedPromoCode : "Applied"), this.discountAmount));
+        }
+
+        summary.append("------------------------------------------\n");
+        summary.append(String.format("GRAND TOTAL: $%.2f\n", this.totalAmount));
+        summary.append("------------------------------------------\n");
+
+        return summary.toString();
+    }
 }

@@ -19,6 +19,10 @@ public class Guest extends User
         this.input = input;
     }
 
+    public Guest() {
+
+    }
+
     public double getBalance() {
         return balance;
     }
