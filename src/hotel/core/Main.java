@@ -1,5 +1,6 @@
 package hotel.core;
 
+import hotel.model.bookings.Reservation;
 import hotel.model.entities.*;
 import hotel.model.enums.*;
 import hotel.model.staff.*;
@@ -340,7 +341,32 @@ public class Main {
                     break;
                 }
                 case "3": {
-                    System.out.print("Reservation ID: "); engine.processCancellation(Integer.parseInt(sc.nextLine()), LocalDate.now());
+                    // 1. Automatically fetch reservations for THIS guest
+                    List<Reservation> myActiveBookings = engine.getReservationsForGuest(guest);
+
+                    if (myActiveBookings.isEmpty()) {
+                        System.out.println("You have no active reservations to cancel.");
+                    } else {
+                        System.out.println("\n--- Your Active Bookings ---");
+                        for (int i = 0; i < myActiveBookings.size(); i++) {
+                            Reservation r = myActiveBookings.get(i);
+                            System.out.println((i + 1) + ". Room " + r.getRoom().getRoomNumber() +
+                                    " [" + r.getCheckinDate() + " to " + r.getCheckoutDate() + "]");
+                        }
+
+                        System.out.print("Enter the number of the booking to cancel (or 0 to exit): ");
+                        try {
+                            int choice1 = Integer.parseInt(sc.nextLine());
+                            if (choice1 > 0 && choice1 <= myActiveBookings.size()) {
+                                // 2. Pass the ID internally without the user ever typing it
+                                Reservation selected = myActiveBookings.get(choice1 - 1);
+                                engine.processCancellation(selected.getReservationID(), LocalDate.now());
+                                System.out.println("Cancellation request submitted successfully.");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input. Please enter a number.");
+                        }
+                    }
                     break;
                 }
                 case "4": guest.ResetPassword(guest.getUserName(), UserType.GUEST); break;
