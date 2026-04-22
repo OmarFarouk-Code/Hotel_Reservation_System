@@ -10,7 +10,8 @@ public class Main {
     private static Scanner sc = new Scanner(System.in);
     private static BookingEngine engine = new BookingEngine();
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         Database.loadData();
         try {
             showMainMenu();
