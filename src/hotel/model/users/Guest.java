@@ -79,7 +79,7 @@ public class Guest extends User
             }
             if(choice==2) 
             {
-                Login();
+                Login(UserType.GUEST);
             }
         }
     }
