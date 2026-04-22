@@ -130,7 +130,7 @@ public class Guest extends User
 
         public void register() {
             System.out.println("Please enter a username ");
-            UserName = input.nextLine();
+            UserName = input.nextLine().trim();
 
             System.out.println("Please enter a password");
             System.out.println("** Password rules **");
@@ -139,7 +139,7 @@ public class Guest extends User
             password = input.nextLine();
             while(!passwordcheck(password)){
                 System.out.println("You didn't Satisfy password rules,try again");
-                password = input.nextLine();
+                password = input.nextLine().trim();
                 passwordcheck(password);
             }
             System.out.println("Password has been created successfully");
@@ -158,16 +158,16 @@ public class Guest extends User
                 }
             }
             System.out.println("Please enter your date of birth YYYY-MM-DD");
-            String userInput = input.nextLine();
+            String userInput = input.nextLine().trim();
             if(!Datechecker(userInput)){
                 System.out.println("Invalid date format, please re-enter it (YYYY-MM-DD)");
-                userInput = input.nextLine();
+                userInput = input.nextLine().trim();
             }
             dateOfbirth = LocalDate.parse(userInput);
             System.out.println("Please enter your phone number");
-            phoneNumber=input.nextLine();
+            phoneNumber=input.nextLine().trim();
             System.out.println("Please enter your address");
-            address=input.nextLine();
+            address=input.nextLine().trim();
             Database.getGuests().add(this);
             Database.saveData();
 
