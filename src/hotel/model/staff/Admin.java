@@ -3,10 +3,6 @@ import java.util.List;
 import hotel.core.Database;
 import hotel.model.entities.*;
 import hotel.model.bookings.Invoice;
-import hotel.model.enums.AccountStatus;
-import hotel.model.enums.Gender;
-import hotel.model.enums.UserType;
-
 import java.time.LocalDate;
 import hotel.interfaces.*;
 public class  Admin extends Staff implements Manageable

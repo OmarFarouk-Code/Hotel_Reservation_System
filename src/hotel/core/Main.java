@@ -31,7 +31,7 @@ public class Main {
                     break;
                 }
                 case "2" : {
-                    showReceptionistMenu(new Receptionist(choice, choice, null, null, choice, 0, null, null, choice, choice, 0));
+                    showReceptionistMenu(new Receptionist());
                     break;
                 }
                 case "3" : {

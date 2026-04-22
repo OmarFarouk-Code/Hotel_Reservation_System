@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Random;
 import java.io.*; // Import this for File IO
 import java.time.LocalDate;
-
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
 import hotel.model.users.Guest;
@@ -132,17 +131,13 @@ public class Database
         Database.getAmenities().add(wifi);
 
         // 3. Generate Room Types
-        RoomType standardGarden = new RoomType("Standard Oasis", 2000.0, RoomView.GARDEN, "Comfortable room overlooking the lush hotel gardens.", 1.0, 2000.0);
-        standardGarden.setMaxCapacity(2);
+        RoomType standardGarden = new RoomType("Standard Oasis", 2000.0, RoomView.GARDEN, "Comfortable room overlooking the lush hotel gardens.", 1.0, 2000.0 , 2);
         
-        RoomType standardPool = new RoomType("Poolside Classic", 2500.0, RoomView.POOL, "Direct access to the central swimming pool.", 1.0, 2500.0);
-        standardPool.setMaxCapacity(2);
+        RoomType standardPool = new RoomType("Poolside Classic", 2500.0, RoomView.POOL, "Direct access to the central swimming pool.", 1.0, 2500.0 ,2);
         
-        RoomType seaViewDeluxe = new RoomType("Red Sea Deluxe", 4000.0, RoomView.SEA_VIEW, "Spacious room with a panoramic view of the Red Sea.", 1.2, 3333.33);
-        seaViewDeluxe.setMaxCapacity(3);
+        RoomType seaViewDeluxe = new RoomType("Red Sea Deluxe", 4000.0, RoomView.SEA_VIEW, "Spacious room with a panoramic view of the Red Sea.", 1.2, 3333.33, 3);
         
-        RoomType nileSuite = new RoomType("Pharaoh Suite", 8500.0, RoomView.SEA_VIEW, "Luxury suite featuring premium furnishings and a wide balcony.", 1.5, 5666.67);
-        nileSuite.setMaxCapacity(4);
+        RoomType nileSuite = new RoomType("Pharaoh Suite", 8500.0, RoomView.SEA_VIEW, "Luxury suite featuring premium furnishings and a wide balcony.", 1.5, 5666.67, 4);
 
         Database.getRoomTypes().add(standardGarden);
         Database.getRoomTypes().add(standardPool);
@@ -211,8 +206,7 @@ public class Database
                 LocalDate.of(1985, 4, 12), "+201011111111", "New Cairo, Egypt", 8, Database.getRooms());
         Database.getAdmins().add(admin1);
 
-        Receptionist rec1 = new Receptionist("frontdesk_aya", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, 
-                LocalDate.of(1998, 9, 21), "+201222222222", "Nasr City, Cairo", 8);
+        Receptionist rec1 = new Receptionist("frontdesk_aya", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1998, 9, 21), "+201222222222", "Nasr City, Cairo", 8);
         Database.getReceptionists().add(rec1);
 
         // 8. Generate Active/Past Reservations & Invoices
