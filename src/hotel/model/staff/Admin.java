@@ -6,7 +6,7 @@ import hotel.model.bookings.Invoice;
 import hotel.model.enums.AccountStatus;
 import hotel.model.enums.Gender;
 import hotel.model.enums.UserType;
-import hotel.model.users.*;
+
 import java.time.LocalDate;
 import hotel.interfaces.*;
 public class  Admin extends Staff implements Manageable
@@ -16,11 +16,6 @@ public class  Admin extends Staff implements Manageable
     private List<Amenity> amenityList;
     private List<RoomType> roomTypeList;
     private List<Invoice> invoicesList;
-
-    public Admin(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, int workingHours, List<Room> roomList) {
-        super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address, workingHours);
-        this.roomList = roomList;
-    }
 
     public Admin() { }
 
@@ -274,7 +269,7 @@ public class  Admin extends Staff implements Manageable
 
         System.out.println("\n--- Financial Report (Last " + days + " Days) ---");
         for (Invoice inv : invoicesList) {
-            if (inv.getPaymentDate().isAfter(cutoffDate) || inv.getPaymentDate().isEqual(cutoffDate)) {
+            if (inv.isPaid() && inv.getPaymentDate().isAfter(cutoffDate) || inv.getPaymentDate().isEqual(cutoffDate)) {
                 total += inv.getTotalAmount();
                 System.out.println("ID: " + inv.getInvoiceID() + " | Date: " + inv.getPaymentDate() + " | Amount: $" + inv.getTotalAmount());
             }

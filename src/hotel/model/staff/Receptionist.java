@@ -5,7 +5,6 @@ import java.util.List;
 import hotel.core.Database;
 
 import hotel.model.enums.ReservationStatus;
-import hotel.model.users.*;
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
 
