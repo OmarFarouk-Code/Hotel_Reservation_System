@@ -12,7 +12,11 @@ public class Main {
 
     public static void main(String[] args) {
         Database.loadData();
-        showMainMenu();
+        try {
+            showMainMenu();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // --- 1. MAIN MENU ---
