@@ -1,22 +1,17 @@
 package hotel.core;
-import hotel.model.bookings.PromoCode;
+
+import hotel.model.bookings.*;
 import hotel.model.entities.*;
-import hotel.model.enums.AccountStatus;
-import hotel.model.enums.DiningPackage;
-import hotel.model.enums.Gender;
-import hotel.model.enums.PaymentMethod;
-import hotel.model.enums.ReservationStatus;
-import hotel.model.enums.RoomView;
-import hotel.model.enums.UserType;
+import hotel.model.enums.*;
 import hotel.model.staff.*;
+import hotel.model.users.*;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.io.*; // Import this for File IO
+import java.io.*; 
 import java.time.LocalDate;
-import hotel.model.bookings.Invoice;
-import hotel.model.bookings.Reservation;
-import hotel.model.users.Guest;
 
 public class Database
 {
@@ -26,18 +21,12 @@ public class Database
     private static List<Invoice> invoices = new ArrayList<>();
     private static List<RoomType> roomTypes = new ArrayList<>();
     private static List<Amenity> amenities = new ArrayList<>();
-    private static List<Admin> admins=new ArrayList<>();
-    private static List<Receptionist> receptionists=new ArrayList<>();
+    private static List<Admin> admins = new ArrayList<>();
+    private static List<Receptionist> receptionists = new ArrayList<>();
     private static List<PromoCode> promoCodes = new ArrayList<>();
 
-    public static List<PromoCode> getPromoCodes() {
-        return promoCodes;
-    }
-
-    public static void setPromoCodes(List<PromoCode> promoCodes) {
-        Database.promoCodes = promoCodes;
-    }
-
+    public static List<PromoCode> getPromoCodes() { return promoCodes; }
+    public static void setPromoCodes(List<PromoCode> promoCodes) { Database.promoCodes = promoCodes; }
 
     private Database() {}
 
@@ -48,15 +37,14 @@ public class Database
     public static List<Invoice> getInvoices() { return invoices; }
     public static List<RoomType> getRoomTypes() { return roomTypes; }
     public static List<Amenity> getAmenities() { return amenities; }
-    public static List<Admin> getAdmins(){return admins;}
-    public static List<Receptionist> getReceptionists(){return receptionists;}
+    public static List<Admin> getAdmins(){ return admins; }
+    public static List<Receptionist> getReceptionists(){ return receptionists; }
+    
     private static final String FILE_NAME = "hotel_data.dat";
 
-    // Call this whenever you change something (Create, Update, Delete)
     public static void saveData() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-            // Create an array or a custom object to hold EVERYTHING
-            Object[] allData = {guests, rooms, reservations, invoices, roomTypes, amenities,admins,receptionists,promoCodes};
+            Object[] allData = {guests, rooms, reservations, invoices, roomTypes, amenities, admins, receptionists, promoCodes};
             oos.writeObject(allData);
             System.out.println("Data saved successfully!");
         } catch (IOException e) {
@@ -64,12 +52,10 @@ public class Database
         }
     }
 
-    // Call this ONCE when your program first starts
     @SuppressWarnings("unchecked")
     public static void loadData() {
         File file = new File(FILE_NAME);
 
-        // If file doesn't exist or is empty, we keep the empty lists initialized above
         if (!file.exists() || file.length() == 0) {
             System.out.println("No data found, starting with fresh lists.");
             return;
@@ -80,8 +66,6 @@ public class Database
 
             if (obj instanceof Object[]) {
                 Object[] allData = (Object[]) obj;
-
-                // Restore in the EXACT order they were saved in saveData()
                 guests = (List<Guest>) allData[0];
                 rooms = (List<Room>) allData[1];
                 reservations = (List<Reservation>) allData[2];
@@ -90,8 +74,7 @@ public class Database
                 amenities = (List<Amenity>) allData[5];
                 admins = (List<Admin>) allData[6];
                 receptionists = (List<Receptionist>) allData[7];
-                promoCodes=(List<PromoCode>) allData[8];
-
+                promoCodes = (List<PromoCode>) allData[8];
                 System.out.println("Data loaded successfully.");
             }
         } catch (Exception e) {
@@ -100,11 +83,11 @@ public class Database
         }
     }
 
-        public static void initializeHotelData() {
-        System.out.println("[SEEDER] Initializing massive Egyptian dummy data...");
+    public static void initializeHotelData() {
+        System.out.println("[SEEDER] Initializing Hurghada Beach Resort data...");
         Random rand = new Random();
 
-        // 1. Clear existing lists to prevent duplicates on multiple runs
+        // 1. Clear existing lists
         Database.getAmenities().clear();
         Database.getRoomTypes().clear();
         Database.getRooms().clear();
@@ -115,168 +98,153 @@ public class Database
         Database.getReservations().clear();
         Database.getInvoices().clear();
 
-        // 2. Generate Amenities
-        Amenity airportTransfer = new Amenity("Airport Shuttle", "Direct transfer to Cairo International Airport (CAI)", 800.0);
-        Amenity snorkeling = new Amenity("Snorkeling Gear", "Full day rental for Red Sea diving", 350.0);
-        Amenity nileCruise = new Amenity("Felucca Ride", "1-hour traditional sailboat ride on the Nile", 450.0);
-        Amenity spa = new Amenity("Pharaonic Spa", "Full body massage and Cleopatra milk bath", 1200.0);
-        Amenity gym = new Amenity("Gym Access", "24/7 access to the fitness center", 150.0);
-        Amenity wifi = new Amenity("Premium WiFi", "High-speed internet access", 100.0);
+        // 2. Generate Hurghada-Specific Amenities
+        Amenity scuba = new Amenity("Scuba Diving Excursion", "Guided dive in the Giftun Island coral reefs", 1500.0);
+        Amenity kiteSurf = new Amenity("Kitesurfing Lesson", "2-hour beginner lesson on the private beach", 1200.0);
+        Amenity safari = new Amenity("Desert Quad Safari", "Sunset quad biking in the Eastern Desert with Bedouin tea", 900.0);
+        Amenity spa = new Amenity("Red Sea Spa", "Full body massage with Dead Sea minerals", 1800.0);
+        Amenity transfer = new Amenity("Airport Transfer", "Private VIP transfer to/from Hurghada International Airport", 600.0);
+        Amenity aquaPark = new Amenity("Aqua Park VIP Pass", "Skip-the-line access to the giant water slides", 300.0);
+        Amenity wifi = new Amenity("Premium WiFi", "High-speed internet across the resort and beach", 150.0);
         
-        Database.getAmenities().add(airportTransfer);
-        Database.getAmenities().add(snorkeling);
-        Database.getAmenities().add(nileCruise);
-        Database.getAmenities().add(spa);
-        Database.getAmenities().add(gym);
-        Database.getAmenities().add(wifi);
+        // FIX: Replaced List.of with Arrays.asList to guarantee compatibility
+        Database.getAmenities().addAll(Arrays.asList(scuba, kiteSurf, safari, spa, transfer, aquaPark, wifi));
 
-        // 3. Generate Room Types
-        RoomType standardGarden = new RoomType("Standard Oasis", 2000.0, RoomView.GARDEN, "Comfortable room overlooking the lush hotel gardens.", 1.0, 2000.0 , 2);
-        
-        RoomType standardPool = new RoomType("Poolside Classic", 2500.0, RoomView.POOL, "Direct access to the central swimming pool.", 1.0, 2500.0 ,2);
-        
-        RoomType seaViewDeluxe = new RoomType("Red Sea Deluxe", 4000.0, RoomView.SEA_VIEW, "Spacious room with a panoramic view of the Red Sea.", 1.2, 3333.33, 3);
-        
-        RoomType nileSuite = new RoomType("Pharaoh Suite", 8500.0, RoomView.SEA_VIEW, "Luxury suite featuring premium furnishings and a wide balcony.", 1.5, 5666.67, 4);
+        // 3. Generate Realistic Room Types
+        RoomType gardenView = new RoomType("Standard Garden Oasis", 2500.0, RoomView.GARDEN, "Comfortable room overlooking the lush resort gardens and palm trees.", 1.0, 2500.0, 2);
+        RoomType poolView = new RoomType("Deluxe Pool View", 3500.0, RoomView.POOL, "Spacious room with a balcony directly facing the main heated pool.", 1.1, 3181.8, 3);
+        RoomType seaView = new RoomType("Red Sea Premium", 4800.0, RoomView.SEA_VIEW, "Stunning panoramic views of the Red Sea crystal clear waters.", 1.3, 3692.3, 3);
+        RoomType royalSuite = new RoomType("Hurghada Royal Suite", 12000.0, RoomView.SEA_VIEW, "Luxurious top-floor suite with a private jacuzzi overlooking the sea.", 1.5, 8000.0, 5);
 
-        Database.getRoomTypes().add(standardGarden);
-        Database.getRoomTypes().add(standardPool);
-        Database.getRoomTypes().add(seaViewDeluxe);
-        Database.getRoomTypes().add(nileSuite);
+        Database.getRoomTypes().addAll(Arrays.asList(gardenView, poolView, seaView, royalSuite));
 
-        // 4. Generate Massive Rooms (100 Rooms across 5 Floors)
-        RoomType[] types = {standardGarden, standardPool, seaViewDeluxe, nileSuite};
+        // 4. Generate 50 Rooms (5 Floors, 10 Rooms per floor)
         for (int floor = 1; floor <= 5; floor++) {
-            for (int r = 1; r <= 20; r++) {
+            for (int r = 1; r <= 10; r++) {
                 int roomNumber = (floor * 100) + r;
-                // Distribute room types: Mostly standard, some deluxe, few suites
                 RoomType type;
-                if (r <= 10) type = types[0];
-                else if (r <= 15) type = types[1];
-                else if (r <= 18) type = types[2];
-                else type = types[3];
+                if (r <= 4) type = gardenView;       // 40% Garden
+                else if (r <= 7) type = poolView;    // 30% Pool
+                else if (r <= 9) type = seaView;     // 20% Sea View
+                else type = royalSuite;              // 10% Suites
 
                 Room room = new Room(roomNumber, floor, type);
-                
-                // Add random base amenities
                 room.addAmenity(wifi);
-                if (type.getTypeName().contains("Suite") || type.getTypeName().contains("Deluxe")) {
-                    room.addAmenity(gym);
+                if (type.getTypeName().contains("Suite")) {
+                    room.addAmenity(spa);
+                    room.addAmenity(transfer);
                 }
                 Database.getRooms().add(room);
             }
         }
 
-        // 5. Generate Promo Codes
-        Database.getPromoCodes().add(new PromoCode("EGYPT2026", 0.15, LocalDate.now().plusMonths(6)));
-        Database.getPromoCodes().add(new PromoCode("ASU_STUDENT", 0.20, LocalDate.now().plusMonths(12)));
-        Database.getPromoCodes().add(new PromoCode("NILE_BREEZE", 0.10, LocalDate.now().plusMonths(1)));
+        // 5. Generate Realistic Reviews (20 reviews)
+        String[] reviewTexts = {
+            "The coral reefs right off the hotel beach are unbelievable!",
+            "Great stay, but the WiFi on the beach was a bit weak.",
+            "Loved the Aqua Park! The kids had an amazing time.",
+            "The sea view from the balcony made the entire trip worth it.",
+            "Kitesurfing instructors were very professional.",
+            "Food at the open buffet was excellent, lots of variety.",
+            "Perfect weather and the heated pool was a nice touch.",
+            "The desert quad safari booked through the hotel was thrilling!",
+            "Room was spotless. Housekeeping does a fantastic job.",
+            "The Bedouin tea during the safari was delicious.",
+            "A bit crowded near the main pool, but the beach was quiet.",
+            "The Red Sea Spa massage really helped me relax.",
+            "Absolutely beautiful resort. We will be back next year!",
+            "Great value for money. The All-Inclusive package is totally worth it.",
+            "The scuba diving excursion changed my life. Beautiful marine life.",
+            "Front desk staff were very welcoming and helpful.",
+            "Loved waking up to the sunrise over the Red Sea.",
+            "Drinks at the beach bar were fantastic.",
+            "Could have more vegetarian options at dinner, but overall good.",
+            "Our royal suite was beyond luxurious. Perfect honeymoon destination!"
+        };
 
-        // 6. Generate Massive Guests
-        String[] maleNames = {"Ahmed", "Mohamed", "Mahmoud", "Youssef", "Kareem", "Tarek", "Mostafa", "Sharif", "Hassan", "Amr"};
-        String[] femaleNames = {"Fatma", "Aya", "Nada", "Salma", "Hla", "Mariam", "Nour", "Mona", "Heba", "Laila"};
-        String[] lastNames = {"Hassan", "Ali", "Ibrahim", "Fawzy", "El-Sayed", "Tawfik", "Abdelrahman", "Mansour", "Gaber", "Aly"};
-        String[] cities = {"Nasr City, Cairo", "New Cairo, Cairo", "Smouha, Alexandria", "Zamalek, Cairo", "Maadi, Cairo", "El Gouna, Red Sea", "Hurghada", "Luxor City", "Aswan"};
+        for (int i = 0; i < 20; i++) {
+            Review review = new Review((rand.nextInt(3) + 3), reviewTexts[i]); // Scores between 3 and 5
+            Room randomRoom = Database.getRooms().get(rand.nextInt(Database.getRooms().size()));
+            randomRoom.addReview(review);
+        }
+
+        // 6. Generate Promo Codes
+        Database.getPromoCodes().add(new PromoCode("HURGHADA2026", 0.15, LocalDate.now().plusMonths(6)));
+        Database.getPromoCodes().add(new PromoCode("SUMMER_SUN", 0.10, LocalDate.now().plusMonths(3)));
+        Database.getPromoCodes().add(new PromoCode("REDSEA_VIBES", 0.20, LocalDate.now().plusMonths(12)));
+
+        // 7. Generate 50 Realistic Guests (Mix of Egyptian and International)
+        String[] fNames = {"Ahmed", "Elena", "John", "Klaus", "Mona", "Youssef", "Olga", "Mark", "Aya", "Dmitry", "Nour", "Sarah", "Omar", "Sophie", "Tarek"};
+        String[] lNames = {"Hassan", "Ivanova", "Smith", "Muller", "Ali", "El-Sayed", "Smirnova", "Taylor", "Mansour", "Volkov", "Gaber", "Williams", "Fawzy", "Davies", "Ibrahim"};
+        String[] cities = {"Cairo, Egypt", "Moscow, Russia", "London, UK", "Berlin, Germany", "Alexandria, Egypt", "Kyiv, Russia", "Manchester, UK", "Munich, Germany", "Giza, Egypt"};
 
         int guestIdCounter = 1000;
-        for (int i = 0; i < 50; i++) { // Generate 50 dummy guests
-            boolean isMale = rand.nextBoolean();
-            String fName = isMale ? maleNames[rand.nextInt(maleNames.length)] : femaleNames[rand.nextInt(femaleNames.length)];
-            String lName = lastNames[rand.nextInt(lastNames.length)];
-            String username = (fName + "_" + lName + i).toLowerCase();
+        for (int i = 0; i < 50; i++) {
+            String fName = fNames[rand.nextInt(fNames.length)];
+            String lName = lNames[rand.nextInt(lNames.length)];
+            String username = (fName.toLowerCase() + "_" + lName.toLowerCase() + i);
             String phone = "+201" + (rand.nextInt(3)) + String.format("%08d", rand.nextInt(100000000));
             String city = cities[rand.nextInt(cities.length)];
-            LocalDate dob = LocalDate.of(1970 + rand.nextInt(40), 1 + rand.nextInt(12), 1 + rand.nextInt(28));
+            LocalDate dob = LocalDate.of(1960 + rand.nextInt(40), 1 + rand.nextInt(12), 1 + rand.nextInt(28));
             
-            Guest guest = new Guest(username, "Pass@1234", UserType.GUEST, isMale ? Gender.MALE : Gender.FEMALE, 
-                    null, 0, AccountStatus.ACTIVE, dob, phone, city, 
-                    10000.0 + (rand.nextDouble() * 50000), // Random balance between 10k and 60k
-                    guestIdCounter++, null);
+            Guest guest = new Guest();
+            guest.setUserName(username);
+            guest.setPassword("Guest@123");
+            guest.setTypeofuser(UserType.GUEST);
+            guest.setTheGender(rand.nextBoolean() ? Gender.MALE : Gender.FEMALE);
+            guest.setAccountStatus(AccountStatus.ACTIVE);
+            guest.setDateOfbirth(dob);
+            guest.setPhoneNumber(phone);
+            guest.setAddress(city);
+            guest.setBalance(20000.0 + (rand.nextDouble() * 80000)); // Balance between 20k and 100k
+            guest.setUniqueId(guestIdCounter++);
             
-            // Adding a specific profile for testing
+            // Hardcode one for easy testing
             if (i == 0) {
-                guest.setUserName("prof_economics");
-                guest.setAddress("Heliopolis, Cairo");
+                guest.setUserName("guest_test");
+                guest.setPassword("Test@123");
             }
             Database.getGuests().add(guest);
         }
 
-        // --- Admins ---
-        // Using setters for Admins to avoid any constructor mismatch errors
-        Admin admin1 = new Admin();
-        admin1.setUserName("admin_omar");
-        admin1.setPassword("Admin@2026");
-        admin1.setTypeofuser(UserType.ADMIN);
-        admin1.setTheGender(Gender.MALE);
-        admin1.setAccountStatus(AccountStatus.ACTIVE);
-        admin1.setDateOfbirth(LocalDate.of(1985, 4, 12));
-        admin1.setPhoneNumber("+201011111111");
-        admin1.setAddress("New Cairo, Egypt");
-        admin1.setWorkingHours(8);
-        Database.getAdmins().add(admin1);
+        // 8. Generate 3 Admins & 3 Receptionists
+        Admin a1 = new Admin(); a1.setUserName("admin_ahmed"); a1.setPassword("Admin@2026"); a1.setTypeofuser(UserType.ADMIN); a1.setAccountStatus(AccountStatus.ACTIVE);
+        Admin a2 = new Admin(); a2.setUserName("admin_sara"); a2.setPassword("Admin@2026"); a2.setTypeofuser(UserType.ADMIN); a2.setAccountStatus(AccountStatus.ACTIVE);
+        Admin a3 = new Admin(); a3.setUserName("admin_tarek"); a3.setPassword("Admin@2026"); a3.setTypeofuser(UserType.ADMIN); a3.setAccountStatus(AccountStatus.ACTIVE);
+        Database.getAdmins().addAll(Arrays.asList(a1, a2, a3));
 
-        Admin admin2 = new Admin();
-        admin2.setUserName("admin_belal");
-        admin2.setPassword("Admin@2026");
-        admin2.setTypeofuser(UserType.ADMIN);
-        admin2.setTheGender(Gender.MALE);
-        admin2.setAccountStatus(AccountStatus.ACTIVE);
-        admin2.setDateOfbirth(LocalDate.of(1990, 8, 25));
-        admin2.setPhoneNumber("+201022222222");
-        admin2.setAddress("Nasr City, Egypt");
-        admin2.setWorkingHours(8);
-        Database.getAdmins().add(admin2);
-        
-        Admin admin3 = new Admin();
-        admin3.setUserName("admin_adam");
-        admin3.setPassword("Admin@2026");
-        admin3.setTypeofuser(UserType.ADMIN);
-        admin3.setTheGender(Gender.MALE);
-        admin3.setAccountStatus(AccountStatus.ACTIVE);
-        admin3.setDateOfbirth(LocalDate.of(1992, 1, 15));
-        admin3.setPhoneNumber("+201033333333");
-        admin3.setAddress("Heliopolis, Egypt");
-        admin3.setWorkingHours(8);
-        Database.getAdmins().add(admin3);
+        Receptionist r1 = new Receptionist(); r1.setUserName("rec_mahmoud"); r1.setPassword("Desk@2026"); r1.setTypeofuser(UserType.RECEPTIONIST); r1.setAccountStatus(AccountStatus.ACTIVE);
+        Receptionist r2 = new Receptionist(); r2.setUserName("rec_yasmine"); r2.setPassword("Desk@2026"); r2.setTypeofuser(UserType.RECEPTIONIST); r2.setAccountStatus(AccountStatus.ACTIVE);
+        Receptionist r3 = new Receptionist(); r3.setUserName("rec_omar"); r3.setPassword("Desk@2026"); r3.setTypeofuser(UserType.RECEPTIONIST); r3.setAccountStatus(AccountStatus.ACTIVE);
+        Database.getReceptionists().addAll(Arrays.asList(r1, r2, r3));
 
-        // --- Receptionists ---
-        Receptionist rec1 = new Receptionist("frontdesk_aya", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1998, 9, 21), "+201123456789", "Nasr City, Cairo", 8);
-        Database.getReceptionists().add(rec1);
-
-        Receptionist rec2 = new Receptionist("frontdesk_tarek", "Desk@2026", UserType.RECEPTIONIST, Gender.MALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1995, 3, 14), "+201198765432", "Maadi, Cairo", 8);
-        Database.getReceptionists().add(rec2);
-
-        Receptionist rec3 = new Receptionist("frontdesk_nada", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(2000, 11, 5), "+201011223344", "Zamalek, Cairo", 6);
-        Database.getReceptionists().add(rec3);
-        
-        Receptionist rec4 = new Receptionist("frontdesk_mostafa", "Desk@2026", UserType.RECEPTIONIST, Gender.MALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1999, 7, 30), "+201099887766", "Rehab City, Cairo", 8);
-        Database.getReceptionists().add(rec4);
-
-        // 8. Generate Active/Past Reservations & Invoices
+        // 9. Generate 50 Reservations & 50 Invoices
         BookingEngine engine = new BookingEngine();
         int resId = 1;
         
-        for (int i = 0; i < 15; i++) { // Generate 15 reservations
+        for (int i = 0; i < 50; i++) {
             Guest guest = Database.getGuests().get(rand.nextInt(Database.getGuests().size()));
             Room room = Database.getRooms().get(rand.nextInt(Database.getRooms().size()));
             
-            // Random dates spanning from last month to next month
-            LocalDate checkIn = LocalDate.now().plusDays(rand.nextInt(30) - 15);
-            LocalDate checkOut = checkIn.plusDays(1 + rand.nextInt(7));
+            // Dates from 30 days ago to 30 days in the future
+            LocalDate checkIn = LocalDate.now().plusDays(rand.nextInt(60) - 30);
+            LocalDate checkOut = checkIn.plusDays(1 + rand.nextInt(10)); // Stays of 1 to 10 nights
             
-            DiningPackage[] dPackages = DiningPackage.values();
+            // Hurghada resorts are mostly ALL_INCLUSIVE or HALF_BOARD
+            DiningPackage[] dPackages = {DiningPackage.ALL_INCLUSIVE, DiningPackage.HALF_BOARD, DiningPackage.FULL_BOARD};
             DiningPackage dp = dPackages[rand.nextInt(dPackages.length)];
             
-            Reservation res = new Reservation(resId++, guest, room, checkIn, checkOut, dp, rand.nextInt(2), 1 + rand.nextInt(2));
+            Reservation res = new Reservation(resId++, guest, room, checkIn, checkOut, dp, rand.nextInt(3), 1 + rand.nextInt(2));
             
-            // Add some amenities randomly
-            if (rand.nextBoolean()) res.getSelectedAmenities().add(airportTransfer);
-            if (rand.nextBoolean()) res.getSelectedAmenities().add(spa);
+            // Add fun amenities randomly
+            if (rand.nextBoolean()) res.getSelectedAmenities().add(aquaPark);
+            if (rand.nextDouble() > 0.7) res.getSelectedAmenities().add(scuba);
+            if (rand.nextDouble() > 0.8) res.getSelectedAmenities().add(safari);
 
-            // Determine status based on dates
+            // Set logical status based on dates
             if (checkOut.isBefore(LocalDate.now())) {
                 res.setStatus(ReservationStatus.COMPLETED);
-            } else if (checkIn.isBefore(LocalDate.now()) && checkOut.isAfter(LocalDate.now())) {
+            } else if (!checkIn.isAfter(LocalDate.now()) && !checkOut.isBefore(LocalDate.now())) {
                 res.setStatus(ReservationStatus.CONFIRMED);
             } else {
                 res.setStatus(rand.nextBoolean() ? ReservationStatus.CONFIRMED : ReservationStatus.PENDING);
@@ -284,35 +252,36 @@ public class Database
             
             Database.getReservations().add(res);
 
-            // Generate an Invoice for confirmed/completed reservations
+            // Generate Invoices for CONFIRMED or COMPLETED reservations
             if (res.getStatus() == ReservationStatus.COMPLETED || res.getStatus() == ReservationStatus.CONFIRMED) {
                 Invoice inv = new Invoice();
                 inv.setInvoiceID(Database.getInvoices().size() + 1);
                 inv.setReservation(res);
-                inv.setPaymentMethod(PaymentMethod.CREDIT_CARD);
-                inv.setPaymentDate(checkIn.minusDays(1)); // Paid the day before check-in
+                inv.setPaymentMethod(rand.nextBoolean() ? PaymentMethod.CREDIT_CARD : PaymentMethod.ONLINE);
+                inv.setPaymentDate(checkIn.minusDays(rand.nextInt(5))); // Paid before arrival
                 inv.setPaid(true);
                 
-                // Use BookingEngine to calculate real totals for the dummy data
                 double rCost = engine.calculateRoomCost(room, checkIn, checkOut);
                 double dCost = engine.calculateDiningCost(dp, res.calcnights());
                 double aCost = engine.calculateAmenityCost(res.getSelectedAmenities());
                 
                 inv.setTotalAmount(rCost + dCost + aCost);
-                inv.setAppliedPromoCode("NONE");
-                inv.setDiscountAmount(0.0);
+                inv.setAppliedPromoCode(rand.nextBoolean() ? "HURGHADA2026" : "NONE");
+                inv.setDiscountAmount(inv.getAppliedPromoCode().equals("NONE") ? 0.0 : (inv.getTotalAmount() * 0.15));
                 
+                // Adjust total if promo applied
+                inv.setTotalAmount(inv.getTotalAmount() - inv.getDiscountAmount());
+
                 Database.getInvoices().add(inv);
             }
         }
 
-        // Save everything to the .dat file
         Database.saveData();
-        System.out.println("[SEEDER] Initialization complete! " + Database.getRooms().size() + " rooms and " + Database.getGuests().size() + " guests loaded.");
+        System.out.println("[SEEDER] Initialization complete! Hurghada resort loaded with:");
+        System.out.println("  -> " + Database.getRooms().size() + " Rooms");
+        System.out.println("  -> " + Database.getGuests().size() + " Guests");
+        System.out.println("  -> " + Database.getReservations().size() + " Reservations");
+        System.out.println("  -> " + Database.getInvoices().size() + " Invoices");
+        System.out.println("  -> 20 Reviews generated.");
     }
-
-
 }
-
-
-
