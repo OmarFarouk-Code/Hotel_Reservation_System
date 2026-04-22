@@ -16,14 +16,15 @@ public class RoomType implements Serializable
 
     public RoomType() {}
 
-    public RoomType(String typeName, double pricePerNight, RoomView roomView, String description, double seasonMultiplier,double basePrice)
-    {
+    public RoomType(String typeName, double pricePerNight, RoomView roomView,
+                    String description, double seasonMultiplier, double basePrice, int maxCapacity) {
         this.typeName = typeName;
         this.roomView = roomView;
         this.pricePerNight = pricePerNight;
         this.description = description;
         this.seasonMultiplier = seasonMultiplier;
         this.basePrice=basePrice;
+        this.maxCapacity = maxCapacity;
     }
 
     public double getBasePrice() {

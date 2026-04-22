@@ -7,7 +7,6 @@ import hotel.model.enums.AccountStatus;
 import hotel.model.enums.Gender;
 import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.UserType;
-import hotel.model.users.*;
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
 
