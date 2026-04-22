@@ -119,31 +119,150 @@ public class Main {
             try {
                 String choice = sc.nextLine();
                 switch (choice) {
-                    case "1": { 
-                        System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
+                    case "1": { // --- MANAGE ROOMS ---
+                        System.out.print("Rooms: 1.Create 2.Read 3.Update 4.Delete: ");
                         String op = sc.nextLine();
-                        if (op.equals("1")) admin.createRoom(new Room(101, 1, new RoomType()));
-                        if (op.equals("2")) admin.readRoom(101);
-                        if (op.equals("3")) admin.updateRoom(101, new Room());
-                        if (op.equals("4")) admin.deleteRoom(101);
+
+                        try {
+                            if (op.equals("1")) {
+                                System.out.print("Enter new Room Number: ");
+                                int roomNum = Integer.parseInt(sc.nextLine()); // Use parseInt to avoid Scanner bugs!
+
+                                System.out.print("Enter Floor Number: ");
+                                int floorNum = Integer.parseInt(sc.nextLine());
+
+                                System.out.print("Enter Room Type Name (e.g., Standard, Suite): ");
+                                String typeName = sc.nextLine();
+
+                                // Fetch the actual RoomType from the database before assigning it
+                                RoomType assignedType = admin.readRoomType(typeName);
+
+                                admin.createRoom(new Room(roomNum, floorNum, assignedType));
+                                System.out.println("Success! Room created.");
+                            }
+                            else if (op.equals("2")) {
+                                System.out.print("Enter Room Number to read: ");
+                                int roomNum = Integer.parseInt(sc.nextLine());
+                                Room r = admin.readRoom(roomNum);
+                                System.out.println("Found Room: " + r.getRoomNumber() + " on floor " + r.getFloor());
+                            }
+                            else if (op.equals("4")) {
+                                System.out.print("Enter Room Number to delete: ");
+                                int roomNum = Integer.parseInt(sc.nextLine());
+                                admin.deleteRoom(roomNum);
+                            }
+                        } catch (Exception e) {
+                            // This will catch all those custom Exception messages we wrote earlier!
+                            System.out.println("❌ ERROR: " + e.getMessage());
+                        }
                         break;
                     }
-                    case "2": { 
-                        System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
+                    case "2": { // --- MANAGE ROOM TYPES ---
+                        System.out.print("Room Types: 1.Create 2.Read 3.Update 4.Delete: \n");
+                        List<RoomType> list = Database.getRoomTypes();
+                        System.out.println("RoomTypes available:\n");
+                        if (list.isEmpty()) {
+                            System.out.println("[No Room Types available]");
+                        } else {
+                            // Only printing the TypeName field
+                            for (RoomType rt : list) {
+                                System.out.println(rt.getTypeName());
+                            }
+                        }
+                        System.out.println("=".repeat(80) + "\n");
                         String op = sc.nextLine();
-                        if (op.equals("1")) admin.createRoomType(new RoomType("Suite", 200, RoomView.SEA_VIEW, "Lux", 1.0, 150, 5));
-                        if (op.equals("2")) admin.readRoomType("Suite");
-                        if (op.equals("3")) admin.updateRoomType("Suite", new RoomType());
-                        if (op.equals("4")) admin.deleteRoomType("Suite");
+
+                        try {
+                            if (op.equals("1")) {
+                                System.out.print("Enter Type Name (e.g., Suite, Single, Double): ");
+                                String typeName = sc.nextLine();
+
+                                System.out.print("Enter Base Price: ");
+                                double basePrice = Double.parseDouble(sc.nextLine());
+
+                                // Handling the Enum input
+                                System.out.print("Enter Room View (SEA_VIEW, GARDEN_VIEW, CITY_VIEW): ");
+                                String viewInput = sc.nextLine().toUpperCase();
+                                RoomView view = RoomView.valueOf(viewInput);
+
+                                System.out.print("Enter Description: ");
+                                String description = sc.nextLine();
+
+                                System.out.print("Enter Max Guests: ");
+                                int maxGuests = Integer.parseInt(sc.nextLine());
+
+                                // Note: Multiplier defaults to 1.0 for new types
+                                admin.createRoomType(new RoomType(typeName, basePrice, view, description, 1.0, basePrice, maxGuests));
+                                System.out.println("Success! Room Type '" + typeName + "' added.");
+                            }
+                            else if (op.equals("2")) {
+                                System.out.print("Enter Room Type Name to search: ");
+                                String typeName = sc.nextLine();
+                                RoomType rt = admin.readRoomType(typeName);
+                                System.out.println("Found: " + rt.getTypeName() + " | Price: $" + rt.getEffectivePrice() + " | View: " + rt.getRoomView());
+                            }
+                            else if (op.equals("3")) {
+                                System.out.print("Enter Room Type Name to update: ");
+                                String typeName = sc.nextLine();
+
+                                // To update, we first read the existing one, then modify it
+                                RoomType existing = admin.readRoomType(typeName);
+
+                                System.out.print("Enter New Base Price (was " + existing.getBasePrice() + "): ");
+                                existing.setBasePrice(Double.parseDouble(sc.nextLine()));
+
+                                admin.updateRoomType(typeName, existing);
+                                System.out.println("Update successful.");
+                            }
+                            else if (op.equals("4")) {
+                                System.out.print("Enter Room Type Name to delete: ");
+                                String typeName = sc.nextLine();
+                                admin.deleteRoomType(typeName);
+                                System.out.println("Room Type deleted.");
+                            }
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("❌ ERROR: Invalid Enum value. Please use SEA_VIEW, GARDEN_VIEW, or CITY_VIEW.");
+                        } catch (Exception e) {
+                            System.out.println("❌ ERROR: " + e.getMessage());
+                        }
                         break;
                     }
-                    case "3": { 
-                        System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
+                    case "3": { // --- MANAGE AMENITIES ---
+                        System.out.print("Amenities: 1.Create 2.Read 3.Update 4.Delete: \n");
+                        System.out.print("Amenities Available:\n");
                         String op = sc.nextLine();
-                        if (op.equals("1")) admin.createAmenity(new Amenity("WiFi", "High Speed", 50));
-                        if (op.equals("2")) admin.readAmenity("WiFi");
-                        if (op.equals("3")) admin.updateAmenity("WiFi", new Amenity());
-                        if (op.equals("4")) admin.deleteAmenity("WiFi");
+                        List<Amenity> list = Database.getAmenities();
+
+                        if (list.isEmpty()) {
+                            System.out.println("[No amenities available]");
+                        } else {
+                            // Simple loop to print ONLY the names
+                            for (Amenity a : list) {
+                                System.out.println(a.getAmenityName());
+                            }
+                        }
+                        try {
+                            if (op.equals("1")) {
+                                System.out.print("Enter Amenity Name: ");
+                                String name = sc.nextLine();
+
+                                System.out.print("Enter Description: ");
+                                String desc = sc.nextLine();
+
+                                System.out.print("Enter Price (0 if free): ");
+                                double price = Double.parseDouble(sc.nextLine());
+
+                                admin.createAmenity(new Amenity(name, desc, price));
+                                System.out.println("Success! Amenity created.");
+                            }
+                            else if (op.equals("4")) {
+                                System.out.print("Enter Amenity Name to delete: ");
+                                String name = sc.nextLine();
+                                admin.deleteAmenity(name);
+                            }
+                        } catch (Exception e) {
+                            System.out.println("❌ ERROR: " + e.getMessage());
+                        }
                         break;
                     }
                     case "4": {
