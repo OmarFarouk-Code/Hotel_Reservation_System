@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Random;
 import java.io.*; // Import this for File IO
 import java.time.LocalDate;
-
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
 import hotel.model.users.Guest;
@@ -211,8 +210,7 @@ public class Database
                 LocalDate.of(1985, 4, 12), "+201011111111", "New Cairo, Egypt", 8, Database.getRooms());
         Database.getAdmins().add(admin1);
 
-        Receptionist rec1 = new Receptionist("frontdesk_aya", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, 
-                LocalDate.of(1998, 9, 21), "+201222222222", "Nasr City, Cairo", 8);
+        Receptionist rec1 = new Receptionist("frontdesk_aya", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1998, 9, 21), "+201222222222", "Nasr City, Cairo", 8);
         Database.getReceptionists().add(rec1);
 
         // 8. Generate Active/Past Reservations & Invoices
