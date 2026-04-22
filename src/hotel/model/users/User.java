@@ -5,11 +5,9 @@ import hotel.model.enums.Gender;
 import hotel.model.enums.UserType;
 import hotel.model.staff.Admin;
 import hotel.model.staff.Receptionist;
-import java.util.NoSuchElementException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public abstract class User implements Serializable
