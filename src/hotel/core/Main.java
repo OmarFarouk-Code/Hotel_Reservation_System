@@ -16,8 +16,9 @@ public class Main {
     }
 
     // --- 1. MAIN MENU ---
-    public static void showMainMenu() throws Exception {
-        while (true) {
+    public static void showMainMenu()  {
+        while (true)
+        {
             System.out.println("\n========== AIN SHAMS HOTEL SYSTEM ==========");
             System.out.println("1. Admin Portal      2. Receptionist Portal");
             System.out.println("3. Guest Portal      4. Global Occupancy Stats");
@@ -31,7 +32,11 @@ public class Main {
                     break;
                 }
                 case "2" : {
-                    showReceptionistMenu(new Receptionist());
+                    try {
+                        showReceptionistMenu(new Receptionist());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                     break;
                 }
                 case "3" : {
