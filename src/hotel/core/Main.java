@@ -16,7 +16,7 @@ public class Main {
     }
 
     // --- 1. MAIN MENU ---
-    public static void showMainMenu() {
+    public static void showMainMenu() throws Exception {
         while (true) {
             System.out.println("\n========== AIN SHAMS HOTEL SYSTEM ==========");
             System.out.println("1. Admin Portal      2. Receptionist Portal");
@@ -82,7 +82,7 @@ public class Main {
                     case "2" : { // RoomType CRUD
                         System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
                         String op = sc.nextLine();
-                        if (op.equals("1")) admin.createRoomType(new RoomType("Suite", 200, RoomView.SEA_VIEW, "Lux", 1.0, 150));
+                        if (op.equals("1")) admin.createRoomType(new RoomType("Suite", 200, RoomView.SEA_VIEW, "Lux", 1.0, 150, 5));
                         if (op.equals("2")) admin.readRoomType("Suite");
                         if (op.equals("3")) admin.updateRoomType("Suite", new RoomType());
                         if (op.equals("4")) admin.deleteRoomType("Suite");
@@ -127,7 +127,7 @@ public class Main {
     }
 
     //  3. RECEPTIONIST MENU (Utilizes check-in/out & draft logic)
-    private static void showReceptionistMenu(Receptionist rec) {
+    private static void showReceptionistMenu(Receptionist rec) throws Exception {
         while (true) {
             System.out.println("\n--- RECEPTIONIST FRONT DESK ---");
             System.out.println("1. Manage Check-In       2. Manage Check-Out");

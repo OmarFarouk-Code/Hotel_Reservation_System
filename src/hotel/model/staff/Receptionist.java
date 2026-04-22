@@ -38,10 +38,10 @@ public class Receptionist extends Staff {
 
     public void manageCheckIn(int reservationID) {
         List<Reservation> reservation = Database.getReservations();
+        List<Invoice> invoice = Database.getInvoices();
         for (int i = 0; i < reservation.size(); i++) {
             if (reservation.get(i).getReservationID() == (reservationID)) {
                 reservation.get(i).confirmreservation();
-                reservation.get(i).setStatus(ReservationStatus.CONFIRMED);
                 Database.saveData();
                 System.out.println("Reservation is confirmed");
                 return;
@@ -51,31 +51,30 @@ public class Receptionist extends Staff {
 
     }
 
-    public void manageCheckOut(int reservationID) {
+    public void manageCheckOut(int reservationID) throws Exception {
+        List<Reservation> reservations = Database.getReservations();
         List<Invoice> invoices = Database.getInvoices();
         Invoice targetInvoice= null;
         for (Invoice inv : invoices) {
-            if (inv.getReservation().getReservationID() == reservationID) {
+            if (inv.getReservation()!=null&&inv.getReservation().getReservationID() == reservationID ) {
                 targetInvoice = inv;
                 break;
             }
         }
         if (targetInvoice == null) {
-            System.out.println("Reservation iD not found");
-            return;
+            throw new Exception("Checkout Failed: No invoice found for ID " + reservationID);
         }
         else if(targetInvoice.isPaid()==false)
         {
-            System.out.println("Check-out Denied: Balance must be $0.00.");
-            targetInvoice=null;
-            return;
+            throw new Exception("Checkout Denied: Invoice must be settled before checkout.");
         }
-        else
-        {
+
             targetInvoice.getReservation().setStatus(ReservationStatus.COMPLETED);
             System.out.println("Check-out complete..... ");
+            Database.saveData();
+
             //should make room available
-        }
-        Database.saveData();
+
+
     }
 }

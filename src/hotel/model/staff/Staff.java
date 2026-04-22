@@ -1,10 +1,12 @@
-package hotel.model.users;
+package hotel.model.staff;
 import java.util.List;
 import hotel.core.Database;
 import hotel.model.bookings.*;
 import hotel.model.enums.AccountStatus;
 import hotel.model.enums.Gender;
 import hotel.model.enums.UserType;
+import hotel.model.users.Guest;
+import hotel.model.users.User;
 
 import java.time.LocalDate;
 
