@@ -547,6 +547,18 @@ public class BookingEngine
         Database.saveData();
     }
 
-
+    public List<Reservation> getReservationsForGuest(Guest guest) {
+        List<Reservation> guestReservations = new ArrayList<>();
+        for (Reservation res : Database.getReservations()) {
+            // Match the reservation to the specific guest object or unique ID
+            if (res.getGuest().getUserName().equals(guest.getUserName())) {
+                // Only include active/pending reservations that CAN be cancelled
+                if (res.getStatus() == ReservationStatus.PENDING || res.getStatus() == ReservationStatus.CONFIRMED) {
+                    guestReservations.add(res);
+                }
+            }
+        }
+        return guestReservations;
+    }
 
 }
