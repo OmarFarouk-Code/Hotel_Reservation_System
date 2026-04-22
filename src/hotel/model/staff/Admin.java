@@ -243,13 +243,14 @@ public class  Admin extends Staff implements Manageable
         if (multiplier < 0) {
             throw new Exception("Invalid Data: Multiplier cannot be negative.");
         }
-
-        for (RoomType type : roomTypeList) 
+        if (this.roomTypeList == null) {
+            throw new Exception("System Error: Room type database is not initialized.");
+        }
+        for (RoomType type : roomTypeList)
         {
-            if (type.getTypeName().equalsIgnoreCase(roomType)) 
+            if (type.getTypeName().equalsIgnoreCase(roomType))
             {
                 type.setSeasonMultiplier(multiplier); // Fix: Actually update the multiplier
-                type.setPricePerNight(multiplier * type.getBasePrice());
                 Database.saveData();
                 return;
             }

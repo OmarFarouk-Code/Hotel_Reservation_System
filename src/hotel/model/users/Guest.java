@@ -2,21 +2,35 @@ package hotel.model.users;
 import hotel.core.Database;
 import hotel.model.bookings.Reservation;
 import hotel.model.enums.*;
-import hotel.model.entities.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
+import java.util.ArrayList;
 public class Guest extends User
 {
     private double balance;
     protected static int GuestId=100;
     protected int UniqueId;
+    private List<String> roomPreferences;
 
     public Guest(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, double balance, int uniqueId, Scanner input) {
         super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address);
         this.balance = balance;
-        UniqueId = uniqueId;
+        this.UniqueId = uniqueId;
         this.input = input;
+        this.roomPreferences = new ArrayList<>();
+    }
+
+    public Guest() {
+        this.roomPreferences = new ArrayList<>();
+    }
+
+    public List<String> getRoomPreferences() {
+        return roomPreferences;
+    }
+
+    public void setRoomPreferences(List<String> roomPreferences) {
+        this.roomPreferences = roomPreferences;
     }
 
     public double getBalance() {
