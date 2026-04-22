@@ -161,13 +161,14 @@ public class Main {
                     case "2": { // --- MANAGE ROOM TYPES ---
                         System.out.print("Room Types: 1.Create 2.Read 3.Update 4.Delete: \n");
                         List<RoomType> list = Database.getRoomTypes();
-                        System.out.println("RoomTypes available:\n");
+                        System.out.println("\n--- RoomTypes Dashboard ---");
                         if (list.isEmpty()) {
                             System.out.println("[No Room Types available]");
                         } else {
                             // Only printing the TypeName field
+                            System.out.println("Available:");
                             for (RoomType rt : list) {
-                                System.out.println(rt.getTypeName());
+                                System.out.println(" • " +rt.getTypeName());
                             }
                         }
                         System.out.println("=".repeat(80) + "\n");
@@ -230,18 +231,20 @@ public class Main {
                     }
                     case "3": { // --- MANAGE AMENITIES ---
                         System.out.print("Amenities: 1.Create 2.Read 3.Update 4.Delete: \n");
-                        System.out.print("Amenities Available:\n");
-                        String op = sc.nextLine();
-                        List<Amenity> list = Database.getAmenities();
+                        System.out.println("\n--- Amenities Dashboard ---");
+                        // 1. Fetch the list immediately before printing
+                        List<Amenity> currentAmenities = Database.getAmenities();
 
-                        if (list.isEmpty()) {
-                            System.out.println("[No amenities available]");
+                        // 2. The Check & Loop
+                        if (currentAmenities == null || currentAmenities.isEmpty()) {
+                            System.out.println("[No amenities available in database]");
                         } else {
-                            // Simple loop to print ONLY the names
-                            for (Amenity a : list) {
-                                System.out.println(a.getAmenityName());
+                            System.out.println("Available:");
+                            for (Amenity a : currentAmenities) {
+                                System.out.println(" • " + a.getAmenityName());
                             }
                         }
+                        String op = sc.nextLine();
                         try {
                             if (op.equals("1")) {
                                 System.out.print("Enter Amenity Name: ");
