@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 public abstract class User implements Serializable
 {
-    private transient Scanner input = new Scanner(System.in);
+    protected transient Scanner input = new Scanner(System.in);
 
     protected String UserName;
     protected String password;
