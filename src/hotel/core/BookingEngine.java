@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class BookingEngine 
 {
@@ -159,7 +160,6 @@ public class BookingEngine
         return packages;
     }
 
-    
 
     public double calculateRoomCost(Room room, LocalDate checkIn, LocalDate checkOut) 
     {
@@ -242,9 +242,19 @@ public class BookingEngine
     }
 
     
-    public Reservation createDraftReservation( Receptionist receptionist , Guest guest , Room room , LocalDate checkIn , LocalDate checkOut , DiningPackage diningPackage, int numChildren, int numAdults ) throws IllegalArgumentException
+    public Reservation createDraftReservation( Guest guest , Room room , LocalDate checkIn , LocalDate checkOut , DiningPackage diningPackage, int numChildren, int numAdults ) throws IllegalArgumentException
     {
-        if (guest == null || room == null || checkIn == null || checkOut == null || diningPackage == null || receptionist == null || numChildren < 0 || numAdults < 0) {
+        List <Receptionist> allReceptionists = Database.getReceptionists();
+
+        if (allReceptionists == null || allReceptionists.isEmpty()) 
+        {
+            throw new IllegalStateException("No receptionists available to handle the reservation.");
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt( allReceptionists.size() );
+        Receptionist allocatedReceptionist = allReceptionists.get(randomIndex);
+
+        if (guest == null || room == null || checkIn == null || checkOut == null || diningPackage == null || numChildren < 0 || numAdults < 0) {
             throw new IllegalArgumentException("All reservation details must be provided.");
         }
         if (checkIn.isAfter(checkOut) || checkIn.isEqual(checkOut)) {
@@ -263,7 +273,7 @@ public class BookingEngine
         Reservation reservation = new Reservation(reservationID, guest, room, checkIn, checkOut, diningPackage, numChildren, numAdults);
         Database.getReservations().add(reservation);
         Database.saveData();
-        receptionist.addDraftReservation(reservation); 
+        allocatedReceptionist.addDraftReservation(reservation); 
         
         return reservation;
        

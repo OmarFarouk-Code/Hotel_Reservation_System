@@ -70,10 +70,6 @@ public class RoomType implements Serializable
         return roomView;
     }
 
-    private void setRoomView(RoomView roomView) {
-        this.roomView = roomView;
-    }
-
     public int getMaxCapacity() {
         return maxCapacity;
     }
