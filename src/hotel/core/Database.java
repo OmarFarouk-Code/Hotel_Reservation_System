@@ -202,9 +202,11 @@ public class Database
         }
 
         // 7. Generate Staff
-        Admin admin1 = new Admin("admin_root", "Admin@2026", UserType.ADMIN, Gender.MALE, null, 0, AccountStatus.ACTIVE, 
+        Admin admin1 = new Admin("Omar", "OmarFarouk12", UserType.ADMIN, Gender.MALE, null, 0, AccountStatus.ACTIVE, 
                 LocalDate.of(1985, 4, 12), "+201011111111", "New Cairo, Egypt", 8, Database.getRooms());
+
         Database.getAdmins().add(admin1);
+
 
         Receptionist rec1 = new Receptionist("frontdesk_aya", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1998, 9, 21), "+201222222222", "Nasr City, Cairo", 8);
         Database.getReceptionists().add(rec1);

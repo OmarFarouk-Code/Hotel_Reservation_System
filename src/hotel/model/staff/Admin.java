@@ -23,9 +23,6 @@ public class  Admin extends Staff implements Manageable
 
     }
 
-    public Admin(String adminRoot, String s, UserType userType, Gender gender, Object o, int i, AccountStatus accountStatus, LocalDate of, String s1, String s2, int i1, List<Room> rooms) {
-    }
-
     //room functions
     public void createRoom(Room room) throws Exception
     {

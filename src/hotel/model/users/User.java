@@ -70,120 +70,92 @@ public abstract class User implements Serializable
         }
     }
 
-    public void Login()
-
+    // NEW UNIFIED LOGIN METHOD
+    public User Login(UserType expectedType) 
     {
-        while(failedLoginAttempts<5){
+        this.Typeofuser = expectedType;
 
+        while(failedLoginAttempts < 5) {
             if (accountStatus == AccountStatus.LOCKED) {
                 System.out.println("This account is locked. Please contact an administrator.");
-                return;
+                return null;
             }
-            while (true) {
-                System.out.print("Please enter your Role (Receptionist, Admin, Guest: ");
-                String roleInput = input.nextLine().trim().toUpperCase();
 
-
-                if (roleInput.equals("RECEPTIONIST") || roleInput.equals("R")) {
-                    Typeofuser=UserType.RECEPTIONIST;
-                    break;
-                } else if (roleInput.equals("ADMIN") || roleInput.equals("A")) {
-                    Typeofuser=UserType.ADMIN;
-                    break;
-                }else if(roleInput.equals("GUEST")|| roleInput.equals("G")){
-                    Typeofuser=UserType.GUEST;
-                    break;
-                } else {
-                    System.out.println("Invalid input. Please enter Receptionist, Admin , Guest.");
-                }
-            }
             System.out.print("Enter Username: ");
-            String currentName = input.nextLine();
+            String currentName = input.nextLine().trim();
             System.out.print("Enter Password: ");
-            String currentPass = input.nextLine();
-        if(Typeofuser== UserType.GUEST){
-        boolean found=false;
-        List<Guest> guestList = Database.getGuests();
-        for(int i=0; i<Database.getGuests().size();i++) {
-        if(guestList.get(i).getUserName().equals(currentName) && guestList.get(i).getPassword().equals(currentPass)){
-            found=true;
-            break;
-        }
-        }
-        if(found && accountStatus==AccountStatus.ACTIVE) {
-            System.out.println("Access Granted,Welcome " + currentName);
-            //homepage for guest
-            break;
-        }else {
-            System.out.println("Access Denied,Please try again !");
-            failedLoginAttempts=failedLoginAttempts+1;
-            Database.saveData();
+            String currentPass = input.nextLine().trim();
 
-        }
-    }if(Typeofuser==UserType.RECEPTIONIST) {
-            boolean found = false;
-            List<Receptionist> guestList = Database.getReceptionists();
-            for (int i = 0; i < Database.getReceptionists().size(); i++) {
-                if (guestList.get(i).getUserName().equals(currentName) && guestList.get(i).getPassword().equals(currentPass)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (found && accountStatus==AccountStatus.ACTIVE) {
-                System.out.println("Access Granted,Welcome " + currentName);
-                //Homepage of receptionist
-                break;
-            }  else {
-                System.out.println("Access Denied,Please try again !");
-                failedLoginAttempts=failedLoginAttempts+1;
-                Database.saveData();
-
-            }
-        }
-            if(Typeofuser==UserType.ADMIN) {
-                boolean found = false;
-                List<Admin> guestList = Database.getAdmins();
-                for (int i = 0; i < Database.getAdmins().size(); i++) {
-                    if (guestList.get(i).getUserName().equals(currentName) && guestList.get(i).getPassword().equals(currentPass)) {
-                        found = true;
-                        break;
+            if (Typeofuser == UserType.GUEST) {
+                for (Guest guest : Database.getGuests()) {
+                    if (guest.getUserName() != null && guest.getUserName().equals(currentName) && guest.getPassword().equals(currentPass)) {
+                        if (guest.getAccountStatus() == AccountStatus.ACTIVE) {
+                            System.out.println("Access Granted. Welcome, " + currentName + "!");
+                            return guest; // Return the actual matched database object
+                        } else {
+                            System.out.println("Access Denied: Account is locked.");
+                            return null;
+                        }
                     }
                 }
-                if (found && accountStatus==AccountStatus.ACTIVE) {
-                    System.out.println("Access Granted,Welcome " + currentName);
-                    //Homepage of admin
-                    break;
-                } else {
-                    System.out.println("Access Denied,Please try again !");
-                    failedLoginAttempts=failedLoginAttempts+1;
-                    Database.saveData();
-
+            } else if (Typeofuser == UserType.RECEPTIONIST) {
+                for (Receptionist rec : Database.getReceptionists()) {
+                    if (rec.getUserName() != null && rec.getUserName().equals(currentName) && rec.getPassword().equals(currentPass)) {
+                        if (rec.getAccountStatus() == AccountStatus.ACTIVE) {
+                            System.out.println("Access Granted. Welcome, " + currentName + "!");
+                            return rec;
+                        } else {
+                            System.out.println("Access Denied: Account is locked.");
+                            return null;
+                        }
+                    }
+                }
+            } else if (Typeofuser == UserType.ADMIN) {
+                for (Admin admin : Database.getAdmins()) {
+                    if (admin.getUserName() != null && admin.getUserName().equals(currentName) && admin.getPassword().equals(currentPass)) {
+                        if (admin.getAccountStatus() == AccountStatus.ACTIVE) {
+                            System.out.println("Access Granted. Welcome, " + currentName + "!");
+                            return admin;
+                        } else {
+                            System.out.println("Access Denied: Account is locked.");
+                            return null;
+                        }
                     }
                 }
             }
 
-        if(failedLoginAttempts>=5){
-            System.out.println("Too much unsuccessful login attempts, account is Locked");
-            accountStatus=AccountStatus.LOCKED;
-        Database.saveData();
+            System.out.println("Access Denied. Please try again!");
+            failedLoginAttempts++;
+            if (failedLoginAttempts >= 5) {
+                System.out.println("Too many unsuccessful login attempts. Account is Locked.");
+                this.accountStatus = AccountStatus.LOCKED;
+            }
         }
+        return null;
+    }
+    
 
-        }
-        public void passwordconfirmation(String Pass1,String Pass2){
-        while(!(Pass1.equals(Pass2))) {
+    public void passwordconfirmation(String Pass1,String Pass2)
+    {
+        while(!(Pass1.equals(Pass2))) 
+        {
             System.out.println("Password don't match,Please re-enter your password");
             Pass1=input.nextLine();
             System.out.println("Please confirm Password");
             Pass2=input.nextLine();
-            }
-        newpassword=Pass1;
         }
-        public void ResetPassword(String theUserName,UserType TheUserType){
-            String CurrentPassword;
-             int counter=0;
-            System.out.println("Please re-enter your current password");
-            CurrentPassword=input.nextLine();
-            if(TheUserType==UserType.ADMIN) {
+        newpassword=Pass1;
+        
+    }
+
+
+    public void ResetPassword(String theUserName,UserType TheUserType)
+    {
+        String CurrentPassword;
+        int counter=0;
+        System.out.println("Please re-enter your current password");
+        CurrentPassword=input.nextLine();
+        if(TheUserType==UserType.ADMIN) {
                 boolean found = false;
                 List<Admin> guestList = Database.getAdmins();
                 for (int i = 0; i < Database.getAdmins().size(); i++) {
@@ -267,5 +239,6 @@ public abstract class User implements Serializable
                     }
                 }
     }
+
 }
 
