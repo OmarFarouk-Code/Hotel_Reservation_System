@@ -356,47 +356,36 @@ public class BookingEngine
         invoice.setAppliedPromoCode(promoCode);
         invoice.setDiscountAmount((roomCost + diningCost + amenityCost) - totalCost);
         return invoice;
-    }    
+    }
 
-    public double calculateCancellationPenalty(int ReservationId,LocalDate cancelDate)
-    {
-        boolean found=false;
-        List<Reservation> Reservations = Database.getReservations();
-        List<Invoice>Invoices=Database.getInvoices();
+    public double calculateCancellationPenalty(int ReservationId, LocalDate cancelDate) {
+        List<Reservation> reservations = Database.getReservations();
+        List<Invoice> invoices = Database.getInvoices();
 
-        for(int i=0;i<Database.getReservations().size();i++) 
-        {
-            if (Reservations.get(i).getReservationID() == ReservationId)
-            {
-                found = true;
-                long daysBetween = ChronoUnit.DAYS.between(cancelDate, Reservations.get(i).getCheckinDate());
-                if (daysBetween >= 0 && daysBetween <= 3) 
-                {
-                    for (int j = 0; j < Database.getInvoices().size(); j++) 
-                    {
-                        if (Invoices.get(j).getReservation().getReservationID() == ReservationId) 
-                        {
-                            System.out.println("Unfortunately,30% of the total reservation amount will be deducted as cancellation fees due to late cancellation");
-                            System.out.print("cancellation penalty : - "+(Invoices.get(j).getTotalAmount() * 0.30));
-                            System.out.println("Refunded amount = "+(Invoices.get(j).getTotalAmount()*0.70));
-                            return (Invoices.get(j).getTotalAmount() * 0.30);
+        for (Reservation res : reservations) {
+            if (res.getReservationID() == ReservationId) {
+                long daysBetween = ChronoUnit.DAYS.between(cancelDate, res.getCheckinDate());
+
+                // Penalty Logic: 3 days or less
+                if (daysBetween >= 0 && daysBetween <= 3) {
+                    for (Invoice inv : invoices) {
+                        if (inv.getReservation().getReservationID() == ReservationId) {
+                            double penalty = inv.getTotalAmount() * 0.30;
+                            System.out.println("Late cancellation (within 3 days). Penalty: " + penalty);
+                            return penalty;
                         }
                     }
+                    // If no invoice is found, we can't calculate 30%, so we return 0 or a flat fee
+                    System.out.println("No invoice found for this reservation. No penalty applied.");
+                    return 0.0;
+                } else {
+                    System.out.println("Cancelled in advance. No penalty applied.");
+                    return 0.0;
                 }
             }
         }
-
-        if(found) 
-        {
-            System.out.println("There will be no cancellation penalty");
-            System.out.println("Cancellation penalty : 0 ");
-            return 0.0;
-        }
-        else 
-        {
-            System.out.println("This reservation Id is not found in the data base");
-            return -1.0;
-        }
+        System.out.println("Error: Reservation ID " + ReservationId + " not found in database.");
+        return -1.0;
     }
 
 
@@ -523,10 +512,7 @@ public class BookingEngine
         return (occupiedCount / totalRooms) * 100.0;
     }
     public void processCancellation(int reservationId, LocalDate cancelDate) {
-
         Reservation reservation = null;
-
-        // Find reservation
         for (Reservation r : Database.getReservations()) {
             if (r.getReservationID() == reservationId) {
                 reservation = r;
@@ -535,16 +521,19 @@ public class BookingEngine
         }
 
         if (reservation == null) {
-            System.out.println("Reservation not found!");
+            System.out.println("System Error: Reservation object lost.");
             return;
         }
 
-        // Calculate penalty
+        // This calls the function above which now has more System.out.println messages
         double penalty = calculateCancellationPenalty(reservationId, cancelDate);
 
-        reservation.setCancellationPenalty(penalty);
-        reservation.setStatus(ReservationStatus.CANCELLED);
-        Database.saveData();
+        if (penalty >= 0) {
+            reservation.setCancellationPenalty(penalty);
+            reservation.setStatus(ReservationStatus.CANCELLED);
+            Database.saveData(); // Ensure the "CANCELLED" status is actually written to the file
+            System.out.println("Successfully cancelled Reservation #" + reservationId);
+        }
     }
 
     public List<Reservation> getReservationsForGuest(Guest guest) {
@@ -560,5 +549,5 @@ public class BookingEngine
         }
         return guestReservations;
     }
+    }
 
-}
