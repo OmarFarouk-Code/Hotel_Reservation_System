@@ -7,7 +7,6 @@ import hotel.model.enums.AccountStatus;
 import hotel.model.enums.Gender;
 import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.UserType;
-import hotel.model.users.*;
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
 
@@ -38,7 +37,6 @@ public class Receptionist extends Staff {
 
     public void manageCheckIn(int reservationID) {
         List<Reservation> reservation = Database.getReservations();
-        List<Invoice> invoice = Database.getInvoices();
         for (int i = 0; i < reservation.size(); i++) {
             if (reservation.get(i).getReservationID() == (reservationID)) {
                 reservation.get(i).confirmreservation();
@@ -52,7 +50,6 @@ public class Receptionist extends Staff {
     }
 
     public void manageCheckOut(int reservationID) throws Exception {
-        List<Reservation> reservations = Database.getReservations();
         List<Invoice> invoices = Database.getInvoices();
         Invoice targetInvoice= null;
         for (Invoice inv : invoices) {

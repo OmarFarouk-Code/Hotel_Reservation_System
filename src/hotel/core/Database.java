@@ -131,17 +131,13 @@ public class Database
         Database.getAmenities().add(wifi);
 
         // 3. Generate Room Types
-        RoomType standardGarden = new RoomType("Standard Oasis", 2000.0, RoomView.GARDEN, "Comfortable room overlooking the lush hotel gardens.", 1.0, 2000.0);
-        standardGarden.setMaxCapacity(2);
+        RoomType standardGarden = new RoomType("Standard Oasis", 2000.0, RoomView.GARDEN, "Comfortable room overlooking the lush hotel gardens.", 1.0, 2000.0 , 2);
         
-        RoomType standardPool = new RoomType("Poolside Classic", 2500.0, RoomView.POOL, "Direct access to the central swimming pool.", 1.0, 2500.0);
-        standardPool.setMaxCapacity(2);
+        RoomType standardPool = new RoomType("Poolside Classic", 2500.0, RoomView.POOL, "Direct access to the central swimming pool.", 1.0, 2500.0 ,2);
         
-        RoomType seaViewDeluxe = new RoomType("Red Sea Deluxe", 4000.0, RoomView.SEA_VIEW, "Spacious room with a panoramic view of the Red Sea.", 1.2, 3333.33);
-        seaViewDeluxe.setMaxCapacity(3);
+        RoomType seaViewDeluxe = new RoomType("Red Sea Deluxe", 4000.0, RoomView.SEA_VIEW, "Spacious room with a panoramic view of the Red Sea.", 1.2, 3333.33, 3);
         
-        RoomType nileSuite = new RoomType("Pharaoh Suite", 8500.0, RoomView.SEA_VIEW, "Luxury suite featuring premium furnishings and a wide balcony.", 1.5, 5666.67);
-        nileSuite.setMaxCapacity(4);
+        RoomType nileSuite = new RoomType("Pharaoh Suite", 8500.0, RoomView.SEA_VIEW, "Luxury suite featuring premium furnishings and a wide balcony.", 1.5, 5666.67, 4);
 
         Database.getRoomTypes().add(standardGarden);
         Database.getRoomTypes().add(standardPool);
