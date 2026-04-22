@@ -472,26 +472,11 @@ public class BookingEngine
         double diningCostPerNight = 0;
         if (reservation.getDiningpackage() != null) {
             switch (reservation.getDiningpackage()) {
-                case BREAKFAST_ONLY : {
-                    diningCostPerNight = 15.0;
-                    break;
-                }
-                case HALF_BOARD     : {
-                    diningCostPerNight = 35.0;
-                    break;
-                }
-                case FULL_BOARD     : {
-                    diningCostPerNight = 60.0;
-                    break;
-                }
-                case ALL_INCLUSIVE  : {
-                    diningCostPerNight = 100.0;
-                    break;
-                }
-                default             : {
-                    diningCostPerNight = 0.0;
-                    break;
-                }
+                case BREAKFAST_ONLY : diningCostPerNight = 15.0;break;
+                case HALF_BOARD     : diningCostPerNight = 35.0;break;
+                case FULL_BOARD     : diningCostPerNight = 60.0;break;
+                case ALL_INCLUSIVE  : diningCostPerNight = 100.0;break;
+                default             : diningCostPerNight = 0.0;
             }
         }
         double totalDiningCost = diningCostPerNight * nights;
@@ -558,7 +543,8 @@ public class BookingEngine
         double penalty = calculateCancellationPenalty(reservationId, cancelDate);
 
         reservation.setCancellationPenalty(penalty);
-        reservation.getCancellationPenalty();
+        reservation.setStatus(ReservationStatus.CANCELLED);
+        Database.saveData();
     }
 
 

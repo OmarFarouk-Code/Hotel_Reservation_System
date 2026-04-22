@@ -129,7 +129,7 @@ public abstract class User implements Serializable
         }
     }
 
-    public void Login()
+    public void Login(UserType Typeofuser)
 
     {
         while(failedLoginAttempts<5){
@@ -137,24 +137,6 @@ public abstract class User implements Serializable
             if (accountStatus == AccountStatus.LOCKED) {
                 System.out.println("This account is locked. Please contact an administrator.");
                 return;
-            }
-            while (true) {
-                System.out.print("Please enter your Role (Receptionist, Admin, Guest: ");
-                String roleInput = input.nextLine().trim().toUpperCase();
-
-
-                if (roleInput.equals("RECEPTIONIST") || roleInput.equals("R")) {
-                    Typeofuser=UserType.RECEPTIONIST;
-                    break;
-                } else if (roleInput.equals("ADMIN") || roleInput.equals("A")) {
-                    Typeofuser=UserType.ADMIN;
-                    break;
-                }else if(roleInput.equals("GUEST")|| roleInput.equals("G")){
-                    Typeofuser=UserType.GUEST;
-                    break;
-                } else {
-                    System.out.println("Invalid input. Please enter Receptionist, Admin , Guest.");
-                }
             }
             System.out.print("Enter Username: ");
             String currentName = input.nextLine();
@@ -266,7 +248,6 @@ public abstract class User implements Serializable
                     String AUsername = input.nextLine();
                     System.out.println("Please enter your roll 1.Guest 2.Admin 3.Receptionist");
                     UserType Usercategory = UserType.valueOf(input.nextLine());
-                    input.nextLine();
                     ResetPassword(AUsername, Usercategory);
                 }
             }  if(TheUserType==UserType.RECEPTIONIST) {
