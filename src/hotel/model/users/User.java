@@ -40,85 +40,26 @@ public abstract class User implements Serializable
         this.address = address;
     }
 
-    public String getUserName() {
-        return this.UserName;
-    }
-
-    public void setUserName(String userName) {
-        this.UserName = userName;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public UserType getTypeofuser() {
-        return this.Typeofuser;
-    }
-
-    public void setTypeofuser(UserType typeofuser) {
-        this.Typeofuser = typeofuser;
-    }
-
-    public Gender getTheGender() {
-        return this.theGender;
-    }
-
-    public void setTheGender(Gender theGender) {
-        this.theGender = theGender;
-    }
-
-    public String getNewpassword() {
-        return this.newpassword;
-    }
-
-    public void setNewpassword(String newpassword) {
-        this.newpassword = newpassword;
-    }
-
-    public int getFailedLoginAttempts() {
-        return this.failedLoginAttempts;
-    }
-
-    public void setFailedLoginAttempts(int failedLoginAttempts) {
-        this.failedLoginAttempts = failedLoginAttempts;
-    }
-
-    public AccountStatus getAccountStatus() {
-        return this.accountStatus;
-    }
-
-    public void setAccountStatus(AccountStatus accountStatus) {
-        this.accountStatus = accountStatus;
-    }
-
-    public LocalDate getDateOfbirth() {
-        return  this.dateOfbirth;
-    }
-
-    public void setDateOfbirth(LocalDate dateOfbirth) {
-        this.dateOfbirth = dateOfbirth;
-    }
-
-    public String getPhoneNumber() {
-        return this.phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    public String getUserName() { return this.UserName; }
+    public void setUserName(String userName) { this.UserName = userName; }
+    public String getPassword() { return this.password; }
+    public void setPassword(String password) { this.password = password; }
+    public UserType getTypeofuser() { return this.Typeofuser; }
+    public void setTypeofuser(UserType typeofuser) { this.Typeofuser = typeofuser; }
+    public Gender getTheGender() { return this.theGender; }
+    public void setTheGender(Gender theGender) { this.theGender = theGender; }
+    public String getNewpassword() { return this.newpassword; }
+    public void setNewpassword(String newpassword) { this.newpassword = newpassword; }
+    public int getFailedLoginAttempts() { return this.failedLoginAttempts; }
+    public void setFailedLoginAttempts(int failedLoginAttempts) { this.failedLoginAttempts = failedLoginAttempts; }
+    public AccountStatus getAccountStatus() { return this.accountStatus; }
+    public void setAccountStatus(AccountStatus accountStatus) { this.accountStatus = accountStatus; }
+    public LocalDate getDateOfbirth() { return  this.dateOfbirth; }
+    public void setDateOfbirth(LocalDate dateOfbirth) { this.dateOfbirth = dateOfbirth; }
+    public String getPhoneNumber() { return this.phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public String getAddress() { return this.address; }
+    public void setAddress(String address) { this.address = address; }
 
     public static boolean Datechecker(String dateStr) {
         try {
