@@ -16,8 +16,9 @@ public class Main {
     }
 
     // --- 1. MAIN MENU ---
-    public static void showMainMenu() {
-        while (true) {
+    public static void showMainMenu()  {
+        while (true)
+        {
             System.out.println("\n========== AIN SHAMS HOTEL SYSTEM ==========");
             System.out.println("1. Admin Portal      2. Receptionist Portal");
             System.out.println("3. Guest Portal      4. Global Occupancy Stats");
@@ -31,7 +32,11 @@ public class Main {
                     break;
                 }
                 case "2" : {
-                    showReceptionistMenu(new Receptionist(choice, choice, null, null, choice, 0, null, null, choice, choice, 0));
+                    try {
+                        showReceptionistMenu(new Receptionist());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                     break;
                 }
                 case "3" : {
@@ -127,7 +132,7 @@ public class Main {
     }
 
     //  3. RECEPTIONIST MENU (Utilizes check-in/out & draft logic)
-    private static void showReceptionistMenu(Receptionist rec) {
+    private static void showReceptionistMenu(Receptionist rec) throws Exception {
         while (true) {
             System.out.println("\n--- RECEPTIONIST FRONT DESK ---");
             System.out.println("1. Manage Check-In       2. Manage Check-Out");
