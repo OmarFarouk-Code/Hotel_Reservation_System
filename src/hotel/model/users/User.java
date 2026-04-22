@@ -70,8 +70,8 @@ public abstract class User implements Serializable
         }
     }
 
-    // NEW UNIFIED LOGIN METHOD
-    public User Login(UserType expectedType) 
+    public void Login(UserType Typeofuser)
+
     {
         this.Typeofuser = expectedType;
 
@@ -80,7 +80,6 @@ public abstract class User implements Serializable
                 System.out.println("This account is locked. Please contact an administrator.");
                 return null;
             }
-
             System.out.print("Enter Username: ");
             String currentName = input.nextLine().trim();
             System.out.print("Enter Password: ");
@@ -179,7 +178,6 @@ public abstract class User implements Serializable
                     String AUsername = input.nextLine();
                     System.out.println("Please enter your roll 1.Guest 2.Admin 3.Receptionist");
                     UserType Usercategory = UserType.valueOf(input.nextLine());
-                    input.nextLine();
                     ResetPassword(AUsername, Usercategory);
                 }
             }  if(TheUserType==UserType.RECEPTIONIST) {

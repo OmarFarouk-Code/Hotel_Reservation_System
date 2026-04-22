@@ -65,24 +65,6 @@ public class Guest extends User
         this.input = input;
     }
 
-    public void GuestHomepage() 
-    {
-        int choice = 0;
-        System.out.println("Welcome to the Guest menu");
-        while (choice != 2 && choice != 1 && choice != 3) {
-            System.out.println("Please enter number: 1.Regiester | 2.Login");
-            choice = input.nextInt();
-            input.nextLine();
-            if (choice == 1) 
-            {
-                register();
-            }
-            if(choice==2) 
-            {
-                Login(UserType.GUEST);
-            }
-        }
-    }
 
     public boolean passwordcheck(String Password) {
         boolean uppercase = false;
