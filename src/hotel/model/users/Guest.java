@@ -12,6 +12,7 @@ public class Guest extends User
     protected static int GuestId=100;
     protected int UniqueId;
     private List<String> roomPreferences;
+    private Scanner input;
 
     public Guest(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, double balance, int uniqueId, Scanner input) {
         super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address);
@@ -117,7 +118,6 @@ public class Guest extends User
         return false;
     }
 
-    private transient Scanner input = new Scanner(System.in);
     public void printreservationdetails(int idcounter,List<Reservation> Reservations){
         System.out.println("Your Reservation");
         System.out.print("Guest Username : "+ Reservations.get(idcounter).getGuest().getUserName());System.out.println();
