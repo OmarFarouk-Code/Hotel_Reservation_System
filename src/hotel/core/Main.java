@@ -16,6 +16,13 @@ public class Main {
     public static void main(String[] args)
     {
         Database.loadData();
+        
+        // FIX: If the database failed to load or is empty, seed it with default data
+        if (Database.getAdmins().isEmpty() && Database.getReceptionists().isEmpty()) {
+            System.out.println("[SYSTEM] Database is empty. Seeding default hotel data...");
+            Database.initializeHotelData();
+        }
+        
         try {
             showMainMenu();
         } catch (Exception e) {
