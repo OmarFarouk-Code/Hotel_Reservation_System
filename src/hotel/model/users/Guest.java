@@ -12,6 +12,7 @@ public class Guest extends User
     protected static int GuestId=100;
     protected int UniqueId;
     private List<String> roomPreferences;
+    private Scanner input;
 
     public Guest(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, double balance, int uniqueId, Scanner input) {
         super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address);
@@ -65,34 +66,6 @@ public class Guest extends User
         this.input = input;
     }
 
-    public void GuestHomepage() {
-        int choice = 0;
-        System.out.println("Welcome to the Guest menu");
-        while (choice != 2 && choice != 1 && choice != 3) {
-            System.out.println("Please enter number: 1.Regiester | 2.Login");
-            choice = input.nextInt();
-            input.nextLine();
-            if (choice == 1) {
-                register();
-            }
-            if(choice==2) {
-                Login();
-            }
-            }
-        }
-
-        public void GuestMainMenu(){
-        System.out.println("Please choose what do you need to do ");
-        //to be continued
-
-        }
-
-
-
-
-
-
-
 
     public boolean passwordcheck(String Password) {
         boolean uppercase = false;
@@ -117,7 +90,6 @@ public class Guest extends User
         return false;
     }
 
-    private transient Scanner input = new Scanner(System.in);
     public void printreservationdetails(int idcounter,List<Reservation> Reservations){
         System.out.println("Your Reservation");
         System.out.print("Guest Username : "+ Reservations.get(idcounter).getGuest().getUserName());System.out.println();
@@ -172,8 +144,20 @@ public class Guest extends User
                 passwordcheck(password);
             }
             System.out.println("Password has been created successfully");
-            System.out.println("Please enter your Gender");
-            theGender=Gender.valueOf(input.next().toUpperCase());
+            while (true) {
+                System.out.print("Please enter your Gender (Male/Female): ");
+                String genderInput = input.nextLine().trim().toUpperCase();
+
+                if (genderInput.equals("MALE") || genderInput.equals("M")) {
+                    this.theGender = Gender.MALE;
+                    break;
+                } else if (genderInput.equals("FEMALE") || genderInput.equals("F")) {
+                    this.theGender = Gender.FEMALE;
+                    break;
+                } else {
+                    System.out.println("Invalid input. Please enter 'Male' or 'Female'.");
+                }
+            }
             System.out.println("Please enter your date of birth YYYY-MM-DD");
             String userInput = input.nextLine();
             if(!Datechecker(userInput)){
