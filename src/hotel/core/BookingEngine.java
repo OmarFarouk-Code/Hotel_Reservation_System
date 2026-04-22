@@ -1,5 +1,4 @@
 package hotel.core;
-
 import hotel.model.entities.Amenity;
 import hotel.model.entities.Room;
 import hotel.model.entities.RoomType;
@@ -7,12 +6,14 @@ import hotel.model.enums.DiningPackage;
 import hotel.model.enums.PaymentMethod;
 import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.RoomView;
+import hotel.model.staff.Receptionist;
 import hotel.model.users.Guest;
 import hotel.model.bookings.*;
 import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class BookingEngine 
 {
@@ -26,7 +27,6 @@ public class BookingEngine
         }
         ArrayList<Room> results=new ArrayList<>();
         List<Room> Rooms=Database.getRooms();
-        List<RoomType>roomtype=Database.getRoomTypes();
 
         for (int i=0;i<Rooms.size();i++)
         {
@@ -160,7 +160,6 @@ public class BookingEngine
         return packages;
     }
 
-    
 
     public double calculateRoomCost(Room room, LocalDate checkIn, LocalDate checkOut) 
     {
@@ -206,7 +205,7 @@ public class BookingEngine
         List<String> suggestions = new ArrayList<>();
 
         
-        if (guest == null || guest.getRoompreferences() == null || guest.getRoompreferences().isEmpty()) 
+        if (guest == null || guest.getRoomPreferences() == null || guest.getRoomPreferences().isEmpty()) 
         {
             suggestions.add("Special Offer: Stay in our hotel for 3 nights with a standard BREAKFAST_ONLY package.");
             return suggestions;
@@ -215,7 +214,7 @@ public class BookingEngine
         boolean lovesFood = false;
         boolean wantsRelaxation = false;
 
-        for (String pref : guest.getRoompreferences()) {
+        for (String pref : guest.getRoomPreferences()) {
             String lowerPref = pref.toLowerCase(); 
             
             
@@ -245,7 +244,17 @@ public class BookingEngine
     
     public Reservation createDraftReservation( Guest guest , Room room , LocalDate checkIn , LocalDate checkOut , DiningPackage diningPackage, int numChildren, int numAdults ) throws IllegalArgumentException
     {
-        if (guest == null || room == null || checkIn == null || checkOut == null || diningPackage == null || receptionist == null || numChildren < 0 || numAdults < 0) {
+        List <Receptionist> allReceptionists = Database.getReceptionists();
+
+        if (allReceptionists == null || allReceptionists.isEmpty()) 
+        {
+            throw new IllegalStateException("No receptionists available to handle the reservation.");
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt( allReceptionists.size() );
+        Receptionist allocatedReceptionist = allReceptionists.get(randomIndex);
+
+        if (guest == null || room == null || checkIn == null || checkOut == null || diningPackage == null || numChildren < 0 || numAdults < 0) {
             throw new IllegalArgumentException("All reservation details must be provided.");
         }
         if (checkIn.isAfter(checkOut) || checkIn.isEqual(checkOut)) {
@@ -264,7 +273,7 @@ public class BookingEngine
         Reservation reservation = new Reservation(reservationID, guest, room, checkIn, checkOut, diningPackage, numChildren, numAdults);
         Database.getReservations().add(reservation);
         Database.saveData();
-        receptionist.addDraftReservation(reservation); 
+        allocatedReceptionist.addDraftReservation(reservation); 
         
         return reservation;
        
@@ -369,6 +378,7 @@ public class BookingEngine
                         {
                             System.out.println("Unfortunately,30% of the total reservation amount will be deducted as cancellation fees due to late cancellation");
                             System.out.print("cancellation penalty : - "+(Invoices.get(j).getTotalAmount() * 0.30));
+                            System.out.println("Refunded amount = "+(Invoices.get(j).getTotalAmount()*0.70));
                             return (Invoices.get(j).getTotalAmount() * 0.30);
                         }
                     }
@@ -463,11 +473,11 @@ public class BookingEngine
         double diningCostPerNight = 0;
         if (reservation.getDiningpackage() != null) {
             switch (reservation.getDiningpackage()) {
-                case BREAKFAST_ONLY -> diningCostPerNight = 15.0;
-                case HALF_BOARD     -> diningCostPerNight = 35.0;
-                case FULL_BOARD     -> diningCostPerNight = 60.0;
-                case ALL_INCLUSIVE  -> diningCostPerNight = 100.0;
-                default             -> diningCostPerNight = 0.0;
+                case BREAKFAST_ONLY : diningCostPerNight = 15.0;
+                case HALF_BOARD     : diningCostPerNight = 35.0;
+                case FULL_BOARD     : diningCostPerNight = 60.0;
+                case ALL_INCLUSIVE  : diningCostPerNight = 100.0;
+                default             : diningCostPerNight = 0.0;
             }
         }
         double totalDiningCost = diningCostPerNight * nights;
@@ -518,7 +528,7 @@ public class BookingEngine
         Reservation reservation = null;
 
         // Find reservation
-        for (Reservation r : Database.reservations) {
+        for (Reservation r : Database.getReservations()) {
             if (r.getReservationID() == reservationId) {
                 reservation = r;
                 break;
@@ -531,7 +541,7 @@ public class BookingEngine
         }
 
         // Calculate penalty
-        double penalty = calculateCancellationPenalty(reservation, cancelDate);
+        double penalty = calculateCancellationPenalty(reservationId, cancelDate);
 
         reservation.setCancellationPenalty(penalty);
         reservation.getCancellationPenalty();

@@ -5,11 +5,9 @@ import hotel.model.enums.Gender;
 import hotel.model.enums.UserType;
 import hotel.model.staff.Admin;
 import hotel.model.staff.Receptionist;
-import java.util.NoSuchElementException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public abstract class User implements Serializable
@@ -29,10 +27,10 @@ public abstract class User implements Serializable
 
     public User() {}
 
-    public User(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address) {
-        UserName = userName;
+    public User(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address ) {
+        this.UserName = userName;
         this.password = password;
-        Typeofuser = typeofuser;
+        this.Typeofuser = typeofuser;
         this.theGender = theGender;
         this.newpassword = newpassword;
         this.failedLoginAttempts = failedLoginAttempts;
@@ -43,15 +41,15 @@ public abstract class User implements Serializable
     }
 
     public String getUserName() {
-        return UserName;
+        return this.UserName;
     }
 
     public void setUserName(String userName) {
-        UserName = userName;
+        this.UserName = userName;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public void setPassword(String password) {
@@ -59,15 +57,15 @@ public abstract class User implements Serializable
     }
 
     public UserType getTypeofuser() {
-        return Typeofuser;
+        return this.Typeofuser;
     }
 
     public void setTypeofuser(UserType typeofuser) {
-        Typeofuser = typeofuser;
+        this.Typeofuser = typeofuser;
     }
 
     public Gender getTheGender() {
-        return theGender;
+        return this.theGender;
     }
 
     public void setTheGender(Gender theGender) {
@@ -75,7 +73,7 @@ public abstract class User implements Serializable
     }
 
     public String getNewpassword() {
-        return newpassword;
+        return this.newpassword;
     }
 
     public void setNewpassword(String newpassword) {
@@ -83,7 +81,7 @@ public abstract class User implements Serializable
     }
 
     public int getFailedLoginAttempts() {
-        return failedLoginAttempts;
+        return this.failedLoginAttempts;
     }
 
     public void setFailedLoginAttempts(int failedLoginAttempts) {
@@ -91,7 +89,7 @@ public abstract class User implements Serializable
     }
 
     public AccountStatus getAccountStatus() {
-        return accountStatus;
+        return this.accountStatus;
     }
 
     public void setAccountStatus(AccountStatus accountStatus) {
@@ -99,7 +97,7 @@ public abstract class User implements Serializable
     }
 
     public LocalDate getDateOfbirth() {
-        return dateOfbirth;
+        return  this.dateOfbirth;
     }
 
     public void setDateOfbirth(LocalDate dateOfbirth) {
@@ -107,7 +105,7 @@ public abstract class User implements Serializable
     }
 
     public String getPhoneNumber() {
-        return phoneNumber;
+        return this.phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
@@ -115,7 +113,7 @@ public abstract class User implements Serializable
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
 
     public void setAddress(String address) {
@@ -140,12 +138,28 @@ public abstract class User implements Serializable
                 System.out.println("This account is locked. Please contact an administrator.");
                 return;
             }
-            System.out.println("Please choose: 1.GUEST, 2.ADMIN, 3.RECEPTIONIST");
-            Typeofuser = UserType.valueOf(input.next().toUpperCase());
+            while (true) {
+                System.out.print("Please enter your Role (Receptionist, Admin, Guest: ");
+                String roleInput = input.nextLine().trim().toUpperCase();
+
+
+                if (roleInput.equals("RECEPTIONIST") || roleInput.equals("R")) {
+                    Typeofuser=UserType.RECEPTIONIST;
+                    break;
+                } else if (roleInput.equals("ADMIN") || roleInput.equals("A")) {
+                    Typeofuser=UserType.ADMIN;
+                    break;
+                }else if(roleInput.equals("GUEST")|| roleInput.equals("G")){
+                    Typeofuser=UserType.GUEST;
+                    break;
+                } else {
+                    System.out.println("Invalid input. Please enter Receptionist, Admin , Guest.");
+                }
+            }
             System.out.print("Enter Username: ");
-            String currentName = input.next();
+            String currentName = input.nextLine();
             System.out.print("Enter Password: ");
-            String currentPass = input.next();
+            String currentPass = input.nextLine();
         if(Typeofuser== UserType.GUEST){
         boolean found=false;
         List<Guest> guestList = Database.getGuests();
