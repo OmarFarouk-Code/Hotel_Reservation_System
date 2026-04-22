@@ -472,11 +472,26 @@ public class BookingEngine
         double diningCostPerNight = 0;
         if (reservation.getDiningpackage() != null) {
             switch (reservation.getDiningpackage()) {
-                case BREAKFAST_ONLY : diningCostPerNight = 15.0;
-                case HALF_BOARD     : diningCostPerNight = 35.0;
-                case FULL_BOARD     : diningCostPerNight = 60.0;
-                case ALL_INCLUSIVE  : diningCostPerNight = 100.0;
-                default             : diningCostPerNight = 0.0;
+                case BREAKFAST_ONLY : {
+                    diningCostPerNight = 15.0;
+                    break;
+                }
+                case HALF_BOARD     : {
+                    diningCostPerNight = 35.0;
+                    break;
+                }
+                case FULL_BOARD     : {
+                    diningCostPerNight = 60.0;
+                    break;
+                }
+                case ALL_INCLUSIVE  : {
+                    diningCostPerNight = 100.0;
+                    break;
+                }
+                default             : {
+                    diningCostPerNight = 0.0;
+                    break;
+                }
             }
         }
         double totalDiningCost = diningCostPerNight * nights;
