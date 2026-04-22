@@ -1,33 +1,35 @@
 package hotel.model.staff;
 import java.util.List;
 import hotel.core.Database;
+import hotel.model.bookings.Reservation;
 import hotel.model.entities.*;
 import hotel.model.bookings.Invoice;
 import java.time.LocalDate;
 import hotel.interfaces.*;
 import hotel.model.enums.AccountStatus;
 import hotel.model.enums.Gender;
+import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.UserType;
 
 public class  Admin extends Staff implements Manageable
 {
 
-    private List<Room> roomList;
-    private List<Amenity> amenityList;
-    private List<RoomType> roomTypeList;
-    private List<Invoice> invoicesList;
+
 
     public Admin() { }
 
-    public Admin(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, int workingHours, List<Room> roomList) {
+    public Admin(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, int workingHours, List<Invoice> invoicesList, List<RoomType> roomTypeList, List<Amenity> amenityList, List<Room> roomList) {
         super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address, workingHours);
-        this.roomList = roomList;
+
+    }
+
+    public Admin(String adminRoot, String s, UserType userType, Gender gender, Object o, int i, AccountStatus accountStatus, LocalDate of, String s1, String s2, int i1, List<Room> rooms) {
     }
 
     //room functions
     public void createRoom(Room room) throws Exception
     {
-        this.roomList = Database.getRooms();
+        List <Room> roomList = Database.getRooms();
         if (room == null) {
             throw new Exception("System Error: Attempted to create a null room.");
         }
@@ -54,7 +56,7 @@ public class  Admin extends Staff implements Manageable
         {
             throw new Exception("Invalid Data: Room number must be greater than 0");
         }
-        this.roomList = Database.getRooms();
+        List <Room> roomList = Database.getRooms();
         for (int i=0;i<roomList.size();i++)
         {
             Room room = roomList.get(i);
@@ -68,7 +70,7 @@ public class  Admin extends Staff implements Manageable
 
     public void updateRoom(int roomNumber, Room updatedRoom) throws Exception
     {
-        this.roomList = Database.getRooms();
+        List <Room> roomList = Database.getRooms();
         if(roomNumber<=0)
         {
             throw new Exception("Invalid Data: Room number must be greater than 0");
@@ -92,7 +94,8 @@ public class  Admin extends Staff implements Manageable
 
     public void deleteRoom(int roomNumber) throws Exception
     {
-        this.roomList = Database.getRooms();
+        List <Room> roomList = Database.getRooms();
+        List < Reservation> allReservations=Database.getReservations();
         if(roomNumber<=0)
         {
             throw new Exception("Invalid Data: Room number must be greater than 0");
@@ -101,6 +104,12 @@ public class  Admin extends Staff implements Manageable
         {
             if (roomList.get(i).getRoomNumber() == roomNumber)
             {
+                for (Reservation res : allReservations) {
+                    if (res.getRoom().getRoomNumber() == roomNumber &&
+                            (res.getStatus() == ReservationStatus.CONFIRMED || res.getStatus() == ReservationStatus.PENDING)) {
+                        throw new Exception("Delete Failed: Room " + roomNumber + " has an active reservation.");
+                    }
+                }
                 roomList.remove(i);
                 Database.saveData();
                 System.out.println("Room " + roomNumber + " deleted successfully.");
@@ -115,7 +124,7 @@ public class  Admin extends Staff implements Manageable
     //Amenity Functions
     // Amenity Functions
     public void createAmenity(Amenity amenity) throws Exception {
-        this.amenityList = Database.getAmenities();
+        List <Amenity> amenityList = Database.getAmenities();
         if (amenity == null) {
             throw new Exception("System Error: Attempted to create a null amenity.");
         }
@@ -130,7 +139,7 @@ public class  Admin extends Staff implements Manageable
     }
 
     public Amenity readAmenity(String name) throws Exception {
-        this.amenityList = Database.getAmenities();
+        List <Amenity> amenityList = Database.getAmenities();
         for (Amenity a : amenityList) {
             if (a.getAmenityName().equalsIgnoreCase(name)) {
                 return a;
@@ -140,7 +149,7 @@ public class  Admin extends Staff implements Manageable
     }
 
     public void updateAmenity(String name, Amenity updatedAmenity) throws Exception {
-        this.amenityList = Database.getAmenities();
+        List <Amenity> amenityList = Database.getAmenities();
         for (int i = 0; i < amenityList.size(); i++) {
             if (amenityList.get(i).getAmenityName().equalsIgnoreCase(name)) {
                 amenityList.set(i, updatedAmenity);
@@ -152,7 +161,7 @@ public class  Admin extends Staff implements Manageable
     }
 
     public void deleteAmenity(String name) throws Exception {
-        this.amenityList = Database.getAmenities();
+        List <Amenity> amenityList = Database.getAmenities();
         for (int i = 0; i < amenityList.size(); i++) {
             if (amenityList.get(i).getAmenityName().equalsIgnoreCase(name)) {
                 amenityList.remove(i);
@@ -167,7 +176,7 @@ public class  Admin extends Staff implements Manageable
     //RoomType
 // RoomType Functions
     public void createRoomType(RoomType roomtype) throws Exception {
-        this.roomTypeList = Database.getRoomTypes();
+        List <RoomType> roomTypeList = Database.getRoomTypes();
 
         if (roomtype == null) {
             throw new Exception("System Error: Attempted to create a null Room Type.");
@@ -185,7 +194,7 @@ public class  Admin extends Staff implements Manageable
     }
 
     public RoomType readRoomType(String typeName) throws Exception {
-        this.roomTypeList = Database.getRoomTypes();
+        List <RoomType> roomTypeList = Database.getRoomTypes();
 
         for (RoomType type : roomTypeList) {
             if (type.getTypeName().equalsIgnoreCase(typeName)) {
@@ -198,7 +207,7 @@ public class  Admin extends Staff implements Manageable
     }
 
     public void updateRoomType(String typeName, RoomType updatedType) throws Exception {
-        this.roomTypeList = Database.getRoomTypes();
+        List <RoomType> roomTypeList = Database.getRoomTypes();
 
         if (updatedType == null) {
             throw new Exception("System Error: Updated data is empty.");
@@ -215,7 +224,7 @@ public class  Admin extends Staff implements Manageable
     }
 
     public void deleteRoomType(String typeName) throws Exception {
-        this.roomTypeList = Database.getRoomTypes();
+        List <RoomType> roomTypeList = Database.getRoomTypes();
 
         for (int i = 0; i < roomTypeList.size(); i++) {
             if (roomTypeList.get(i).getTypeName().equalsIgnoreCase(typeName)) {
@@ -238,12 +247,12 @@ public class  Admin extends Staff implements Manageable
 
     public void setSeasonalMultiplier(String roomType, double multiplier) throws Exception
     {
-        this.roomTypeList = Database.getRoomTypes();
+        List <RoomType> roomTypeList = Database.getRoomTypes();
 
         if (multiplier < 0) {
             throw new Exception("Invalid Data: Multiplier cannot be negative.");
         }
-        if (this.roomTypeList == null) {
+        if (roomTypeList == null) {
             throw new Exception("System Error: Room type database is not initialized.");
         }
         for (RoomType type : roomTypeList)
@@ -264,7 +273,7 @@ public class  Admin extends Staff implements Manageable
             throw new Exception("Invalid Input: Days cannot be negative.");
         }
 
-        this.invoicesList = Database.getInvoices();
+        List <Invoice> invoicesList = Database.getInvoices();
         double total = 0;
         LocalDate cutoffDate = LocalDate.now().minusDays(days);
 
@@ -275,7 +284,7 @@ public class  Admin extends Staff implements Manageable
 
         System.out.println("\n--- Financial Report (Last " + days + " Days) ---");
         for (Invoice inv : invoicesList) {
-            if (inv.isPaid() && inv.getPaymentDate().isAfter(cutoffDate) || inv.getPaymentDate().isEqual(cutoffDate)) {
+            if (inv.isPaid() && (inv.getPaymentDate().isAfter(cutoffDate) || inv.getPaymentDate().isEqual(cutoffDate))){
                 total += inv.getTotalAmount();
                 System.out.println("ID: " + inv.getInvoiceID() + " | Date: " + inv.getPaymentDate() + " | Amount: $" + inv.getTotalAmount());
             }

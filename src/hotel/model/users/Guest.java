@@ -12,7 +12,6 @@ public class Guest extends User
     protected static int GuestId=100;
     protected int UniqueId;
     private List<String> roomPreferences;
-    private Scanner input;
 
     public Guest(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, double balance, int uniqueId, Scanner input) {
         super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address);
@@ -165,7 +164,6 @@ public class Guest extends User
                 userInput = input.nextLine();
             }
             dateOfbirth = LocalDate.parse(userInput);
-            input.nextLine();//used to leave line
             System.out.println("Please enter your phone number");
             phoneNumber=input.nextLine();
             System.out.println("Please enter your address");
