@@ -82,7 +82,7 @@ public class Main {
                     case "2" : { // RoomType CRUD
                         System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
                         String op = sc.nextLine();
-                        if (op.equals("1")) admin.createRoomType(new RoomType("Suite", 200, RoomView.SEA_VIEW, "Lux", 1.0, 150));
+                        if (op.equals("1")) admin.createRoomType(new RoomType("Suite", 200, RoomView.SEA_VIEW, "Lux", 1.0, 150, 5));
                         if (op.equals("2")) admin.readRoomType("Suite");
                         if (op.equals("3")) admin.updateRoomType("Suite", new RoomType());
                         if (op.equals("4")) admin.deleteRoomType("Suite");
