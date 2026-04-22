@@ -5,6 +5,10 @@ import hotel.model.entities.*;
 import hotel.model.bookings.Invoice;
 import java.time.LocalDate;
 import hotel.interfaces.*;
+import hotel.model.enums.AccountStatus;
+import hotel.model.enums.Gender;
+import hotel.model.enums.UserType;
+
 public class  Admin extends Staff implements Manageable
 {
 
@@ -14,6 +18,17 @@ public class  Admin extends Staff implements Manageable
     private List<Invoice> invoicesList;
 
     public Admin() { }
+
+    public Admin(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, int workingHours, List<Invoice> invoicesList, List<RoomType> roomTypeList, List<Amenity> amenityList, List<Room> roomList) {
+        super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address, workingHours);
+        this.invoicesList = invoicesList;
+        this.roomTypeList = roomTypeList;
+        this.amenityList = amenityList;
+        this.roomList = roomList;
+    }
+
+    public Admin(String adminRoot, String s, UserType userType, Gender gender, Object o, int i, AccountStatus accountStatus, LocalDate of, String s1, String s2, int i1, List<Room> rooms) {
+    }
 
     //room functions
     public void createRoom(Room room) throws Exception
@@ -266,7 +281,7 @@ public class  Admin extends Staff implements Manageable
 
         System.out.println("\n--- Financial Report (Last " + days + " Days) ---");
         for (Invoice inv : invoicesList) {
-            if (inv.isPaid() && inv.getPaymentDate().isAfter(cutoffDate) || inv.getPaymentDate().isEqual(cutoffDate)) {
+            if (inv.isPaid() && (inv.getPaymentDate().isAfter(cutoffDate) || inv.getPaymentDate().isEqual(cutoffDate))){
                 total += inv.getTotalAmount();
                 System.out.println("ID: " + inv.getInvoiceID() + " | Date: " + inv.getPaymentDate() + " | Amount: $" + inv.getTotalAmount());
             }
