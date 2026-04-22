@@ -26,12 +26,31 @@ public class Main {
 
             String choice = sc.nextLine();
             switch (choice) {
-                case "1" : showAdminMenu(new Admin()); // Uses default Admin instance
-                case "2" : showReceptionistMenu(new Receptionist(choice, choice, null, null, choice, 0, null, null, choice, choice, 0));
-                case "3" : showGuestMenu(new Guest());
-                case "4" : System.out.println("Current Occupancy: " + engine.calculateOccupancyPercentage() + "%");
-                case "5" : { Database.saveData(); System.exit(0); }
-                default : System.out.println("Invalid selection.");
+                case "1" : {
+                    showAdminMenu(new Admin()); // Uses default Admin instance
+                    break;
+                }
+                case "2" : {
+                    showReceptionistMenu(new Receptionist(choice, choice, null, null, choice, 0, null, null, choice, choice, 0));
+                    break;
+                }
+                case "3" : {
+                    showGuestMenu(new Guest());
+                    break;
+                }
+                case "4" : {
+                    System.out.println("Current Occupancy: " + engine.calculateOccupancyPercentage() + "%");
+                    break;
+                }
+                case "5" : { 
+                    Database.saveData(); System.exit(0); 
+                    break;
+                }
+                    
+                default : {
+                    System.out.println("Invalid selection.");
+                    break;
+                }
             }
         }
     }
@@ -58,6 +77,7 @@ public class Main {
                         if (op.equals("2")) admin.readRoom(101);
                         if (op.equals("3")) admin.updateRoom(101, new Room());
                         if (op.equals("4")) admin.deleteRoom(101);
+                        break;
                     }
                     case "2" : { // RoomType CRUD
                         System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
@@ -66,6 +86,7 @@ public class Main {
                         if (op.equals("2")) admin.readRoomType("Suite");
                         if (op.equals("3")) admin.updateRoomType("Suite", new RoomType());
                         if (op.equals("4")) admin.deleteRoomType("Suite");
+                        break;
                     }
                     case "3" : { // Amenity CRUD
                         System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
@@ -74,21 +95,34 @@ public class Main {
                         if (op.equals("2")) admin.readAmenity("WiFi");
                         if (op.equals("3")) admin.updateAmenity("WiFi", new Amenity());
                         if (op.equals("4")) admin.deleteAmenity("WiFi");
+                        break;
                     }
                     case "4" : {
                         System.out.print("Type: "); String t = sc.nextLine();
                         System.out.print("Multiplier: "); double m = Double.parseDouble(sc.nextLine());
                         admin.setSeasonalMultiplier(t, m);
+                        break;
                     }
                     case "5" : {
                         System.out.print("Report days: ");
                         admin.generateFinancialReport(Integer.parseInt(sc.nextLine()));
+                        break;
                     }
-                    case "6" : admin.viewAllGuests();
-                    case "7" : admin.viewAllReservations();
+                    case "6" : {
+                        admin.viewAllGuests();
+                        break;
+                    }
+                    case "7" : { 
+                        admin.viewAllReservations();
+                        break;
+                    }
                     case "8" : { return; }
-                }
-            } catch (Exception e) { System.out.println("Error: " + e.getMessage()); }
+                }   
+            } 
+            catch (Exception e) 
+            { 
+                System.out.println("Error: " + e.getMessage()); 
+            }
         }
     }
 
@@ -102,11 +136,26 @@ public class Main {
 
             String choice = sc.nextLine();
             switch (choice) {
-                case "1" : { System.out.print("ID: "); rec.manageCheckIn(Integer.parseInt(sc.nextLine())); }
-                case "2" : { System.out.print("ID: "); rec.manageCheckOut(Integer.parseInt(sc.nextLine())); }
-                case "3" : rec.getDraftReservations().forEach(System.out::println);
-                case "4" : rec.viewAllGuests();
-                case "5" : rec.viewAllReservations();
+                case "1" : { 
+                    System.out.print("ID: "); rec.manageCheckIn(Integer.parseInt(sc.nextLine())); 
+                    break;
+                }
+                case "2" : { 
+                    System.out.print("ID: "); rec.manageCheckOut(Integer.parseInt(sc.nextLine())); 
+                    break;
+                }
+                case "3" : {
+                    rec.getDraftReservations().forEach(System.out::println);
+                    break;
+                }
+                case "4" : {
+                    rec.viewAllGuests();
+                    break;
+                }
+                case "5" : {
+                    rec.viewAllReservations();
+                    break;
+                }
                 case "6" : { return; }
             }
         }
@@ -125,7 +174,10 @@ public class Main {
 
             String choice = sc.nextLine();
             switch (choice) {
-                case "1" : guest.GuestHomepage();
+                case "1" : {
+                    guest.GuestHomepage();
+                    break;
+                }
                 case "2" : {
                     System.out.print("Type: "); String t = sc.nextLine();
                     List<Room> rs = engine.filterRooms(t, RoomView.SEA_VIEW, 10000);
@@ -135,10 +187,20 @@ public class Main {
                         System.out.print("Promo Code? "); String code = sc.nextLine();
                         engine.validatePromocode(code);
                     }
+                    break;
                 }
-                case "3" : { System.out.print("Name: "); String n = sc.nextLine(); System.out.print("ID: "); int id = Integer.parseInt(sc.nextLine()); guest.ViewReservation(n, id); }
-                case "4" : { System.out.print("ID: "); engine.processCancellation(Integer.parseInt(sc.nextLine()), LocalDate.now()); }
-                case "5" : guest.ResetPassword("User", UserType.GUEST);
+                case "3" : { 
+                    System.out.print("Name: "); String n = sc.nextLine(); System.out.print("ID: "); int id = Integer.parseInt(sc.nextLine()); guest.ViewReservation(n, id); 
+                    break;
+                }
+                case "4" : { 
+                    System.out.print("ID: "); engine.processCancellation(Integer.parseInt(sc.nextLine()), LocalDate.now()); 
+                    break;
+                }
+                case "5" : {
+                    guest.ResetPassword("User", UserType.GUEST);
+                    break;
+                }
                 case "6" : { return; }
             }
         }
