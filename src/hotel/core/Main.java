@@ -182,6 +182,7 @@ public class Main {
                     System.out.print("Type: "); String t = sc.nextLine();
                     List<Room> rs = engine.filterRooms(t, RoomView.SEA_VIEW, 10000);
                     if(!rs.isEmpty()) {
+                        
                         System.out.println("Booking first available...");
                         engine.createDraftReservation(guest, rs.get(0), LocalDate.now(), LocalDate.now().plusDays(1), DiningPackage.ALL_INCLUSIVE, 0, 2);
                         System.out.print("Promo Code? "); String code = sc.nextLine();
