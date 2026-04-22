@@ -403,7 +403,6 @@ public class BookingEngine
     public double calculateAmenityCost(List<Amenity> selectedAmenities)
     {
         double total=0.0;
-        List<Amenity> amenityList = Database.getAmenities();
         if (selectedAmenities==null||selectedAmenities.isEmpty())
         {
             return  total;
