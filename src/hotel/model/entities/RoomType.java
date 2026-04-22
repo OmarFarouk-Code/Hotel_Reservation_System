@@ -82,4 +82,6 @@ public class RoomType implements Serializable
     public double getEffectivePrice() {
         return basePrice * seasonMultiplier;
     }
+
+    public void setRoomView(RoomView roomView){this.roomView = roomView;}
 }
