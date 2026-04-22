@@ -5,6 +5,10 @@ import hotel.model.entities.*;
 import hotel.model.bookings.Invoice;
 import java.time.LocalDate;
 import hotel.interfaces.*;
+import hotel.model.enums.AccountStatus;
+import hotel.model.enums.Gender;
+import hotel.model.enums.UserType;
+
 public class  Admin extends Staff implements Manageable
 {
 
@@ -14,6 +18,11 @@ public class  Admin extends Staff implements Manageable
     private List<Invoice> invoicesList;
 
     public Admin() { }
+
+    public Admin(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, int workingHours, List<Room> roomList) {
+        super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address, workingHours);
+        this.roomList = roomList;
+    }
 
     //room functions
     public void createRoom(Room room) throws Exception
