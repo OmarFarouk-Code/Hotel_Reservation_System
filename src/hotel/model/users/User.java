@@ -138,12 +138,28 @@ public abstract class User implements Serializable
                 System.out.println("This account is locked. Please contact an administrator.");
                 return;
             }
-            System.out.println("Please choose: 1.GUEST, 2.ADMIN, 3.RECEPTIONIST");
-            Typeofuser = UserType.valueOf(input.next().toUpperCase());
+            while (true) {
+                System.out.print("Please enter your Role (Receptionist, Admin, Guest: ");
+                String roleInput = input.nextLine().trim().toUpperCase();
+
+
+                if (roleInput.equals("RECEPTIONIST") || roleInput.equals("R")) {
+                    Typeofuser=UserType.RECEPTIONIST;
+                    break;
+                } else if (roleInput.equals("ADMIN") || roleInput.equals("A")) {
+                    Typeofuser=UserType.ADMIN;
+                    break;
+                }else if(roleInput.equals("GUEST")|| roleInput.equals("G")){
+                    Typeofuser=UserType.GUEST;
+                    break;
+                } else {
+                    System.out.println("Invalid input. Please enter Receptionist, Admin , Guest.");
+                }
+            }
             System.out.print("Enter Username: ");
-            String currentName = input.next();
+            String currentName = input.nextLine();
             System.out.print("Enter Password: ");
-            String currentPass = input.next();
+            String currentPass = input.nextLine();
         if(Typeofuser== UserType.GUEST){
         boolean found=false;
         List<Guest> guestList = Database.getGuests();

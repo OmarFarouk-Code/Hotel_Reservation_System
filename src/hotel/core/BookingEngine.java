@@ -26,7 +26,6 @@ public class BookingEngine
         }
         ArrayList<Room> results=new ArrayList<>();
         List<Room> Rooms=Database.getRooms();
-        List<RoomType>roomtype=Database.getRoomTypes();
 
         for (int i=0;i<Rooms.size();i++)
         {
@@ -369,6 +368,7 @@ public class BookingEngine
                         {
                             System.out.println("Unfortunately,30% of the total reservation amount will be deducted as cancellation fees due to late cancellation");
                             System.out.print("cancellation penalty : - "+(Invoices.get(j).getTotalAmount() * 0.30));
+                            System.out.println("Refunded amount = "+(Invoices.get(j).getTotalAmount()*0.70));
                             return (Invoices.get(j).getTotalAmount() * 0.30);
                         }
                     }
@@ -531,7 +531,7 @@ public class BookingEngine
         }
 
         // Calculate penalty
-        double penalty = calculateCancellationPenalty(reservation, cancelDate);
+        double penalty = calculateCancellationPenalty(reservationId, cancelDate);
 
         reservation.setCancellationPenalty(penalty);
         reservation.getCancellationPenalty();
