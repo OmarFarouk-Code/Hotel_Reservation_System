@@ -201,13 +201,56 @@ public class Database
             Database.getGuests().add(guest);
         }
 
-        // 7. Generate Staff
-        Admin admin1 = new Admin("admin_root", "Admin@2026", UserType.ADMIN, Gender.MALE, null, 0, AccountStatus.ACTIVE, 
-                LocalDate.of(1985, 4, 12), "+201011111111", "New Cairo, Egypt", 8, Database.getRooms());
+        // --- Admins ---
+        // Using setters for Admins to avoid any constructor mismatch errors
+        Admin admin1 = new Admin();
+        admin1.setUserName("admin_omar");
+        admin1.setPassword("Admin@2026");
+        admin1.setTypeofuser(UserType.ADMIN);
+        admin1.setTheGender(Gender.MALE);
+        admin1.setAccountStatus(AccountStatus.ACTIVE);
+        admin1.setDateOfbirth(LocalDate.of(1985, 4, 12));
+        admin1.setPhoneNumber("+201011111111");
+        admin1.setAddress("New Cairo, Egypt");
+        admin1.setWorkingHours(8);
         Database.getAdmins().add(admin1);
 
-        Receptionist rec1 = new Receptionist("frontdesk_aya", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1998, 9, 21), "+201222222222", "Nasr City, Cairo", 8);
+        Admin admin2 = new Admin();
+        admin2.setUserName("admin_belal");
+        admin2.setPassword("Admin@2026");
+        admin2.setTypeofuser(UserType.ADMIN);
+        admin2.setTheGender(Gender.MALE);
+        admin2.setAccountStatus(AccountStatus.ACTIVE);
+        admin2.setDateOfbirth(LocalDate.of(1990, 8, 25));
+        admin2.setPhoneNumber("+201022222222");
+        admin2.setAddress("Nasr City, Egypt");
+        admin2.setWorkingHours(8);
+        Database.getAdmins().add(admin2);
+        
+        Admin admin3 = new Admin();
+        admin3.setUserName("admin_adam");
+        admin3.setPassword("Admin@2026");
+        admin3.setTypeofuser(UserType.ADMIN);
+        admin3.setTheGender(Gender.MALE);
+        admin3.setAccountStatus(AccountStatus.ACTIVE);
+        admin3.setDateOfbirth(LocalDate.of(1992, 1, 15));
+        admin3.setPhoneNumber("+201033333333");
+        admin3.setAddress("Heliopolis, Egypt");
+        admin3.setWorkingHours(8);
+        Database.getAdmins().add(admin3);
+
+        // --- Receptionists ---
+        Receptionist rec1 = new Receptionist("frontdesk_aya", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1998, 9, 21), "+201123456789", "Nasr City, Cairo", 8);
         Database.getReceptionists().add(rec1);
+
+        Receptionist rec2 = new Receptionist("frontdesk_tarek", "Desk@2026", UserType.RECEPTIONIST, Gender.MALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1995, 3, 14), "+201198765432", "Maadi, Cairo", 8);
+        Database.getReceptionists().add(rec2);
+
+        Receptionist rec3 = new Receptionist("frontdesk_nada", "Desk@2026", UserType.RECEPTIONIST, Gender.FEMALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(2000, 11, 5), "+201011223344", "Zamalek, Cairo", 6);
+        Database.getReceptionists().add(rec3);
+        
+        Receptionist rec4 = new Receptionist("frontdesk_mostafa", "Desk@2026", UserType.RECEPTIONIST, Gender.MALE, null, 0, AccountStatus.ACTIVE, LocalDate.of(1999, 7, 30), "+201099887766", "Rehab City, Cairo", 8);
+        Database.getReceptionists().add(rec4);
 
         // 8. Generate Active/Past Reservations & Invoices
         BookingEngine engine = new BookingEngine();

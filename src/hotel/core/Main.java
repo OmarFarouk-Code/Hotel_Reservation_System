@@ -13,9 +13,15 @@ public class Main {
     private static Scanner sc = new Scanner(System.in);
     private static BookingEngine engine = new BookingEngine();
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         Database.loadData();
+        
+        // Auto-seed dummy data if the database is completely empty
+        if (Database.getAdmins().isEmpty() && Database.getReceptionists().isEmpty()) {
+            System.out.println("[SYSTEM] Database is empty. Seeding default hotel data...");
+            Database.initializeHotelData();
+        }
+
         try {
             showMainMenu();
         } catch (Exception e) {
@@ -35,119 +41,67 @@ public class Main {
             String choice = sc.nextLine();
             switch (choice) {
                 case "1":
-                    handleAdminLogin();
+                    System.out.println("\n--- ADMIN LOGIN ---");
+                    Admin tempAdmin = new Admin();
+                    User loggedInAdmin = tempAdmin.Login(UserType.ADMIN);
+                    if (loggedInAdmin != null) showAdminMenu((Admin) loggedInAdmin);
                     break;
+                    
                 case "2":
-                    handleReceptionistLogin();
+                    System.out.println("\n--- RECEPTIONIST LOGIN ---");
+                    Receptionist tempRec = new Receptionist();
+                    User loggedInRec = tempRec.Login(UserType.RECEPTIONIST);
+                    if (loggedInRec != null) {
+                        try {
+                            showReceptionistMenu((Receptionist) loggedInRec);
+                        } catch (Exception e) {
+                            System.out.println("Menu Error: " + e.getMessage());
+                        }
+                    }
                     break;
+                    
                 case "3":
-                    handleGuestPortal();
+                    System.out.println("\n--- GUEST PORTAL ---");
+                    System.out.println("1. Login   2. Register");
+                    System.out.print("Selection: ");
+                    String gChoice = sc.nextLine();
+                    Guest tempGuest = new Guest();
+                    
+                    if (gChoice.equals("1")) {
+                        User loggedInGuest = tempGuest.Login(UserType.GUEST);
+                        if (loggedInGuest != null) {
+                            ((Guest) loggedInGuest).setInput(sc); // Bind main scanner to guest
+                            showGuestMenu((Guest) loggedInGuest);
+                        }
+                    } else if (gChoice.equals("2")) {
+                        tempGuest.setInput(sc);
+                        try {
+                            tempGuest.register();
+                            System.out.println("Registration complete! You can now log in.");
+                        } catch (Exception e) {
+                            System.out.println("Registration error: " + e.getMessage());
+                        }
+                    } else {
+                        System.out.println("Invalid selection.");
+                    }
                     break;
+                    
                 case "4":
                     System.out.println("Current Occupancy: " + engine.calculateOccupancyPercentage() + "%");
                     break;
+                    
                 case "5":
                     Database.saveData();
                     System.out.println("Data saved successfully. Exiting...");
                     System.exit(0);
                     break;
+                    
                 default:
                     System.out.println("Invalid selection.");
                     break;
             }
         }
     }
-
-    // --- AUTHENTICATION FLOWS ---
-
-    private static void handleAdminLogin() {
-        System.out.println("\n--- ADMIN LOGIN ---");
-        System.out.print("Username: ");
-        String username = sc.nextLine();
-        System.out.print("Password: ");
-        String password = sc.nextLine();
-
-        for (Admin admin : Database.getAdmins()) {
-            if (admin.getUserName().equals(username) && admin.getPassword().equals(password)) {
-                if (admin.getAccountStatus() == AccountStatus.ACTIVE) {
-                    System.out.println("Login Successful! Welcome, " + admin.getUserName() + ".");
-                    showAdminMenu(admin);
-                    return;
-                } else {
-                    System.out.println("Access Denied: Account is locked.");
-                    return;
-                }
-            }
-        }
-        System.out.println("Invalid credentials.");
-    }
-
-    private static void handleReceptionistLogin() {
-        System.out.println("\n--- RECEPTIONIST LOGIN ---");
-        System.out.print("Username: ");
-        String username = sc.nextLine();
-        System.out.print("Password: ");
-        String password = sc.nextLine();
-
-        for (Receptionist rec : Database.getReceptionists()) {
-            if (rec.getUserName().equals(username) && rec.getPassword().equals(password)) {
-                if (rec.getAccountStatus() == AccountStatus.ACTIVE) {
-                    System.out.println("Login Successful! Welcome, " + rec.getUserName() + ".");
-                    try {
-                        showReceptionistMenu(rec);
-                    } catch (Exception e) {
-                        System.out.println("Error loading menu: " + e.getMessage());
-                    }
-                    return;
-                } else {
-                    System.out.println("Access Denied: Account is locked.");
-                    return;
-                }
-            }
-        }
-        System.out.println("Invalid credentials.");
-    }
-
-    private static void handleGuestPortal() {
-        System.out.println("\n--- GUEST PORTAL ---");
-        System.out.println("1. Login");
-        System.out.println("2. Register");
-        System.out.println("3. Back to Main Menu");
-        System.out.print("Selection: ");
-
-        String choice = sc.nextLine();
-        if (choice.equals("1")) {
-            System.out.print("Username: ");
-            String username = sc.nextLine();
-            System.out.print("Password: ");
-            String password = sc.nextLine();
-
-            for (Guest guest : Database.getGuests()) {
-                if (guest.getUserName() != null && guest.getUserName().equals(username) && guest.getPassword().equals(password)) {
-                    if (guest.getAccountStatus() == AccountStatus.ACTIVE) {
-                        System.out.println("Login Successful! Welcome, " + guest.getUserName() + ".");
-                        guest.setInput(sc); // Ensure input scanner is bound for guest methods
-                        showGuestMenu(guest);
-                        return;
-                    } else {
-                        System.out.println("Access Denied: Account is locked.");
-                        return;
-                    }
-                }
-            }
-            System.out.println("Invalid credentials.");
-        } else if (choice.equals("2")) {
-            Guest newGuest = new Guest();
-            newGuest.setInput(sc);
-            try {
-                newGuest.register();
-                System.out.println("Registration complete! Please log in from the Guest Portal.");
-            } catch (Exception e) {
-                System.out.println("Registration error: " + e.getMessage());
-            }
-        }
-    }
-
 
     // --- 2. ADMIN MENU ---
     private static void showAdminMenu(Admin admin) {
@@ -165,7 +119,7 @@ public class Main {
             try {
                 String choice = sc.nextLine();
                 switch (choice) {
-                    case "1": { // Room CRUD
+                    case "1": { 
                         System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
                         String op = sc.nextLine();
                         if (op.equals("1")) admin.createRoom(new Room(101, 1, new RoomType()));
@@ -174,7 +128,7 @@ public class Main {
                         if (op.equals("4")) admin.deleteRoom(101);
                         break;
                     }
-                    case "2": { // RoomType CRUD
+                    case "2": { 
                         System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
                         String op = sc.nextLine();
                         if (op.equals("1")) admin.createRoomType(new RoomType("Suite", 200, RoomView.SEA_VIEW, "Lux", 1.0, 150, 5));
@@ -183,7 +137,7 @@ public class Main {
                         if (op.equals("4")) admin.deleteRoomType("Suite");
                         break;
                     }
-                    case "3": { // Amenity CRUD
+                    case "3": { 
                         System.out.print("1.Create 2.Read 3.Update 4.Delete: ");
                         String op = sc.nextLine();
                         if (op.equals("1")) admin.createAmenity(new Amenity("WiFi", "High Speed", 50));
@@ -203,18 +157,9 @@ public class Main {
                         admin.generateFinancialReport(Integer.parseInt(sc.nextLine()));
                         break;
                     }
-                    case "6": {
-                        admin.viewAllGuests();
-                        break;
-                    }
-                    case "7": {
-                        admin.viewAllReservations();
-                        break;
-                    }
-                    case "8": {
-                        System.out.println("Logging out Admin...");
-                        return;
-                    }
+                    case "6": admin.viewAllGuests(); break;
+                    case "7": admin.viewAllReservations(); break;
+                    case "8": System.out.println("Logging out..."); return;
                 }
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
@@ -234,30 +179,12 @@ public class Main {
 
             String choice = sc.nextLine();
             switch (choice) {
-                case "1": {
-                    System.out.print("ID: "); rec.manageCheckIn(Integer.parseInt(sc.nextLine()));
-                    break;
-                }
-                case "2": {
-                    System.out.print("ID: "); rec.manageCheckOut(Integer.parseInt(sc.nextLine()));
-                    break;
-                }
-                case "3": {
-                    rec.getDraftReservations().forEach(System.out::println);
-                    break;
-                }
-                case "4": {
-                    rec.viewAllGuests();
-                    break;
-                }
-                case "5": {
-                    rec.viewAllReservations();
-                    break;
-                }
-                case "6": {
-                    System.out.println("Logging out Receptionist...");
-                    return;
-                }
+                case "1": System.out.print("ID: "); rec.manageCheckIn(Integer.parseInt(sc.nextLine())); break;
+                case "2": System.out.print("ID: "); rec.manageCheckOut(Integer.parseInt(sc.nextLine())); break;
+                case "3": rec.getDraftReservations().forEach(System.out::println); break;
+                case "4": rec.viewAllGuests(); break;
+                case "5": rec.viewAllReservations(); break;
+                case "6": System.out.println("Logging out..."); return;
             }
         }
     }
@@ -297,16 +224,9 @@ public class Main {
                     System.out.print("Reservation ID: "); engine.processCancellation(Integer.parseInt(sc.nextLine()), LocalDate.now());
                     break;
                 }
-                case "4": {
-                    guest.ResetPassword(guest.getUserName(), UserType.GUEST);
-                    break;
-                }
-                case "5": {
-                    System.out.println("Logging out Guest...");
-                    return;
-                }
+                case "4": guest.ResetPassword(guest.getUserName(), UserType.GUEST); break;
+                case "5": System.out.println("Logging out..."); return;
             }
         }
     }
 }
-
