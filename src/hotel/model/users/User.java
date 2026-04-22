@@ -16,11 +16,11 @@ public abstract class User implements Serializable
 
     protected String UserName;
     protected String password;
-    private UserType Typeofuser=null;
+    protected UserType Typeofuser=null;
     protected Gender theGender;
     protected String newpassword;
-    private int failedLoginAttempts =0;
-    private AccountStatus accountStatus;
+    protected int failedLoginAttempts =0;
+    protected AccountStatus accountStatus;
     protected LocalDate dateOfbirth;
     protected String phoneNumber;
     protected String address;
