@@ -120,9 +120,16 @@ public class Main {
             try {
                 String choice = sc.nextLine();
                 switch (choice) {
-                    case "1": { // --- MANAGE ROOMS ---
-                        System.out.print("Rooms: 1.Create 2.Read 3.Update 4.Delete: ");
-                        String op = sc.nextLine();
+                    case "1":  // --- MANAGE ROOMS ---
+                        List <RoomType> roomtype=Database.getRoomTypes();
+                        if (roomtype.isEmpty()) {
+                            System.out.println("[No Room Types available]");
+                        }
+                        else
+                        {
+                            admin.DisplayRoomType();
+                            System.out.print("Rooms: 1.Create 2.Read 3.Update 4.Delete: ");
+                            String op = sc.nextLine();
 
                         try {
                             if (op.equals("1")) {
@@ -132,7 +139,7 @@ public class Main {
                                 System.out.print("Enter Floor Number: ");
                                 int floorNum = Integer.parseInt(sc.nextLine());
 
-                                System.out.print("Enter Room Type Name (e.g., Standard, Suite): ");
+                                System.out.print("Enter Room Type Name (From Available List): ");
                                 String typeName = sc.nextLine();
 
                                 // Fetch the actual RoomType from the database before assigning it
@@ -145,7 +152,7 @@ public class Main {
                                 System.out.print("Enter Room Number to read: ");
                                 int roomNum = Integer.parseInt(sc.nextLine());
                                 Room r = admin.readRoom(roomNum);
-                                System.out.println("Found Room: " + r.getRoomNumber() + " on floor " + r.getFloor());
+                                System.out.println("Found Room: " + r.getRoomNumber() + " on floor " + r.getFloor() + "\nRoomType: "+r.getRoomType().getTypeName());
                             }
                             else if (op.equals("4")) {
                                 System.out.print("Enter Room Number to delete: ");
@@ -159,19 +166,15 @@ public class Main {
                         break;
                     }
                     case "2": { // --- MANAGE ROOM TYPES ---
-                        System.out.print("Room Types: 1.Create 2.Read 3.Update 4.Delete: \n");
+
                         List<RoomType> list = Database.getRoomTypes();
-                        System.out.println("\n--- RoomTypes Dashboard ---");
-                        if (list.isEmpty()) {
+                        if (list.isEmpty())
+                        {
                             System.out.println("[No Room Types available]");
-                        } else {
-                            // Only printing the TypeName field
-                            System.out.println("Available:");
-                            for (RoomType rt : list) {
-                                System.out.println(" • " +rt.getTypeName());
-                            }
                         }
-                        System.out.println("=".repeat(80) + "\n");
+                            // Only printing the TypeName field
+                        admin.DisplayRoomType();
+                        System.out.print("Room Types: 1.Create 2.Read 3.Update 4.Delete: \n");
                         String op = sc.nextLine();
 
                         try {
@@ -230,20 +233,14 @@ public class Main {
                         break;
                     }
                     case "3": { // --- MANAGE AMENITIES ---
-                        System.out.print("Amenities: 1.Create 2.Read 3.Update 4.Delete: \n");
-                        System.out.println("\n--- Amenities Dashboard ---");
                         // 1. Fetch the list immediately before printing
                         List<Amenity> currentAmenities = Database.getAmenities();
-
                         // 2. The Check & Loop
                         if (currentAmenities == null || currentAmenities.isEmpty()) {
                             System.out.println("[No amenities available in database]");
-                        } else {
-                            System.out.println("Available:");
-                            for (Amenity a : currentAmenities) {
-                                System.out.println(" • " + a.getAmenityName());
-                            }
                         }
+                        admin.DisplayAmenity();
+                        System.out.print("Amenities: 1.Create 2.Read 3.Update 4.Delete:");
                         String op = sc.nextLine();
                         try {
                             if (op.equals("1")) {
@@ -259,7 +256,33 @@ public class Main {
                                 admin.createAmenity(new Amenity(name, desc, price));
                                 System.out.println("Success! Amenity created.");
                             }
-                            else if (op.equals("4")) {
+                            else if (op.equals("2"))
+                            { // --- READ ---
+                                System.out.print("Enter Amenity Name to search: ");
+                                String name = sc.nextLine();
+
+                                Amenity a = admin.readAmenity(name);
+                                System.out.println("Found: " + a.getAmenityName() + " | Price: $" + a.getAmenityPrice() + " | Info: " + a.getDescription());
+                            }
+                            else if (op.equals("3"))
+                            { // --- UPDATE ---
+                                System.out.print("Enter Amenity Name to update: ");
+                                String name = sc.nextLine();
+
+                                // Fetch existing to show current values
+                                Amenity existing = admin.readAmenity(name);
+
+                                System.out.print("Enter New Description (was: " + existing.getDescription() + "): ");
+                                existing.setDescription(sc.nextLine());
+
+                                System.out.print("Enter New Price (was: " + existing.getAmenityPrice() + "): ");
+                                existing.setAmenityPrice(Double.parseDouble(sc.nextLine()));
+
+                                admin.updateAmenity(name, existing);
+                                System.out.println("Update successful.");
+                            }
+                            else if (op.equals("4"))
+                            {
                                 System.out.print("Enter Amenity Name to delete: ");
                                 String name = sc.nextLine();
                                 admin.deleteAmenity(name);
@@ -270,6 +293,7 @@ public class Main {
                         break;
                     }
                     case "4": {
+                        admin.DisplayRoomType();
                         System.out.print("Type: "); String t = sc.nextLine();
                         System.out.print("Multiplier: "); double m = Double.parseDouble(sc.nextLine());
                         admin.setSeasonalMultiplier(t, m);
