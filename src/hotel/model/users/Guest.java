@@ -79,44 +79,21 @@ public class Guest extends User
 
 
 
-
-    public boolean passwordcheck(String Password) {
-        boolean uppercase = false;
-        boolean number = false;
-        boolean both = false;
-        for (char x : Password.toCharArray()) {
-            if (Character.isUpperCase(x)) uppercase = true;//check that has capital letter
-            if (Character.isDigit(x)) number = true;//check that there ia a number
-
-            if (uppercase && number) {
-                both = true;
-                break;
-            }
-        }
-        if (both) {
-            if (Password.length() >= 8) {
-                return true;
-            }
-        } else {
-            return false;
-        }
-        return false;
-    }
-
-
     public void printreservationdetails(int idcounter,List<Reservation> Reservations){
+        System.out.println("-----------------------------------------------");
         System.out.println("Your Reservation");
         System.out.print("Guest Username : "+ Reservations.get(idcounter).getGuest().getUserName());System.out.println();
         System.out.println("-----------------------------------------------");
         System.out.print("Room Type : "+Reservations.get(idcounter).getRoom().getRoomType().getTypeName());System.out.println();
-        System.out.println("Room floor : "+Reservations.get(idcounter).getRoom().getFloor());System.out.println();
+        System.out.println("Room floor : "+Reservations.get(idcounter).getRoom().getFloor());
         System.out.print("Room Number : "+Reservations.get(idcounter).getRoom().getRoomNumber());System.out.println();System.out.println("-----------------------------------------------");
         System.out.println("Check in :"+Reservations.get(idcounter).getCheckinDate());System.out.println("                  ");
         System.out.print("Check out : "+Reservations.get(idcounter).getCheckoutDate());System.out.println();System.out.println("-----------------------------------------------");
         System.out.println("Reservation Status: "+Reservations.get(idcounter).getStatus());System.out.println();
-        System.out.print("Dining Package : "+Reservations.get(idcounter).getDiningpackage());System.out.println("-----------------------------------------------");
-        System.out.println("*Room Amenities*");System.out.println();System.out.println("-----------------------------------------------");
-        System.out.println(Reservations.get(idcounter).getSelectedAmenities());
+        System.out.println("Dining Package : "+Reservations.get(idcounter).getDiningpackage());System.out.println("-----------------------------------------------");
+        System.out.println("*Room Amenities*");
+        System.out.println(Reservations.get(idcounter).getRoom().getAmenities());
+        System.out.println("-----------------------------------------------");
 
     }
     public void ViewReservationbyId() {
