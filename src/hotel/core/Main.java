@@ -178,7 +178,7 @@ public class Main {
 
                         try {
                             if (op.equals("1")) {
-                                System.out.print("Enter Type Name (e.g., Suite, Single, Double): ");
+                                System.out.print("Enter Type Name: ");
                                 String typeName = sc.nextLine();
 
                                 System.out.print("Enter Base Price: ");
@@ -205,18 +205,28 @@ public class Main {
                                 RoomType rt = admin.readRoomType(typeName);
                                 System.out.println("Found: " + rt.getTypeName() + " | Price: $" + rt.getEffectivePrice() + " | View: " + rt.getRoomView());
                             }
-                            else if (op.equals("3")) {
+                            else if (op.equals("3"))
+                            {
                                 System.out.print("Enter Room Type Name to update: ");
                                 String typeName = sc.nextLine();
 
                                 // To update, we first read the existing one, then modify it
                                 RoomType existing = admin.readRoomType(typeName);
-
-                                System.out.print("Enter New Base Price (was " + existing.getBasePrice() + "): ");
-                                existing.setBasePrice(Double.parseDouble(sc.nextLine()));
-
-                                admin.updateRoomType(typeName, existing);
-                                System.out.println("Update successful.");
+                                if(existing!=null)
+                                {
+                                    System.out.print("Enter New Base Price (was " + existing.getBasePrice() + "): ");
+                                    existing.setBasePrice(Double.parseDouble(sc.nextLine()));
+                                    System.out.print("Enter New Room View (was " + existing.getRoomView() + "): ");
+                                    existing.setRoomView(RoomView.valueOf(sc.nextLine()));
+                                    System.out.print("Enter New Room Description (was " + existing.getDescription() + "): ");
+                                    existing.setDescription(sc.nextLine());
+                                    System.out.print("Enter New Room's Max Capacity (was " + existing.getMaxCapacity() + "): ");
+                                    existing.setMaxCapacity(Integer.parseInt(sc.nextLine()));
+                                    admin.updateRoomType(typeName, existing);
+                                    System.out.println("Update successful.");
+                                }
+                                else
+                                    throw new Exception("Error: Room type not found.");
                             }
                             else if (op.equals("4")) {
                                 System.out.print("Enter Room Type Name to delete: ");
