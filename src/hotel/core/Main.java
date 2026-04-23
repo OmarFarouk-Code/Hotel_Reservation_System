@@ -340,7 +340,7 @@ public class Main {
     private static void showGuestMenu(Guest guest) {
         while (true) {
             System.out.println("\n--- GUEST PORTAL ---");
-            System.out.println("Logged in as: " + guest.getUserName()+"ID : "+guest.getUniqueId());
+            System.out.println("Logged in as: " + guest.getUserName()+"  ID : "+guest.getUniqueId());
             System.out.println("1. Search & Book Room (Engine)");
             System.out.println("2. View My Reservations");
             System.out.println("3. Cancel Reservation");
@@ -362,9 +362,8 @@ public class Main {
                     break;
                 }
                 case "2": {
-                    System.out.print("Confirm Name: "); String n = sc.nextLine();
-                    System.out.print("Confirm Unique ID: "); int id = Integer.parseInt(sc.nextLine());
-                    guest.ViewReservation(n, id);
+
+                    guest.ViewReservation(guest.getUserName(), guest.getUniqueId());
                     break;
                 }
                 case "3": {
