@@ -10,7 +10,7 @@ import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.UserType;
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
-import hotel.model.entities.Room;
+
 
 public class Receptionist extends Staff {
     private List<Reservation> draftReservations;
