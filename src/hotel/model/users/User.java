@@ -129,6 +129,7 @@ public abstract class User implements Serializable
             if (failedLoginAttempts >= 5) {
                 System.out.println("Too many unsuccessful login attempts. Account is Locked.");
                 this.accountStatus = AccountStatus.LOCKED;
+                Database.saveData();
             }
         }
         return null;
