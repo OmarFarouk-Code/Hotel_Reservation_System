@@ -93,7 +93,7 @@ public class Guest extends User
         System.out.println("Your Reservation");
         System.out.print("Guest Username : "+ Reservations.get(idcounter).getGuest().getUserName());System.out.println();
         System.out.println("-----------------------------------------------");
-        System.out.print("Room Type : "+Reservations.get(idcounter).getRoom().getRoomType());System.out.println();
+        System.out.print("Room Type : "+Reservations.get(idcounter).getRoom().getRoomType().getTypeName());System.out.println();
         System.out.println("Room floor : "+Reservations.get(idcounter).getRoom().getFloor());System.out.println();
         System.out.print("Room Number : "+Reservations.get(idcounter).getRoom().getRoomNumber());System.out.println();System.out.println("-----------------------------------------------");
         System.out.println("Check in :"+Reservations.get(idcounter).getCheckinDate());System.out.println("                  ");
