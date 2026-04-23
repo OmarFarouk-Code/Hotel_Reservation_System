@@ -11,6 +11,7 @@ public class Review implements Serializable
         this.comment = comment;
     }
 
+
     public int getScore() {
         return score;
     }

@@ -231,7 +231,7 @@ public class Database
             LocalDate checkOut = checkIn.plusDays(1 + rand.nextInt(10)); // Stays of 1 to 10 nights
             
             // Hurghada resorts are mostly ALL_INCLUSIVE or HALF_BOARD
-            DiningPackage[] dPackages = {DiningPackage.ALL_INCLUSIVE, DiningPackage.HALF_BOARD, DiningPackage.FULL_BOARD};
+            DiningPackage[] dPackages = {DiningPackage.BREAKFAST_ONLY, DiningPackage.ALL_INCLUSIVE, DiningPackage.HALF_BOARD, DiningPackage.FULL_BOARD};
             DiningPackage dp = dPackages[rand.nextInt(dPackages.length)];
             
             Reservation res = new Reservation(resId++, guest, room, checkIn, checkOut, dp, rand.nextInt(3), 1 + rand.nextInt(2));
