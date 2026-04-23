@@ -65,6 +65,20 @@ public class Guest extends User
         this.input = input;
     }
 
+    public boolean phonecheck(String s) {
+        if (s == null || s.length() != 11) return false;
+
+        for (int i = 0; i < s.length(); i++) {
+            if (!Character.isDigit(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+
 
     public boolean passwordcheck(String Password) {
         boolean uppercase = false;
@@ -89,11 +103,12 @@ public class Guest extends User
         return false;
     }
 
+
     public void printreservationdetails(int idcounter,List<Reservation> Reservations){
         System.out.println("Your Reservation");
         System.out.print("Guest Username : "+ Reservations.get(idcounter).getGuest().getUserName());System.out.println();
         System.out.println("-----------------------------------------------");
-        System.out.print("Room Type : "+Reservations.get(idcounter).getRoom().getRoomType());System.out.println();
+        System.out.print("Room Type : "+Reservations.get(idcounter).getRoom().getRoomType().getTypeName());System.out.println();
         System.out.println("Room floor : "+Reservations.get(idcounter).getRoom().getFloor());System.out.println();
         System.out.print("Room Number : "+Reservations.get(idcounter).getRoom().getRoomNumber());System.out.println();System.out.println("-----------------------------------------------");
         System.out.println("Check in :"+Reservations.get(idcounter).getCheckinDate());System.out.println("                  ");
@@ -105,26 +120,47 @@ public class Guest extends User
 
     }
     public void ViewReservationbyId() {
-        System.out.println("Can't find your reservation? Enter your ReservationID");
-        boolean found = false;
-        while (!found) {
-            System.out.println("Enter Reservation ID (or 0 to cancel):");
+        int limit =0;
+        List<Reservation> reservations = Database.getReservations();
+        while(limit<2) {
+            System.out.println("Can't find your reservation? Enter your ReservationID");
+            if (!input.hasNextInt()) { //ensures that the user didn't type a letter instead of number
+                input.next();
+                System.out.println("Invalid input! Please enter a numeric ID.");
+                continue;
+            }
+            String phone;
             int id = input.nextInt();
             input.nextLine();
             if (id == 0) return;
+            while (true) {
+                System.out.print("Enter your Phone Number : ");
+                phone = input.nextLine();
 
-            List<Reservation> reservations = Database.getReservations();
-            for (int i = 0; i < reservations.size(); i++) {
-                if (reservations.get(i).getReservationID() == id) {
-                    printreservationdetails(i, reservations);
-                    found = true;
+                if ((phonecheck(phone))) {
                     break;
+                } else {
+                    System.out.println("Invalid input! Please enter (numbers only).");
                 }
             }
-            if (!found) System.out.println("ID not found.");
+
+
+                for (int i = 0; i < reservations.size(); i++) {
+                    if (reservations.get(i).getReservationID() == id && reservations.get(i).getGuest().getPhoneNumber().equals(phone)) {
+                        printreservationdetails(i, reservations);
+                        return;
+                    }
+                }
+                limit = limit + 1;
+                if (limit < 2) {
+                    System.out.println("Data not found. You have " + (2 - limit) + " attempts left.");
+                } else {
+                    System.out.println("Too many failed attempts. Returning to main menu.");
+                }
+            }
         }
 
-        }
+
 
 
 

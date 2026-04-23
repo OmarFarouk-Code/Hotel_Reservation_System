@@ -1,12 +1,12 @@
 package hotel.core;
 
-import hotel.model.bookings.Reservation;
 import hotel.model.entities.*;
 import hotel.model.enums.*;
 import hotel.model.staff.*;
 import hotel.model.users.*;
-
+import hotel.model.bookings.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -179,7 +179,7 @@ public class Main {
 
                         try {
                             if (op.equals("1")) {
-                                System.out.print("Enter Type Name (e.g., Suite, Single, Double): ");
+                                System.out.print("Enter Type Name: ");
                                 String typeName = sc.nextLine();
 
                                 System.out.print("Enter Base Price: ");
@@ -206,18 +206,28 @@ public class Main {
                                 RoomType rt = admin.readRoomType(typeName);
                                 System.out.println("Found: " + rt.getTypeName() + " | Price: $" + rt.getEffectivePrice() + " | View: " + rt.getRoomView());
                             }
-                            else if (op.equals("3")) {
+                            else if (op.equals("3"))
+                            {
                                 System.out.print("Enter Room Type Name to update: ");
                                 String typeName = sc.nextLine();
 
                                 // To update, we first read the existing one, then modify it
                                 RoomType existing = admin.readRoomType(typeName);
-
-                                System.out.print("Enter New Base Price (was " + existing.getBasePrice() + "): ");
-                                existing.setBasePrice(Double.parseDouble(sc.nextLine()));
-
-                                admin.updateRoomType(typeName, existing);
-                                System.out.println("Update successful.");
+                                if(existing!=null)
+                                {
+                                    System.out.print("Enter New Base Price (was " + existing.getBasePrice() + "): ");
+                                    existing.setBasePrice(Double.parseDouble(sc.nextLine()));
+                                    System.out.print("Enter New Room View (was " + existing.getRoomView() + "): ");
+                                    existing.setRoomView(RoomView.valueOf(sc.nextLine()));
+                                    System.out.print("Enter New Room Description (was " + existing.getDescription() + "): ");
+                                    existing.setDescription(sc.nextLine());
+                                    System.out.print("Enter New Room's Max Capacity (was " + existing.getMaxCapacity() + "): ");
+                                    existing.setMaxCapacity(Integer.parseInt(sc.nextLine()));
+                                    admin.updateRoomType(typeName, existing);
+                                    System.out.println("Update successful.");
+                                }
+                                else
+                                    throw new Exception("Error: Room type not found.");
                             }
                             else if (op.equals("4")) {
                                 System.out.print("Enter Room Type Name to delete: ");
@@ -352,31 +362,125 @@ public class Main {
     private static void showGuestMenu(Guest guest) {
         while (true) {
             System.out.println("\n--- GUEST PORTAL ---");
-            System.out.println("Logged in as: " + guest.getUserName());
+            System.out.println("Logged in as: " + guest.getUserName()+"  ID : "+guest.getUniqueId());
             System.out.println("1. Search & Book Room (Engine)");
             System.out.println("2. View My Reservations");
             System.out.println("3. Cancel Reservation");
-            System.out.println("4. Reset Password");
-            System.out.println("5. Logout");
+            System.out.println("4. View & Pay Invoices");
+            System.out.println("5. Reset Password");
+            System.out.println("6. Logout");
             System.out.print("Action: ");
 
             String choice = sc.nextLine();
             switch (choice) {
                 case "1": {
-                    System.out.print("Type: "); String t = sc.nextLine();
-                    List<Room> rs = engine.filterRooms(t, RoomView.SEA_VIEW, 10000);
-                    if (!rs.isEmpty()) {
-                        System.out.println("Booking first available...");
-                        engine.createDraftReservation(guest, rs.get(0), LocalDate.now(), LocalDate.now().plusDays(1), DiningPackage.ALL_INCLUSIVE, 0, 2);
-                        System.out.print("Promo Code? "); String code = sc.nextLine();
-                        engine.validatePromocode(code);
+                    try {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+                        System.out.println("\n--- Make a Reservation ---");
+                        System.out.print("Enter Check-In Date (yyyy-MM-dd): ");
+                        LocalDate checkIn = LocalDate.parse(sc.nextLine(), formatter);
+                        System.out.print("Enter Check-Out Date (yyyy-MM-dd): ");
+                        LocalDate checkOut = LocalDate.parse(sc.nextLine(), formatter);
+
+                       
+                        List<Room> availableRooms = engine.getAvailableRooms(checkIn, checkOut);
+                        if (availableRooms.isEmpty()) {
+                            System.out.println("Sorry, no rooms available for those dates.");
+                            break;
+                        }
+
+                       
+                        System.out.println("\n--- Available Rooms ---");
+                        for (int i = 0; i < availableRooms.size(); i++) {
+                            Room r = availableRooms.get(i);
+                            RoomType rt = r.getRoomType();
+                           
+                            System.out.println("- Room " + r.getRoomNumber() +
+                                               " | View: " + rt.getRoomView() +
+                                               " | Type: " + rt.getTypeName() +
+                                               " | Price: $" + rt.getBasePrice());
+                        }
+                       
+                        System.out.print("\nSelect a Room Number to book (or 0 to cancel): ");
+                        int roomChoice = Integer.parseInt(sc.nextLine());
+                        if (roomChoice == 0) break;
+                       
+                        Room selectedRoom = null;
+                        for (Room r : availableRooms) {
+                            if (r.getRoomNumber() == roomChoice) {
+                                selectedRoom = r;
+                                break;
+                            }
+                        }
+                       
+                        if (selectedRoom == null) {
+                            System.out.println("Invalid room selection.");
+                            break;
+                        }
+
+                       
+                        System.out.print("Number of Adults: ");
+                        int adults = Integer.parseInt(sc.nextLine());
+                        System.out.print("Number of Children: ");
+                        int children = Integer.parseInt(sc.nextLine());
+
+                       
+                        System.out.println("\n--- Dining Packages ---");
+                        List<String> suggestions = engine.suggestPackages(guest);
+                        for(String s : suggestions) {
+                            System.out.println(s);
+                        }
+                       
+                        System.out.println("Available: [BREAKFAST_ONLY, HALF_BOARD, FULL_BOARD, ALL_INCLUSIVE]");
+                        System.out.print("Enter your chosen Dining Package: ");
+                        DiningPackage selectedDining = DiningPackage.valueOf(sc.nextLine().toUpperCase());
+
+                       
+                        System.out.print("Enter a promo code (or press Enter to skip): ");
+                        String promoCode = sc.nextLine();
+                       
+                       
+                        Reservation draft = engine.createDraftReservation(guest, selectedRoom, checkIn, checkOut, selectedDining, children, adults);
+                       
+                        Invoice invoice = engine.generateInvoice(draft, promoCode);
+                        System.out.println("\n--- Reservation Draft Created ---");
+                        System.out.println("Draft Reservation ID: " + draft.getReservationID());
+                        System.out.println("Total Amount Due: $" + invoice.getTotalAmount());
+
+                       
+                        System.out.print("Would you like to pay now from your account balance to confirm? (Y/N): ");
+                        String payNow = sc.nextLine().toUpperCase();
+                       
+                        if (payNow.equals("Y")) {
+                            if (guest.getBalance() >= invoice.getTotalAmount()) {
+                               
+                                guest.setBalance(guest.getBalance() - invoice.getTotalAmount());
+                               
+                                boolean isConfirmed = engine.confirmReservation(draft.getReservationID(), PaymentMethod.ONLINE);
+                               
+                                if (isConfirmed) {
+                                    System.out.println("Payment successful! Your new balance is: $" + guest.getBalance());
+                                }
+                            } else {
+                                System.out.println("Insufficient balance. Reservation remains PENDING. Please pay at check-in.");
+                            }
+                        } else {
+                            System.out.println("Reservation saved as PENDING. Please pay at check-in.");
+                        }
+
+                    } catch (java.time.format.DateTimeParseException e) {
+                        System.out.println("Error: Invalid date format. Please use yyyy-MM-dd.");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Input error: " + e.getMessage());
+                    } catch (Exception e) {
+                        System.out.println("An unexpected error occurred: " + e.getMessage());
                     }
                     break;
                 }
                 case "2": {
-                    System.out.print("Confirm Name: "); String n = sc.nextLine();
-                    System.out.print("Confirm Unique ID: "); int id = Integer.parseInt(sc.nextLine());
-                    guest.ViewReservation(n, id);
+
+                    guest.ViewReservation(guest.getUserName(), guest.getUniqueId());
                     break;
                 }
                 case "3": {
@@ -408,8 +512,18 @@ public class Main {
                     }
                     break;
                 }
-                case "4": guest.ResetPassword(guest.getUserName(), UserType.GUEST); break;
-                case "5": System.out.println("Logging out..."); return;
+                case "4" : {
+                    BookingEngine.viewAndPayInvoices(guest, sc);
+                    break;
+                }
+                case "5": {
+                    guest.ResetPassword(guest.getUserName(), UserType.GUEST); 
+                    break;
+                }
+                case "6": {
+                    System.out.println("Logging out..."); 
+                    return;
+                }
             }
         }
     }
