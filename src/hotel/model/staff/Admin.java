@@ -288,4 +288,26 @@ public class  Admin extends Staff implements Manageable
         }
         System.out.println("TOTAL REVENUE: $" + total);
     }
+    public void DisplayRoomType() {
+        List<RoomType> roomtype = Database.getRoomTypes();
+        System.out.println("\n--- RoomTypes Dashboard ---");
+
+            System.out.println("Available:");
+            for (RoomType r : roomtype)
+            {
+                System.out.println(" • " + r.getTypeName());
+            }
+
+    }
+    public void DisplayAmenity()
+    {
+        System.out.println("\n--- Amenities Dashboard ---");
+        // 1. Fetch the list immediately before printing
+        List<Amenity> currentAmenities = Database.getAmenities();
+            System.out.println("Available:");
+            for (Amenity a : currentAmenities)
+            {
+                System.out.println(" • " + a.getAmenityName());
+            }
+    }
 }
