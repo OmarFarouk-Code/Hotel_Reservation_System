@@ -384,7 +384,9 @@ public class Main {
 
                     if (myActiveBookings.isEmpty()) {
                         System.out.println("You have no active reservations to cancel.");
-                    } else {
+                    } 
+                    else 
+                    {
                         System.out.println("\n--- Your Active Bookings ---");
                         for (int i = 0; i < myActiveBookings.size(); i++) {
                             Reservation r = myActiveBookings.get(i);
