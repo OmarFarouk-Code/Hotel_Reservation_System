@@ -194,7 +194,7 @@ public class Main {
     private static void showGuestMenu(Guest guest) {
         while (true) {
             System.out.println("\n--- GUEST PORTAL ---");
-            System.out.println("Logged in as: " + guest.getUserName());
+            System.out.println("Logged in as: " + guest.getUserName()+"ID : "+guest.getUniqueId());
             System.out.println("1. Search & Book Room (Engine)");
             System.out.println("2. View My Reservations");
             System.out.println("3. Cancel Reservation");
