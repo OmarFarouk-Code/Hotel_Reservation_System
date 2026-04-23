@@ -6,7 +6,6 @@ import hotel.model.staff.*;
 import hotel.model.users.*;
 import hotel.model.bookings.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -398,66 +397,7 @@ public class Main {
                     break;
                 }
                 case "4" : {
-
-                    System.out.println("\n--- Your Unpaid Invoices ---");
-                    List<Invoice> myUnpaidInvoices = new ArrayList<>();
-                    for ( Invoice inv : Database.getInvoices() )
-                    {
-                        if ( !inv.isPaid() && inv.getReservation().getGuest().getUserName().equals(guest.getUserName()) )
-                        {
-                            myUnpaidInvoices.add(inv);
-                        }
-                    }
-                    for ( int i = 0 ; i < myUnpaidInvoices.size() ; i++ )
-                    {
-                        Invoice inv = myUnpaidInvoices.get(i);
-                        System.out.println((i+1) + ". Invoice ID: " + inv.getInvoiceID() + "| Amount: $" + String.format("%.2f", inv.getTotalAmount()) + " | Reservation ID: " + inv.getReservation().getReservationID());
-                    }
-
-                    // 2. Handle case where there's nothing to pay
-                    if (myUnpaidInvoices.isEmpty()) {
-                        System.out.println("You have no unpaid invoices.");
-                        break;
-                    }
-                    System.out.print("Enter the number of the invoice to pay (or 0 to exit): ");
-                    try 
-                    {
-                        int invChoice = Integer.parseInt(sc.nextLine());
-                        if (invChoice < myUnpaidInvoices.size() && invChoice > 0)
-                        {
-                            Invoice selectedInv = myUnpaidInvoices.get(invChoice - 1);
-
-                            System.out.println(selectedInv.generateItemizedSummary());
-                            System.out.println("Your Current Balance: $" + String.format("%.2f", guest.getBalance()));
-                            
-                            System.out.println("\nSelect Payment Method:");
-                            System.out.println("1. Credit Card   2. Cash   3. Online   0. Cancel");
-                            System.out.print("Choice: ");
-                            String payChoice = sc.nextLine();
-
-                            PaymentMethod method = null;
-                            switch(payChoice) {
-                                case "1": method = PaymentMethod.CREDIT_CARD; break;
-                                case "2": method = PaymentMethod.CASH; break;
-                                case "3": method = PaymentMethod.ONLINE; break;
-                                case "0": System.out.println("Payment cancelled."); break;
-                                default: System.out.println("Invalid selection."); break;      
-                            }
-                            if (method != null) 
-                            {
-                                selectedInv.pay(guest, method);
-                                    
-                                if (selectedInv.isPaid())
-                                {
-                                    Database.saveData(); 
-                                }
-                            }
-                        }
-                    }
-                    catch (NumberFormatException e) 
-                    {
-                        System.out.println("Invalid input. Please enter a valid number.");
-                    }
+                    BookingEngine.viewAndPayInvoices(guest, sc);
                     break;
                 }
                 case "5": {
