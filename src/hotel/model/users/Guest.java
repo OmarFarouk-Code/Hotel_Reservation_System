@@ -128,52 +128,60 @@ public class Guest extends User
 
 
 
-        public void register() {
-            System.out.println("Please enter a username ");
-            UserName = input.nextLine().trim();
+    public void register() {
+        System.out.println("Please enter a username ");
+        UserName = input.nextLine().trim();
 
-            System.out.println("Please enter a password");
-            System.out.println("** Password rules **");
-            System.out.println("Password must be more than 8 characters");
-            System.out.println("Password must at least contain 1 number and 1 capital letter");
-            password = input.nextLine();
-            while(!passwordcheck(password)){
-                System.out.println("You didn't Satisfy password rules,try again");
-                password = input.nextLine().trim();
-                passwordcheck(password);
-            }
-            System.out.println("Password has been created successfully");
-            while (true) {
-                System.out.print("Please enter your Gender (Male/Female): ");
-                String genderInput = input.nextLine().trim().toUpperCase();
-
-                if (genderInput.equals("MALE") || genderInput.equals("M")) {
-                    this.theGender = Gender.MALE;
-                    break;
-                } else if (genderInput.equals("FEMALE") || genderInput.equals("F")) {
-                    this.theGender = Gender.FEMALE;
-                    break;
-                } else {
-                    System.out.println("Invalid input. Please enter 'Male' or 'Female'.");
-                }
-            }
-            System.out.println("Please enter your date of birth YYYY-MM-DD");
-            String userInput = input.nextLine().trim();
-            if(!Datechecker(userInput)){
-                System.out.println("Invalid date format, please re-enter it (YYYY-MM-DD)");
-                userInput = input.nextLine().trim();
-            }
-            dateOfbirth = LocalDate.parse(userInput);
-            System.out.println("Please enter your phone number");
-            phoneNumber=input.nextLine().trim();
-            System.out.println("Please enter your address");
-            address=input.nextLine().trim();
-            Database.getGuests().add(this);
-            Database.saveData();
-
+        System.out.println("Please enter a password");
+        System.out.println("** Password rules **");
+        System.out.println("Password must be more than 8 characters");
+        System.out.println("Password must at least contain 1 number and 1 capital letter");
+        password = input.nextLine();
+        while(!passwordcheck(password)){
+            System.out.println("You didn't Satisfy password rules,try again");
+            password = input.nextLine().trim();
+            passwordcheck(password);
         }
+        System.out.println("Password has been created successfully");
+        this.Typeofuser = UserType.GUEST;
+        this.accountStatus = AccountStatus.ACTIVE;
+        this.UniqueId = GuestId++;
+        this.failedLoginAttempts = 0;
 
 
+
+
+
+        while (true) {
+            System.out.print("Please enter your Gender (Male/Female): ");
+            String genderInput = input.nextLine().trim().toUpperCase();
+
+            if (genderInput.equals("MALE") || genderInput.equals("M")) {
+                this.theGender = Gender.MALE;
+                break;
+            } else if (genderInput.equals("FEMALE") || genderInput.equals("F")) {
+                this.theGender = Gender.FEMALE;
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'Male' or 'Female'.");
+            }
+        }
+        System.out.println("Please enter your date of birth YYYY-MM-DD");
+        String userInput = input.nextLine().trim();
+        if(!Datechecker(userInput)){
+            System.out.println("Invalid date format, please re-enter it (YYYY-MM-DD)");
+            userInput = input.nextLine().trim();
+        }
+        dateOfbirth = LocalDate.parse(userInput);
+        System.out.println("Please enter your phone number");
+        phoneNumber=input.nextLine().trim();
+        System.out.println("Please enter your address");
+        address=input.nextLine().trim();
+        System.out.println("Your ID: "+getUniqueId());
+        Database.getGuests().add(this);
+        Database.saveData();
+
+    }
 
         public void ViewReservation(String UserName, int UserId) {
             List<Reservation> allReservations = Database.getReservations();
