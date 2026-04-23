@@ -41,4 +41,9 @@ public class Amenity implements Serializable
         this.amenityPrice = amenityPrice;
     }
 
+    @Override
+    public String toString() {
+        return this.amenityName;
+    }
 }
+

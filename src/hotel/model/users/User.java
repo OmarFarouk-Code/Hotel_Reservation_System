@@ -70,7 +70,31 @@ public abstract class User implements Serializable
         }
     }
 
-    // NEW UNIFIED LOGIN METHOD
+
+    public boolean passwordcheck(String Password) {
+        boolean uppercase = false;
+        boolean number = false;
+        boolean both = false;
+        for (char x : Password.toCharArray()) {
+            if (Character.isUpperCase(x)) uppercase = true;//check that has capital letter
+            if (Character.isDigit(x)) number = true;//check that there ia a number
+
+            if (uppercase && number) {
+                both = true;
+                break;
+            }
+        }
+        if (both) {
+            if (Password.length() >= 8) {
+                return true;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
+
+
     public User Login(UserType expectedType) 
     {
         this.Typeofuser = expectedType;
@@ -145,7 +169,7 @@ public abstract class User implements Serializable
             System.out.println("Please confirm Password");
             Pass2=input.nextLine();
         }
-        newpassword=Pass1;
+
         
     }
 
@@ -167,14 +191,22 @@ public abstract class User implements Serializable
                     }
                 }
                 if (found) {
-                    System.out.println("Please enter new password");
-                    newpassword = input.nextLine();
-                    System.out.println("confirm password");
-                    String confirmpass = input.nextLine();
-                    passwordconfirmation(newpassword, confirmpass);
-                    Admin targetAdmin = guestList.get(counter);
-                    targetAdmin.setPassword(newpassword);
-                    Database.saveData();
+                    int count=0;
+                    do{
+                        if(count>=1){
+                            System.out.println("Password didn't satisfy the rules, 1 Capital letter , 1 number");
+                        }
+            System.out.println("Please enter new password");
+            newpassword = input.nextLine();
+            System.out.println("confirm password");
+            String confirmpass = input.nextLine();
+            passwordconfirmation(newpassword, confirmpass);
+            count=count+1;
+        }
+        while(!passwordcheck(newpassword));
+        Admin targetAdmin = guestList.get(counter);
+        targetAdmin.setPassword(newpassword);
+        Database.saveData();
                 } else {
                     System.out.println("The Username or password is not found,Please re-enter your username");
                     String AUsername = input.nextLine();
@@ -194,15 +226,24 @@ public abstract class User implements Serializable
                         }
                     }
                     if(found){
-                        System.out.println("Please enter new password");
-                        newpassword=input.nextLine();
-                        System.out.println("confirm password");
-                        String confirmpass=input.nextLine();
-                        passwordconfirmation(newpassword,confirmpass);
+                        int count=0;
+                        do {
+                            if(count>=1){
+                                System.out.println("Password didn't satisfy the rules, 1 Capital letter , 1 number");
+                            }
+                            System.out.println("Please enter new password");
+                            newpassword = input.nextLine();
+                            System.out.println("confirm password");
+                            String confirmpass = input.nextLine();
+                            passwordconfirmation(newpassword, confirmpass);
+                            count=count+1;
+                        }
+                        while(!passwordcheck(newpassword));
                         Receptionist targetReceptionist = guestList.get(counter);
                         targetReceptionist.setPassword(newpassword);
                         Database.saveData();
-                    }
+                        }
+
                     else {
                         System.out.println("The Username or password is not found,Please re-enter your username");
                         String AUsername=input.nextLine();
@@ -222,11 +263,19 @@ public abstract class User implements Serializable
                         }
                     }
                     if (found) {
-                        System.out.println("Please enter new password");
-                        newpassword = input.nextLine();
-                        System.out.println("confirm password");
-                        String confirmpass = input.nextLine();
-                        passwordconfirmation(newpassword, confirmpass);
+                        int count=0;
+                        do {
+                            if(count>=1){
+                                System.out.println("Password didn't satisfy the rules, 1 Capital letter , 1 number");
+                            }
+                            System.out.println("Please enter new password");
+                            newpassword = input.nextLine();
+                            System.out.println("confirm password");
+                            String confirmpass = input.nextLine();
+                            passwordconfirmation(newpassword, confirmpass);
+                            count=count+1;
+                        }
+                        while(!passwordcheck(newpassword));
                         Guest targetGuest = guestList.get(counter);
                         targetGuest.setPassword(newpassword);
                         Database.saveData();
