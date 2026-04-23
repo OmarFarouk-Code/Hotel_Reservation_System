@@ -355,6 +355,8 @@ public class BookingEngine
         invoice.setPaymentDate(LocalDate.now());
         invoice.setAppliedPromoCode(promoCode);
         invoice.setDiscountAmount((roomCost + diningCost + amenityCost) - totalCost);
+        Database.getInvoices().add(invoice);
+        Database.saveData();                   
         return invoice;
     }
 

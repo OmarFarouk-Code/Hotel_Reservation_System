@@ -440,28 +440,43 @@ public class Main {
                         System.out.print("Would you like to pay now from your account balance to confirm? (Y/N): ");
                         String payNow = sc.nextLine().toUpperCase();
                        
-                        if (payNow.equals("Y")) {
-                            if (guest.getBalance() >= invoice.getTotalAmount()) {
-                               
+                        if (payNow.equals("Y")) 
+                        {
+                            if (guest.getBalance() >= invoice.getTotalAmount()) 
+                            {
                                 guest.setBalance(guest.getBalance() - invoice.getTotalAmount());
-                               
+                                invoice.setPaid(true);
+                                invoice.setPaymentMethod(PaymentMethod.ONLINE);
+                                invoice.setPaymentDate(java.time.LocalDate.now());
                                 boolean isConfirmed = engine.confirmReservation(draft.getReservationID(), PaymentMethod.ONLINE);
-                               
-                                if (isConfirmed) {
+                                if (isConfirmed) 
+                                {
+                                    Database.saveData();
                                     System.out.println("Payment successful! Your new balance is: $" + guest.getBalance());
                                 }
-                            } else {
+                               
+                            } 
+                            else 
+                            {
                                 System.out.println("Insufficient balance. Reservation remains PENDING. Please pay at check-in.");
                             }
-                        } else {
+                        } 
+                        else 
+                        {
                             System.out.println("Reservation saved as PENDING. Please pay at check-in.");
                         }
 
-                    } catch (java.time.format.DateTimeParseException e) {
+                    } 
+                    catch (java.time.format.DateTimeParseException e) 
+                    {
                         System.out.println("Error: Invalid date format. Please use yyyy-MM-dd.");
-                    } catch (IllegalArgumentException e) {
+                    } 
+                    catch (IllegalArgumentException e) 
+                    {
                         System.out.println("Input error: " + e.getMessage());
-                    } catch (Exception e) {
+                    } 
+                    catch (Exception e) 
+                    {
                         System.out.println("An unexpected error occurred: " + e.getMessage());
                     }
                     break;
