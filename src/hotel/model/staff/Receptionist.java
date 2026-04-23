@@ -3,12 +3,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import hotel.core.Database;
+import hotel.model.entities.Review;
 import hotel.model.enums.AccountStatus;
 import hotel.model.enums.Gender;
 import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.UserType;
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
+import hotel.model.entities.Room;
 
 public class Receptionist extends Staff {
     private List<Reservation> draftReservations;
@@ -48,7 +50,7 @@ public class Receptionist extends Staff {
 
     }
 
-    public void manageCheckOut(int reservationID) throws Exception {
+    public void manageCheckOut(int reservationID , Review review) throws Exception {
         List<Invoice> invoices = Database.getInvoices();
         Invoice targetInvoice= null;
         for (Invoice inv : invoices) {
@@ -56,6 +58,9 @@ public class Receptionist extends Staff {
                 targetInvoice = inv;
                 break;
             }
+        }
+        if (review != null) {
+
         }
         if (targetInvoice == null) {
             throw new Exception("Checkout Failed: No invoice found for ID " + reservationID);

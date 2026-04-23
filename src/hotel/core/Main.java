@@ -327,11 +327,23 @@ public class Main {
             String choice = sc.nextLine();
             switch (choice) {
                 case "1": System.out.print("ID: "); rec.manageCheckIn(Integer.parseInt(sc.nextLine())); break;
-                case "2": System.out.print("ID: "); rec.manageCheckOut(Integer.parseInt(sc.nextLine())); break;
+                case "2": {
+                    Scanner input = new Scanner(System.in);
+                    System.out.print("Add a Comment: ");
+                    String comment = input.nextLine();
+                    System.out.print("Rating: ");
+                    int rating = input.nextInt();
+                    Review review = new Review(rating, comment);
+                    System.out.print("ID: ");
+                    rec.manageCheckOut(Integer.parseInt(sc.nextLine()), review);
+
+                }break;
                 case "3": rec.getDraftReservations().forEach(System.out::println); break;
                 case "4": rec.viewAllGuests(); break;
                 case "5": rec.viewAllReservations(); break;
                 case "6": System.out.println("Logging out..."); return;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + choice);
             }
         }
     }
