@@ -31,10 +31,6 @@ public class Receptionist extends Staff {
     public void addDraftReservation(Reservation reservation) {
         this.draftReservations.add(reservation);
     }
-
-    public void removeDraftReservation(Reservation reservation) {
-        this.draftReservations.remove(reservation);
-    }
         
     public void manageCheckIn(int reservationID) {
         List<Reservation> reservation = Database.getReservations();

@@ -468,7 +468,7 @@ public class Main {
                     r.getRoomNumber(),
                     rt.getTypeName(),
                     rt.getRoomView(),
-                    rt.getBasePrice(),
+                    rt.getEffectivePrice(),
                     rt.getMaxCapacity(),
                     stars);
         }
