@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-public class BookingEngine 
+
+
+public class BookingEngine
 {
     Database database;
 
@@ -40,24 +42,24 @@ public class BookingEngine
         return results;
     }
 
-    public double validatePromocode(String code) 
+    public double validatePromocode(String code)
     {
-        if (code == null) 
+        if (code == null)
         {
-            return 1.0; 
+            return 1.0;
         }
-    
+
         List<PromoCode> promos = Database.getPromoCodes();
 
-        for (int i = 0; i < Database.getPromoCodes().size(); i++) 
+        for (int i = 0; i < Database.getPromoCodes().size(); i++)
         {
-            if (promos.get(i).getCode().equals(code)) 
+            if (promos.get(i).getCode().equals(code))
             {
-                if (promos.get(i).isActive()) 
+                if (promos.get(i).isActive())
                 {
                     return 1 - (promos.get(i).getDiscountPercentage());
-                } 
-                else 
+                }
+                else
                 {
                     System.out.println("Promo code is expired");
                     return 1;
@@ -65,33 +67,33 @@ public class BookingEngine
             }
         }
         System.out.println("Promo code is not found");
-        return 1; 
+        return 1;
     }
 
-    public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) 
-    {    
+    public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut)
+    {
         if (checkIn == null || checkOut == null) {
             throw new IllegalArgumentException("Dates cannot be null.");
         }
-        if (checkIn.isAfter(checkOut)) 
+        if (checkIn.isAfter(checkOut))
         {
             throw new IllegalArgumentException("Check-in date cannot be after check-out date.");
-        }  
+        }
         List<Room> available = new ArrayList<>();
 
-        if (Database.getRooms() != null) 
+        if (Database.getRooms() != null)
         {
-            for (Room room : Database.getRooms()) 
+            for (Room room : Database.getRooms())
             {
                 boolean isBooked = false;
-                if (Database.getReservations() != null) 
+                if (Database.getReservations() != null)
                 {
-                    for (Reservation res : Database.getReservations()) 
+                    for (Reservation res : Database.getReservations())
                     {
-                        if (res.getRoom().getRoomNumber() == room.getRoomNumber()) 
-                        {    
-                            if (!(checkOut.isBefore(res.getCheckinDate()) || checkOut.isEqual(res.getCheckinDate()) || 
-                                checkIn.isAfter(res.getCheckoutDate()) || checkIn.isEqual(res.getCheckoutDate()))) 
+                        if (res.getRoom().getRoomNumber() == room.getRoomNumber())
+                        {
+                            if (!(checkOut.isBefore(res.getCheckinDate()) || checkOut.isEqual(res.getCheckinDate()) ||
+                                checkIn.isAfter(res.getCheckoutDate()) || checkIn.isEqual(res.getCheckoutDate())))
                             {
                                 isBooked = true;
                                 break;
@@ -99,7 +101,7 @@ public class BookingEngine
                         }
                     }
                 }
-                if (!isBooked) 
+                if (!isBooked)
                 {
                     available.add(room);
                 }
@@ -108,7 +110,7 @@ public class BookingEngine
         return available;
     }
 
-    public void viewAllRooms() 
+    public void viewAllRooms()
     {
         System.out.println("--- All Hotel Rooms ---");
 
@@ -121,7 +123,7 @@ public class BookingEngine
         //Define the dates to check current availability (Today to Tomorrow)
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = today.plusDays(1);
-        
+
         //Get the list of rooms available for these dates
         List<Room> availableRoomsList = getAvailableRooms(today, tomorrow);
 
@@ -131,7 +133,7 @@ public class BookingEngine
 
             System.out.println("Room " + room.getRoomNumber()
                     + " | Type: " + room.getRoomType().getTypeName()
-                    + " | Available: " + (isCurrentlyAvailable ? "Yes" : "No")); 
+                    + " | Available: " + (isCurrentlyAvailable ? "Yes" : "No"));
         }
     }
 
@@ -155,7 +157,7 @@ public class BookingEngine
     }
 
 
-    public List<String> viewAllDiningPackages() 
+    public List<String> viewAllDiningPackages()
     {
         List<String> packages = new ArrayList<>();
         packages.add("Breakfast Only - Start your day right!");
@@ -166,9 +168,9 @@ public class BookingEngine
     }
 
 
-    public double calculateRoomCost(Room room, LocalDate checkIn, LocalDate checkOut) 
+    public double calculateRoomCost(Room room, LocalDate checkIn, LocalDate checkOut)
     {
-        
+
         if (room == null) {
             throw new IllegalArgumentException("Room cannot be null.");
         }
@@ -178,61 +180,61 @@ public class BookingEngine
         if (checkIn.isAfter(checkOut) || checkIn.isEqual(checkOut)) {
             throw new IllegalArgumentException("Check-out date must be at least one day after check-in.");
         }
-    
+
         long nights = ChronoUnit.DAYS.between(checkIn, checkOut);
         double pricePerNight = room.getRoomType().getEffectivePrice();
-        
-        RoomView view = room.getRoomType().getRoomView(); 
+
+        RoomView view = room.getRoomType().getRoomView();
         double viewSurcharge = 0.0;
-        
-        if (view != null) 
+
+        if (view != null)
         {
-            switch (view) 
+            switch (view)
             {
                 case SEA_VIEW:
-                    viewSurcharge = 1000; 
+                    viewSurcharge = 1000;
                     break;
                 case POOL:
-                    viewSurcharge = 500; 
+                    viewSurcharge = 500;
                     break;
                 case GARDEN:
-                    viewSurcharge = 0; 
+                    viewSurcharge = 0;
                     break;
             }
         }
-        
+
         return nights * (pricePerNight + viewSurcharge);
     }
 
     //NOT COMPLETE - MUST PRINT PRICES FOR PACKAGES SUGGESTED TOO
-    public List<String> suggestPackages(Guest guest) 
+    public List<String> suggestPackages(Guest guest)
     {
         List<String> suggestions = new ArrayList<>();
 
-        
-        if (guest == null || guest.getRoomPreferences() == null || guest.getRoomPreferences().isEmpty()) 
+
+        if (guest == null || guest.getRoomPreferences() == null || guest.getRoomPreferences().isEmpty())
         {
             suggestions.add("Special Offer: Stay in our hotel for 3 nights with a standard BREAKFAST_ONLY package.");
             return suggestions;
         }
- 
+
         boolean lovesFood = false;
         boolean wantsRelaxation = false;
 
         for (String pref : guest.getRoomPreferences()) {
-            String lowerPref = pref.toLowerCase(); 
-            
-            
+            String lowerPref = pref.toLowerCase();
+
+
             if (lowerPref.contains("food") || lowerPref.contains("dining") || lowerPref.contains("eat")) {
                 lovesFood = true;
             }
-            
+
             if (lowerPref.contains("relax") || lowerPref.contains("sea") || lowerPref.contains("quiet")) {
                 wantsRelaxation = true;
             }
         }
 
-    
+
         if (lovesFood && wantsRelaxation) {
             suggestions.add("Perfect Match: Stay in our hotel for 5 nights in a SEA_VIEW room with an ALL_INCLUSIVE dining package!");
         } else if (lovesFood) {
@@ -246,12 +248,12 @@ public class BookingEngine
         return suggestions;
     }
 
-    
+
     public Reservation createDraftReservation( Guest guest , Room room , LocalDate checkIn , LocalDate checkOut , DiningPackage diningPackage, int numChildren, int numAdults ) throws IllegalArgumentException
     {
         List <Receptionist> allReceptionists = Database.getReceptionists();
 
-        if (allReceptionists == null || allReceptionists.isEmpty()) 
+        if (allReceptionists == null || allReceptionists.isEmpty())
         {
             throw new IllegalStateException("No receptionists available to handle the reservation.");
         }
@@ -278,24 +280,24 @@ public class BookingEngine
         Reservation reservation = new Reservation(reservationID, guest, room, checkIn, checkOut, diningPackage, numChildren, numAdults);
         Database.getReservations().add(reservation);
         Database.saveData();
-        allocatedReceptionist.addDraftReservation(reservation); 
-        
+        allocatedReceptionist.addDraftReservation(reservation);
+
         return reservation;
-       
+
     }
 
 
-    public double calculateDiningCost(DiningPackage packageType, int nights) 
+    public double calculateDiningCost(DiningPackage packageType, int nights)
     {
-        if (packageType == null || nights <= 0) 
+        if (packageType == null || nights <= 0)
         {
-            return 0.0; 
+            return 0.0;
         }
 
         double packagePricePerNight = 0.0;
 
-    
-        switch (packageType) 
+
+        switch (packageType)
         {
             case BREAKFAST_ONLY:
                 packagePricePerNight = 0;
@@ -351,9 +353,9 @@ public class BookingEngine
         double roomCost = calculateRoomCost(reservation.getRoom(), reservation.getCheckinDate(), reservation.getCheckoutDate());
         double diningCost = calculateDiningCost(reservation.getDiningpackage(), (int)ChronoUnit.DAYS.between(reservation.getCheckinDate(), reservation.getCheckoutDate()));
         double amenityCost = calculateAmenityCost( reservation.getSelectedAmenities());
-        
+
         double subtotal = roomCost + diningCost + amenityCost;
-        double discountMultiplier = validatePromocode(promoCode); 
+        double discountMultiplier = validatePromocode(promoCode);
         double totalCost = subtotal * discountMultiplier;
 
         invoice.setTotalAmount(totalCost);
@@ -361,7 +363,7 @@ public class BookingEngine
         invoice.setAppliedPromoCode(promoCode);
         invoice.setDiscountAmount((roomCost + diningCost + amenityCost) - totalCost);
         Database.getInvoices().add(invoice);
-        Database.saveData();                   
+        Database.saveData();
         return invoice;
     }
 
@@ -410,7 +412,7 @@ public class BookingEngine
         return total;
     }
 
-    public double calculateTotalRevenue() 
+    public double calculateTotalRevenue()
     {
         double total = 0.0;
         // No parameters means we check EVERYTHING in the database
@@ -548,11 +550,11 @@ public class BookingEngine
         return guestReservations;
     }
 
-    public static void viewAndPayInvoices(Guest guest , Scanner sc) 
+    public static void viewAndPayInvoices(Guest guest , Scanner sc)
     {
         System.out.println("\n--- Your Unpaid Invoices ---");
         List<Invoice> myUnpaidInvoices = new ArrayList<>();
-        
+
         for (Invoice inv : Database.getInvoices()) {
             if (!inv.isPaid() && inv.getReservation().getGuest().getUserName().equals(guest.getUserName())) {
                 myUnpaidInvoices.add(inv);
@@ -567,22 +569,22 @@ public class BookingEngine
 
         for (int i = 0; i < myUnpaidInvoices.size(); i++) {
             Invoice inv = myUnpaidInvoices.get(i);
-            System.out.println((i + 1) + ". Invoice ID: " + inv.getInvoiceID() + 
-                               " | Amount: $" + String.format("%.2f", inv.getTotalAmount()) + 
+            System.out.println((i + 1) + ". Invoice ID: " + inv.getInvoiceID() +
+                               " | Amount: $" + String.format("%.2f", inv.getTotalAmount()) +
                                " | Reservation ID: " + inv.getReservation().getReservationID());
         }
 
         System.out.print("Enter the number of the invoice to pay (or 0 to exit): ");
         try {
             int invChoice = Integer.parseInt(sc.nextLine());
-            
+
             // Fixed the bounds check to include the last item (<=)
             if (invChoice <= myUnpaidInvoices.size() && invChoice > 0) {
                 Invoice selectedInv = myUnpaidInvoices.get(invChoice - 1);
 
                 System.out.println(selectedInv.generateItemizedSummary());
                 System.out.println("Your Current Balance: $" + String.format("%.2f", guest.getBalance()));
-                
+
                 System.out.println("\nSelect Payment Method:");
                 System.out.println("1. Credit Card   2. Cash   3. Online   0. Cancel");
                 System.out.print("Choice: ");
@@ -594,14 +596,14 @@ public class BookingEngine
                     case "2": method = PaymentMethod.CASH; break;
                     case "3": method = PaymentMethod.ONLINE; break;
                     case "0": System.out.println("Payment cancelled."); break;
-                    default: System.out.println("Invalid selection."); break;      
+                    default: System.out.println("Invalid selection."); break;
                 }
-                
+
                 if (method != null) {
                     selectedInv.pay(guest, method);
-                        
+
                     if (selectedInv.isPaid()) {
-                        Database.saveData(); 
+                        Database.saveData();
                     }
                 }
             } else if (invChoice != 0) {
@@ -612,5 +614,23 @@ public class BookingEngine
         }
     }
 
+    public void addbalance( Guest guest, Scanner sc){
+        System.out.println("Your current balance : "+guest.getBalance());
+        System.out.println("Please enter the amount to be added to your balance, 0 to cancel");
+        double amount = sc.nextDouble();
+        while(amount<=0){
+           if(amount == 0){
+               return;
+           }
+           else{
+               System.out.println("Invalid value, Please re-enter the amount");
+               amount=sc.nextDouble();
+           }
+
+        }
+        guest.Newbalance(amount);
+        System.out.println(amount+"EGP has been added to balance, current balance :"+guest.getBalance());
+        Database.saveData();
+    }
 }
 

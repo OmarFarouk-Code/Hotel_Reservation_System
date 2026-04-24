@@ -40,6 +40,7 @@ public class Guest extends User
     public void setBalance(double balance) {
         this.balance = balance;
     }
+    public void Newbalance(double newbalance){balance=balance+newbalance;}
 
     public static int getGuestId() {
         return GuestId;
@@ -100,7 +101,7 @@ public class Guest extends User
         int limit =0;
         List<Reservation> reservations = Database.getReservations();
         while(limit<2) {
-            System.out.println("Can't find your reservation? Enter your ReservationID");
+            System.out.println("Can't find your reservation? Enter your ReservationID or press 0 to exit");
             if (!input.hasNextInt()) { //ensures that the user didn't type a letter instead of number
                 input.next();
                 System.out.println("Invalid input! Please enter a numeric ID.");
@@ -155,9 +156,6 @@ public class Guest extends User
         }
     }
         while (found);
-
-
-
         System.out.println("Please enter a password");
         System.out.println("** Password rules **");
         System.out.println("Password must be more than 8 characters");
@@ -173,10 +171,6 @@ public class Guest extends User
         this.accountStatus = AccountStatus.ACTIVE;
         this.UniqueId = GuestId++;
         this.failedLoginAttempts = 0;
-
-
-
-
 
         while (true) {
             System.out.print("Please enter your Gender (Male/Female): ");
