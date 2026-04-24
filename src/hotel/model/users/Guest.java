@@ -77,7 +77,9 @@ public class Guest extends User
         return true;
     }
 
-    private void printreservationdetails(int idcounter,List<Reservation> Reservations){
+    private void printreservationdetails(int idcounter,List<Reservation> Reservations)
+    {
+
         System.out.println("-----------------------------------------------");
         System.out.println("Your Reservation");
         System.out.print("Guest Username : "+ Reservations.get(idcounter).getGuest().getUserName());System.out.println();
@@ -168,7 +170,17 @@ public class Guest extends User
         System.out.println("Password has been created successfully");
         this.Typeofuser = UserType.GUEST;
         this.accountStatus = AccountStatus.ACTIVE;
-        this.UniqueId = GuestId++;
+
+        if (Database.getGuests().isEmpty()) 
+        {
+            this.UniqueId = 1000;
+        } 
+        else 
+        {
+            int lastGuestIndex = Database.getGuests().size() - 1;
+            this.UniqueId = Database.getGuests().get(lastGuestIndex).getUniqueId() + 1;
+        }
+
         this.failedLoginAttempts = 0;
 
         while (true) {
