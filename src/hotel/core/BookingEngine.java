@@ -600,6 +600,8 @@ public class BookingEngine
                     selectedInv.pay(guest, method);
                         
                     if (selectedInv.isPaid()) {
+                        selectedInv.getReservation().setStatus(ReservationStatus.CONFIRMED);
+                        System.out.println("Reservation updated to CONFIRMED.");
                         Database.saveData(); 
                     }
                 }
