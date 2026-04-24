@@ -413,7 +413,6 @@ public class BookingEngine
     public double calculateTotalRevenue() 
     {
         double total = 0.0;
-        // No parameters means we check EVERYTHING in the database
         for (Invoice inv : Database.getInvoices()) {
             if (inv.isPaid()) {
                 total += inv.getTotalAmount();
@@ -459,13 +458,8 @@ public class BookingEngine
         if (nights <= 0) {
             nights = 1;
         }
-
-
         double roomPricePerNight = reservation.getRoom().getRoomType().getPricePerNight();
         double totalRoomCost = roomPricePerNight * nights;
-
-
-        double diningCostPerNight = 0;
         double totalDiningCost = calculateDiningCost(reservation.getDiningpackage(), (int) nights);
 
 
@@ -475,11 +469,7 @@ public class BookingEngine
                 totalAmenitiesCost += amenity.getAmenityPrice();
             }
         }
-
-
         double grandTotal = totalRoomCost + totalDiningCost + totalAmenitiesCost;
-
-
         return grandTotal;
     }
 
