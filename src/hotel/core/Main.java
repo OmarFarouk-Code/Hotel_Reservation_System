@@ -115,7 +115,8 @@ public class Main {
             System.out.println("3. Create/Read/Update/Delete Amenity");
             System.out.println("4. Set Seasonal Multiplier    5. Financial Report");
             System.out.println("6. View All Guests            7. View All Reservations");
-            System.out.println("8. Logout");
+            System.out.println("8. View All Rooms");
+            System.out.println("9. Logout");
             System.out.print("Action: ");
 
             try {
@@ -149,18 +150,92 @@ public class Main {
                                 admin.createRoom(new Room(roomNum, floorNum, assignedType));
                                 System.out.println("Success! Room created.");
                             }
-                            else if (op.equals("2")) {
-                                System.out.print("Enter Room Number to read: ");
-                                int roomNum = Integer.parseInt(sc.nextLine());
-                                Room r = admin.readRoom(roomNum);
-                                System.out.println("Found Room: " + r.getRoomNumber() + " on floor " + r.getFloor() + "\nRoomType: "+r.getRoomType().getTypeName());
+                            else if (op.equals("2"))
+                            {
+                                try
+                                {
+                                    System.out.print("Enter Room Number to read: ");
+                                    int roomNum = Integer.parseInt(sc.nextLine());
+                                    Room r = admin.readRoom(roomNum);
+                                    System.out.println("Found Room: " + r.getRoomNumber() + " on floor " + r.getFloor() + "\nRoomType: "+r.getRoomType().getTypeName());
+                                    System.out.println("Amenties Included: ");
+                                    List<Amenity> list = r.getAmenities();
+                                    if (list == null || list.isEmpty())
+                                    {
+                                        System.out.println("  [No amenities assigned to this room]");
+                                    } else
+                                    {
+                                        // Loop through the list to actually print the names
+                                        for (Amenity a : list)
+                                        {
+                                            System.out.println("  • " + a.getAmenityName() + " ($" + a.getAmenityPrice() + ")");
+                                        }
+                                    }
+                                }
+
+                                 catch (Exception e)
+                                {
+                                    // This will catch all those custom Exception messages we wrote earlier!
+                                    System.out.println("❌ ERROR: " + e.getMessage());
+                                }
+                                break;
+                            }
+                            else if (op.equals("3"))
+                            {
+                                System.out.print("Enter Room Number to update: ");
+                                int Name = Integer.parseInt(sc.nextLine());
+
+                                // To update, we first read the existing one, then modify it
+                                Room existing = admin.readRoom(Name);
+                                printDivider(" ADD-ON AMENITIES (Optional)");
+                                List<Amenity> allAmenities = Database.getAmenities();
+                                List<Amenity> chosenAmenities = new ArrayList<>();
+
+                                if (allAmenities.isEmpty()) {
+                                    System.out.println("  No amenities currently available.");
+                                } else {
+                                    System.out.println("  Select amenities to add to your stay (one per line, 0 when done):\n");
+                                    for (int i = 0; i < allAmenities.size(); i++) {
+                                        Amenity a = allAmenities.get(i);
+                                        System.out.printf("  [%d] %-35s $%.0f%n", i + 1, a.getAmenityName(), a.getAmenityPrice());
+                                    }
+
+                                    System.out.println("\n  Enter amenity number(s) to add (0 to skip):");
+                                    while (true) {
+                                        System.out.print("  > ");
+                                        String raw = sc.nextLine().trim();
+                                        if (raw.equals("0") || raw.isEmpty()) break;
+                                        try {
+                                            int idx = Integer.parseInt(raw);
+                                            if (idx >= 1 && idx <= allAmenities.size()) {
+                                                Amenity picked = allAmenities.get(idx - 1);
+                                                if (!chosenAmenities.contains(picked)) {
+                                                    chosenAmenities.add(picked);
+
+                                                    System.out.println("  ✔ Added: " + picked.getAmenityName());
+                                                } else {
+                                                    System.out.println("  Already added.");
+                                                }
+                                            } else {
+                                                System.out.println("  Invalid selection.");
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            System.out.println("  Please enter a number.");
+                                        }
+                                    }
+                                    existing.setAmenities(chosenAmenities);//this part doesnt work still
+                                    admin.updateRoom(Name, existing);
+                                    Database.saveData();
+                                }
                             }
                             else if (op.equals("4")) {
                                 System.out.print("Enter Room Number to delete: ");
                                 int roomNum = Integer.parseInt(sc.nextLine());
                                 admin.deleteRoom(roomNum);
                             }
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e)
+                        {
                             // This will catch all those custom Exception messages we wrote earlier!
                             System.out.println(" ERROR: " + e.getMessage());
                         }
@@ -317,7 +392,8 @@ public class Main {
                     }
                     case "6": admin.viewAllGuests(); break;
                     case "7": admin.viewAllReservations(); break;
-                    case "8": System.out.println("Logging out..."); return;
+                    case "8" :BookingEngine.viewAllRooms(); break;
+                    case "9": System.out.println("Logging out..."); return;
                 }
             } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());

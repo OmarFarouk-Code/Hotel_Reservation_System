@@ -68,7 +68,7 @@ public class BookingEngine
         return 1; 
     }
 
-    public List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) 
+    public static List<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut)
     {    
         if (checkIn == null || checkOut == null) {
             throw new IllegalArgumentException("Dates cannot be null.");
@@ -108,7 +108,7 @@ public class BookingEngine
         return available;
     }
 
-    public void viewAllRooms() 
+    public static void viewAllRooms()
     {
         System.out.println("--- All Hotel Rooms ---");
 
