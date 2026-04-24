@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
+import hotel.model.entities.*;
 public class Guest extends User
 {
     private double balance;
@@ -77,24 +78,44 @@ public class Guest extends User
         return true;
     }
 
-    private void printreservationdetails(int idcounter,List<Reservation> Reservations)
+    private void printreservationdetails(int idcounter, List<Reservation> reservations) 
     {
+       
+        Reservation res = reservations.get(idcounter);
 
-        System.out.println("-----------------------------------------------");
-        System.out.println("Your Reservation");
-        System.out.print("Guest Username : "+ Reservations.get(idcounter).getGuest().getUserName());System.out.println();
-        System.out.println("-----------------------------------------------");
-        System.out.print("Room Type : "+Reservations.get(idcounter).getRoom().getRoomType().getTypeName());System.out.println();
-        System.out.println("Room floor : "+Reservations.get(idcounter).getRoom().getFloor());
-        System.out.print("Room Number : "+Reservations.get(idcounter).getRoom().getRoomNumber());System.out.println();System.out.println("-----------------------------------------------");
-        System.out.println("Check in :"+Reservations.get(idcounter).getCheckinDate());System.out.println("                  ");
-        System.out.print("Check out : "+Reservations.get(idcounter).getCheckoutDate());System.out.println();System.out.println("-----------------------------------------------");
-        System.out.println("Reservation Status: "+Reservations.get(idcounter).getStatus());System.out.println();
-        System.out.println("Dining Package : "+Reservations.get(idcounter).getDiningpackage());System.out.println("-----------------------------------------------");
-        System.out.println("*Room Amenities*");
-        System.out.println(Reservations.get(idcounter).getRoom().getAmenities());
-        System.out.println("-----------------------------------------------");
-
+        System.out.println("\n=================================================");
+        System.out.println("               RESERVATION DETAILS               ");
+        System.out.println("=================================================");
+        
+        System.out.printf("%-20s : %s%n", "Guest Username", res.getGuest().getUserName());
+        System.out.printf("%-20s : %s%n", "Reservation Status", res.getStatus());
+        
+        System.out.println("-------------------------------------------------");
+        System.out.println("ROOM INFORMATION");
+        System.out.printf("%-20s : %s%n", "Room Type", res.getRoom().getRoomType().getTypeName());
+        System.out.printf("%-20s : %d%n", "Room Number", res.getRoom().getRoomNumber());
+        System.out.printf("%-20s : %d%n", "Floor", res.getRoom().getFloor());
+        
+        System.out.println("-------------------------------------------------");
+        System.out.println("STAY DETAILS");
+        System.out.printf("%-20s : %s%n", "Check-in Date", res.getCheckinDate());
+        System.out.printf("%-20s : %s%n", "Check-out Date", res.getCheckoutDate());
+        
+        System.out.println("-------------------------------------------------");
+        System.out.println("PACKAGES & ADD-ONS");
+        System.out.printf("%-20s : %s%n", "Dining Package", res.getDiningpackage());
+        
+        System.out.println("\n* Room Amenities:");
+        
+        List<Amenity> amenities = res.getRoom().getAmenities();
+        if (amenities == null || amenities.isEmpty()) {
+            System.out.println("  - No special amenities");
+        } else {
+            for (Amenity amenity : amenities) {
+                System.out.println("  - " + amenity.getAmenityName());
+            }
+        }
+        System.out.println("=================================================\n");
     }
 
     public void ViewReservationbyId() 
