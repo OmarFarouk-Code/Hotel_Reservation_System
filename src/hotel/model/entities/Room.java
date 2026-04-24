@@ -65,6 +65,10 @@ public class Room implements Serializable
         return reviews;
     }
 
+    public void setAmenities(List<Amenity> amenities) {
+        this.amenities = amenities;
+    }
+
     public void addReview (Review review) {
         reviews.add(review);
     }
