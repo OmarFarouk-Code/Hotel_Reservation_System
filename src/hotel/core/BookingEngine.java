@@ -42,6 +42,11 @@ public class BookingEngine
 
     public double validatePromocode(String code) 
     {
+        if (code == null) 
+        {
+            return 1.0; 
+        }
+    
         List<PromoCode> promos = Database.getPromoCodes();
 
         for (int i = 0; i < Database.getPromoCodes().size(); i++) 
@@ -461,16 +466,7 @@ public class BookingEngine
 
 
         double diningCostPerNight = 0;
-        if (reservation.getDiningpackage() != null) {
-            switch (reservation.getDiningpackage()) {
-                case BREAKFAST_ONLY : diningCostPerNight = 15.0;break;
-                case HALF_BOARD     : diningCostPerNight = 35.0;break;
-                case FULL_BOARD     : diningCostPerNight = 60.0;break;
-                case ALL_INCLUSIVE  : diningCostPerNight = 100.0;break;
-                default             : diningCostPerNight = 0.0;
-            }
-        }
-        double totalDiningCost = diningCostPerNight * nights;
+        double totalDiningCost = calculateDiningCost(reservation.getDiningpackage(), (int) nights);
 
 
         double totalAmenitiesCost = 0;

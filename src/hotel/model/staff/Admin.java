@@ -18,7 +18,7 @@ public class  Admin extends Staff implements Manageable
 
     public Admin() { }
 
-    public Admin(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, int workingHours, List<Invoice> invoicesList, List<RoomType> roomTypeList, List<Amenity> amenityList, List<Room> roomList) {
+    public Admin(String userName, String password, UserType typeofuser, Gender theGender, String newpassword, int failedLoginAttempts, AccountStatus accountStatus, LocalDate dateOfbirth, String phoneNumber, String address, int workingHours) {
         super(userName, password, typeofuser, theGender, newpassword, failedLoginAttempts, accountStatus, dateOfbirth, phoneNumber, address, workingHours);
 
     }
