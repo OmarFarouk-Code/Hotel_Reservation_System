@@ -142,8 +142,21 @@ public class Guest extends User
 
 
     public void register() {
+        List<Guest> Guestlist = Database.getGuests();
+        boolean found = false;
+        do{
         System.out.println("Please enter a username ");
         UserName = input.nextLine().trim();
+        for (int i = 0; i < Database.getGuests().size(); i++) {
+            if (Guestlist.get(i).getUserName().equals(UserName)) {
+                System.out.println("User name is taken please try another one");
+                found = true;
+            }
+        }
+    }
+        while (found);
+
+
 
         System.out.println("Please enter a password");
         System.out.println("** Password rules **");
