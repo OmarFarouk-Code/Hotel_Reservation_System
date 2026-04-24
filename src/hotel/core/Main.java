@@ -343,7 +343,7 @@ public class Main {
                     System.out.print("Add a Comment: ");
                     String comment = input.nextLine();
                     System.out.print("Rating: ");
-                    int rating = input.nextInt();
+                    int rating = Integer.parseInt(sc.nextLine());
                     Review review = new Review(rating, comment);
                     System.out.print("ID: ");
                     rec.manageCheckOut(Integer.parseInt(sc.nextLine()), review);
