@@ -380,6 +380,11 @@ public class Main {
                     runBookingFlow(guest);
                     break;
                 }
+                case "2" : 
+                {
+                    guest.ViewReservation(guest.getUserName(), guest.getUniqueId());
+                    break;
+                }
                 case "3": {
                     // 1. Automatically fetch reservations for THIS guest
                     List<Reservation> myActiveBookings = engine.getReservationsForGuest(guest);
