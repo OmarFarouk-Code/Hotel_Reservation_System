@@ -42,6 +42,11 @@ public class BookingEngine
 
     public double validatePromocode(String code) 
     {
+        if (code == null) 
+        {
+            return 1.0; 
+        }
+    
         List<PromoCode> promos = Database.getPromoCodes();
 
         for (int i = 0; i < Database.getPromoCodes().size(); i++) 
