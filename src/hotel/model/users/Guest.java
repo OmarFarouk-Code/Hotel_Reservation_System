@@ -65,7 +65,7 @@ public class Guest extends User
         this.input = input;
     }
 
-    public boolean phonecheck(String s) {
+    private boolean phonecheck(String s) {
         if (s == null || s.length() != 11) return false;
 
         for (int i = 0; i < s.length(); i++) {
@@ -79,7 +79,7 @@ public class Guest extends User
 
 
 
-    public void printreservationdetails(int idcounter,List<Reservation> Reservations){
+    private void printreservationdetails(int idcounter,List<Reservation> Reservations){
         System.out.println("-----------------------------------------------");
         System.out.println("Your Reservation");
         System.out.print("Guest Username : "+ Reservations.get(idcounter).getGuest().getUserName());System.out.println();

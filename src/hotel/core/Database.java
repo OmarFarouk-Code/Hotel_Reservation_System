@@ -39,7 +39,16 @@ public class Database
     public static List<Amenity> getAmenities() { return amenities; }
     public static List<Admin> getAdmins(){ return admins; }
     public static List<Receptionist> getReceptionists(){ return receptionists; }
-    
+
+    public static void setGuests(List<Guest> guests) { Database.guests = guests; }
+    public static void setRooms(List<Room> rooms) { Database.rooms = rooms; }
+    public static void setReservations(List<Reservation> reservations) { Database.reservations = reservations; }
+    public static void setInvoices(List<Invoice> invoices) { Database.invoices = invoices; }
+    public static void setRoomTypes(List<RoomType> roomTypes) { Database.roomTypes = roomTypes; }
+    public static void setAmenities(List<Amenity> amenities) { Database.amenities = amenities; }
+    public static void setAdmins(List<Admin> admins) { Database.admins = admins; }
+    public static void setReceptionists(List<Receptionist> receptionists) { Database.receptionists = receptionists; }
+
     private static final String FILE_NAME = "hotel_data.dat";
 
     public static void saveData() {
