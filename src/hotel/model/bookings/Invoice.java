@@ -96,7 +96,7 @@ public class Invoice implements Payable , Serializable
 
     @Override
     public double getTotal() {
-        return totalAmount; // Removed the secondary deduction
+        return totalAmount; 
     }
 
     @Override
