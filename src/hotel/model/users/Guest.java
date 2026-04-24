@@ -172,23 +172,31 @@ public class Guest extends User
 
     public void register() 
     {
-        System.out.println("Please enter a username ");
+        System.out.println("\n=================================================");
+        System.out.println("             GUEST REGISTRATION FORM             ");
+        System.out.println("=================================================");
+
+        System.out.print("> Enter a Username: ");
         UserName = input.nextLine().trim();
 
-        System.out.println("Please enter a password");
-        System.out.println("** Password rules **");
-        System.out.println("Password must be more than 8 characters");
-        System.out.println("Password must at least contain 1 number and 1 capital letter");
+        System.out.println("\n[ Password Requirements ]");
+        System.out.println("  * Minimum 8 characters");
+        System.out.println("  * At least 1 number");
+        System.out.println("  * At least 1 capital letter");
+        
+        System.out.print("> Enter a Password: ");
         password = input.nextLine();
 
         while(!passwordcheck(password))
         {
-            System.out.println("You didn't Satisfy password rules,try again");
+            System.out.println("\n[!] Password does not meet the requirements.");
+            System.out.print("> Please try again: ");
             password = input.nextLine().trim();
             passwordcheck(password);
         }
 
-        System.out.println("Password has been created successfully");
+        System.out.println("[SUCCESS] Password created successfully!\n");
+        
         this.Typeofuser = UserType.GUEST;
         this.accountStatus = AccountStatus.ACTIVE;
 
@@ -204,8 +212,12 @@ public class Guest extends User
 
         this.failedLoginAttempts = 0;
 
+        System.out.println("-------------------------------------------------");
+        System.out.println("                 PERSONAL DETAILS                ");
+        System.out.println("-------------------------------------------------");
+
         while (true) {
-            System.out.print("Please enter your Gender (Male/Female): ");
+            System.out.print("> Enter Gender (Male/Female): ");
             String genderInput = input.nextLine().trim().toUpperCase();
 
             if (genderInput.equals("MALE") || genderInput.equals("M")) {
@@ -215,24 +227,34 @@ public class Guest extends User
                 this.theGender = Gender.FEMALE;
                 break;
             } else {
-                System.out.println("Invalid input. Please enter 'Male' or 'Female'.");
+                System.out.println("[!] Invalid input. Please type 'Male' or 'Female'.");
             }
         }
-        System.out.println("Please enter your date of birth YYYY-MM-DD");
+
+        System.out.print("> Enter Date of Birth (YYYY-MM-DD): ");
         String userInput = input.nextLine().trim();
+
         if(!Datechecker(userInput)){
-            System.out.println("Invalid date format, please re-enter it (YYYY-MM-DD)");
+            System.out.println("[!] Invalid date format.");
+            System.out.print("> Please re-enter (YYYY-MM-DD): ");
             userInput = input.nextLine().trim();
         }
         dateOfbirth = LocalDate.parse(userInput);
-        System.out.println("Please enter your phone number");
-        phoneNumber=input.nextLine().trim();
-        System.out.println("Please enter your address");
-        address=input.nextLine().trim();
-        System.out.println("Your ID: "+getUniqueId());
+
+        System.out.print("> Enter Phone Number: ");
+        phoneNumber = input.nextLine().trim();
+        
+        System.out.print("> Enter Home Address: ");
+        address = input.nextLine().trim();
+
+        // Save to database
         Database.getGuests().add(this);
         Database.saveData();
 
+        System.out.println("\n=================================================");
+        System.out.println("*** Registration Complete! Welcome, " + UserName + "!");
+        System.out.println("*** Your Guest ID is: " + getUniqueId());
+        System.out.println("=================================================\n");
     }
 
     public void ViewReservation(String UserName, int UserId) 
