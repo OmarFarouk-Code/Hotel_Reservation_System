@@ -636,8 +636,7 @@ public class Main {
                         System.out.println("\n  ══════════════════════════════════════════");
                         System.out.println("    BOOKING CONFIRMED!");
                         System.out.println("   Reservation ID : " + draft.getReservationID());
-                        System.out.println("   Room           : " + selectedRoom.getRoomNumber()
-                                + "  (Floor " + selectedRoom.getFloor() + ")");
+                        System.out.println("   Room           : " + selectedRoom.getRoomNumber() + "  (Floor " + selectedRoom.getFloor() + ")");
                         System.out.println("   Check-In       : " + checkIn);
                         System.out.println("   Check-Out      : " + checkOut);
                         System.out.println("   Total Paid     : $" + String.format("%.2f", invoice.getTotalAmount()));
@@ -678,7 +677,8 @@ public class Main {
     // Prompts for a LocalDate, retries on bad format, returns null if user
     // types "0" to abort.
 
-    private static LocalDate promptDate(String prompt, DateTimeFormatter fmt) {
+    private static LocalDate promptDate(String prompt, DateTimeFormatter fmt) 
+    {
         while (true) {
             System.out.print("  " + prompt);
             String raw = sc.nextLine().trim();
@@ -692,7 +692,8 @@ public class Main {
     
     // Prompts the user to pick a room from the available list.
     // Retries on invalid input; returns null if user enters 0.
-    private static Room promptRoomChoice(List<Room> available) {
+    private static Room promptRoomChoice(List<Room> available) 
+    {
         while (true) {
             System.out.print("\n  Enter Room Number to book (0 to cancel): ");
             String raw = sc.nextLine().trim();
