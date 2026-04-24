@@ -75,7 +75,7 @@ public class Room implements Serializable
 
     public double calculateAverageRating() {
         if (reviews.isEmpty()) {
-            return 0.0; // No reviews, average rating is 0
+            return 0.0; 
         }
         double totalRating = 0;
         for (Review review : reviews) {

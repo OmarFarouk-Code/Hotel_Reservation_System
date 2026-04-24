@@ -55,6 +55,7 @@ public class Receptionist extends Staff {
     public void manageCheckOut(int reservationID , Review review) throws Exception {
         List<Invoice> invoices = Database.getInvoices();
         Invoice targetInvoice= null;
+        
         for (Invoice inv : invoices) {
             if (inv.getReservation()!=null&&inv.getReservation().getReservationID() == reservationID ) {
                 targetInvoice = inv;
@@ -73,13 +74,10 @@ public class Receptionist extends Staff {
         }
 
             targetInvoice.getReservation().setStatus(ReservationStatus.COMPLETED);
+            targetInvoice.getReservation().setCheckoutDate(LocalDate.now());
             targetInvoice.getReservation().getRoom().addReview(review);
             System.out.println("Check-out complete..... ");
 
             Database.saveData();
-
-            //should make room available
-
-
     }
 }
