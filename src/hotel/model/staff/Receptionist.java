@@ -73,7 +73,9 @@ public class Receptionist extends Staff {
         }
 
             targetInvoice.getReservation().setStatus(ReservationStatus.COMPLETED);
+            targetInvoice.getReservation().getRoom().addReview(review);
             System.out.println("Check-out complete..... ");
+
             Database.saveData();
 
             //should make room available
