@@ -10,7 +10,7 @@ import hotel.model.enums.ReservationStatus;
 import hotel.model.enums.UserType;
 import hotel.model.bookings.Invoice;
 import hotel.model.bookings.Reservation;
-import hotel.model.entities.Room;
+
 
 public class Receptionist extends Staff {
     private List<Reservation> draftReservations;
@@ -31,23 +31,25 @@ public class Receptionist extends Staff {
     public void addDraftReservation(Reservation reservation) {
         this.draftReservations.add(reservation);
     }
-
-    public void removeDraftReservation(Reservation reservation) {
-        this.draftReservations.remove(reservation);
-    }
         
-    public void manageCheckIn(int reservationID) {
-        List<Reservation> reservation = Database.getReservations();
-        for (int i = 0; i < reservation.size(); i++) {
-            if (reservation.get(i).getReservationID() == (reservationID)) {
-                reservation.get(i).confirmreservation();
+    public void manageCheckIn(int reservationID) 
+    {
+        List<Reservation> reservations = Database.getReservations();
+        for (Reservation res : reservations) {
+            if (res.getReservationID() == reservationID) 
+            {
+                if (res.getStatus() != ReservationStatus.PENDING) 
+                {
+                    System.out.println("Check-in failed: Reservation is " + res.getStatus() + ", not PENDING.");
+                    return;
+                }
+                res.confirmreservation();
                 Database.saveData();
-                System.out.println("Reservation is confirmed");
+                System.out.println("Reservation #" + reservationID + " confirmed. Guest checked in.");
                 return;
             }
         }
-        System.out.println("Reservation ID not found");
-
+        System.out.println("Reservation ID not found.");
     }
 
     public void manageCheckOut(int reservationID , Review review) throws Exception {
