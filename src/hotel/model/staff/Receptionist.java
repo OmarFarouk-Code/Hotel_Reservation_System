@@ -37,12 +37,10 @@ public class Receptionist extends Staff {
         for (Reservation res : reservations) {
             if (res.getReservationID() == reservationID)
             {
-                if (res.getStatus() != ReservationStatus.PENDING)
-                {
+                if (res.getStatus() != ReservationStatus.PENDING) {
                     System.out.println("Check-in failed: Reservation is " + res.getStatus() + ", not PENDING.");
                     return;
                 }
-
                 for(int j=0;j<Database.getInvoices().size();j++) {
                     if (invoiceList.get(j).getReservation().getReservationID() == reservationID) {
                         if (invoiceList.get(j).getPaymentMethod() == PaymentMethod.CASH) {
