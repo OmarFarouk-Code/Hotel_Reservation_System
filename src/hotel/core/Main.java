@@ -136,7 +136,7 @@ public class Main {
                         try {
                             if (op.equals("1")) {
                                 System.out.print("Enter new Room Number: ");
-                                int roomNum = Integer.parseInt(sc.nextLine()); // Use parseInt to avoid Scanner bugs!
+                                int roomNum = Integer.parseInt(sc.nextLine()); 
 
                                 System.out.print("Enter Floor Number: ");
                                 int floorNum = Integer.parseInt(sc.nextLine());
@@ -237,7 +237,7 @@ public class Main {
                         catch (Exception e)
                         {
                             // This will catch all those custom Exception messages we wrote earlier!
-                            System.out.println("❌ ERROR: " + e.getMessage());
+                            System.out.println(" ERROR: " + e.getMessage());
                         }
                         break;
                     }
@@ -312,9 +312,9 @@ public class Main {
                                 System.out.println("Room Type deleted.");
                             }
                         } catch (IllegalArgumentException e) {
-                            System.out.println("❌ ERROR: Invalid Enum value. Please use SEA_VIEW, GARDEN_VIEW, or CITY_VIEW.");
+                            System.out.println(" ERROR: Invalid Enum value. Please use SEA_VIEW, GARDEN_VIEW, or CITY_VIEW.");
                         } catch (Exception e) {
-                            System.out.println("❌ ERROR: " + e.getMessage());
+                            System.out.println(" ERROR: " + e.getMessage());
                         }
                         break;
                     }
@@ -374,7 +374,7 @@ public class Main {
                                 admin.deleteAmenity(name);
                             }
                         } catch (Exception e) {
-                            System.out.println("❌ ERROR: " + e.getMessage());
+                            System.out.println(" ERROR: " + e.getMessage());
                         }
                         break;
                     }
