@@ -135,8 +135,8 @@ public abstract class User implements Serializable {
         boolean number = false;
         boolean both = false;
         for (char x : Password.toCharArray()) {
-            if (Character.isUpperCase(x)) uppercase = true;//check that has capital letter
-            if (Character.isDigit(x)) number = true;//check that there ia a number
+            if (Character.isUpperCase(x)) uppercase = true;
+            if (Character.isDigit(x)) number = true;
 
             if (uppercase && number) {
                 both = true;
@@ -154,7 +154,8 @@ public abstract class User implements Serializable {
     }
 
 
-    public User Login(UserType expectedType) {
+    public User Login(UserType expectedType) 
+    {
         this.Typeofuser = expectedType;
 
         while (failedLoginAttempts < 5) {
@@ -221,11 +222,8 @@ public abstract class User implements Serializable {
             }
 
             }
-        return null;
+            return null;
         }
-
-
-    
 
     public void passwordconfirmation(String Pass1,String Pass2)
     {
@@ -236,10 +234,8 @@ public abstract class User implements Serializable {
             System.out.println("Please confirm Password");
             Pass2=input.nextLine();
         }
-
-        
+ 
     }
-
 
     public void ResetPassword(String theUserName,UserType TheUserType)
     {
