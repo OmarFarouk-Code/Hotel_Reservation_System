@@ -447,7 +447,8 @@ public class Main {
             System.out.println("3. Cancel Reservation");
             System.out.println("4. View & Pay Invoices");
             System.out.println("5. Reset Password");
-            System.out.println("6. Logout");
+            System.out.println("6.Top up your balance");
+            System.out.println("7. Logout");
             System.out.print("Action: ");
 
             String choice = sc.nextLine();
@@ -499,6 +500,10 @@ public class Main {
                     break;
                 }
                 case "6": {
+                    engine.addbalance(guest,sc);
+                    break;
+                }
+                case "7": {
                     System.out.println("Logging out..."); 
                     return;
                 }
