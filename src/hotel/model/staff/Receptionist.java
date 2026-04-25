@@ -49,10 +49,11 @@ public class Receptionist extends Staff {
                             int choice= sc.nextInt();
                             while(choice !=1 && choice!=2){
                                 System.out.println("Invalid input ,please try again");
-                                choice=input.nextInt();
+                                choice=sc.nextInt();
                             }
                             if(choice ==2){
                                 res.setStatus(ReservationStatus.CANCELLED);
+                                Database.saveData();
                                 return;
                             }else{
                                 res.confirmreservation();
@@ -63,6 +64,10 @@ public class Receptionist extends Staff {
 
                             }
 
+                        }else if (!invoiceList.get(j).isPaid()) {
+                        System.out.println("No amount of money is paid, reservation will be cancelled");
+                        res.setStatus(ReservationStatus.CANCELLED);
+                        return;
                         }else{
                             res.confirmreservation();
                             Database.saveData();
