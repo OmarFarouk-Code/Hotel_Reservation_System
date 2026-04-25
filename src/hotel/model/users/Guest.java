@@ -41,10 +41,12 @@ public class Guest extends User
     public void setBalance(double balance) {
         this.balance = balance;
     }
+    public void Newbalance(double newbalance){balance=balance+newbalance;}
 
     public static int getGuestId() {
         return GuestId;
     }
+
 
     public static void setGuestId(int guestId) {
         GuestId = guestId;
@@ -125,7 +127,7 @@ public class Guest extends User
 
         while(limit<2) 
         {
-            System.out.println("Can't find your reservation? Enter your ReservationID");
+            System.out.println("Can't find your reservation? Enter your ReservationID or 0 to exit");
             if (!input.hasNextInt()) { 
                 input.next();
                 System.out.println("Invalid input! Please enter a numeric ID.");
@@ -170,20 +172,30 @@ public class Guest extends User
     }
 
 
-    public void register() 
+    public void register()
     {
         System.out.println("\n=================================================");
         System.out.println("             GUEST REGISTRATION FORM             ");
         System.out.println("=================================================");
 
-        System.out.print("> Enter a Username: ");
-        UserName = input.nextLine().trim();
+        List<Guest> Guestlist = Database.getGuests();
+        boolean found = false;
+        do{
+            System.out.println("> Please enter a username :");
+            UserName = input.nextLine().trim();
+            for (int i = 0; i < Database.getGuests().size(); i++) {
+                if (Guestlist.get(i).getUserName().equals(UserName)) {
+                    System.out.println("User name is taken please try another one");
+                    found = true;
+                }
+            }
+        }while (found);
 
         System.out.println("\n[ Password Requirements ]");
         System.out.println("  * Minimum 8 characters");
         System.out.println("  * At least 1 number");
         System.out.println("  * At least 1 capital letter");
-        
+
         System.out.print("> Enter a Password: ");
         password = input.nextLine();
 
@@ -196,15 +208,15 @@ public class Guest extends User
         }
 
         System.out.println("[SUCCESS] Password created successfully!\n");
-        
+
         this.Typeofuser = UserType.GUEST;
         this.accountStatus = AccountStatus.ACTIVE;
 
-        if (Database.getGuests().isEmpty()) 
+        if (Database.getGuests().isEmpty())
         {
             this.UniqueId = 1000;
-        } 
-        else 
+        }
+        else
         {
             int lastGuestIndex = Database.getGuests().size() - 1;
             this.UniqueId = Database.getGuests().get(lastGuestIndex).getUniqueId() + 1;
@@ -243,7 +255,7 @@ public class Guest extends User
 
         System.out.print("> Enter Phone Number: ");
         phoneNumber = input.nextLine().trim();
-        
+
         System.out.print("> Enter Home Address: ");
         address = input.nextLine().trim();
 
@@ -256,6 +268,7 @@ public class Guest extends User
         System.out.println("*** Your Guest ID is: " + getUniqueId());
         System.out.println("=================================================\n");
     }
+
 
     public void ViewReservation(String UserName, int UserId) 
     {
