@@ -413,7 +413,7 @@ public class Main {
 
             String choice = sc.nextLine();
             switch (choice) {
-                case "1": System.out.print("ID: "); rec.manageCheckIn(Integer.parseInt(sc.nextLine())); break;
+                case "1": System.out.print("ID: "); rec.manageCheckIn(Integer.parseInt(sc.nextLine()),sc); break;
                 case "2": {
                     Scanner input = new Scanner(System.in);
                     System.out.print("Add a Comment: ");
