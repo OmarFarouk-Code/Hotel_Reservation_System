@@ -34,7 +34,7 @@ public class Main {
     // --- 1. MAIN MENU ---
     public static void showMainMenu() {
         while (true) {
-            System.out.println("\n========== AIN SHAMS HOTEL SYSTEM ==========");
+            System.out.println("\n========== COZY PARADISE RESORT HOTEL ==========");
             System.out.println("1. Admin Portal      2. Receptionist Portal");
             System.out.println("3. Guest Portal      4. Global Occupancy Stats");
             System.out.println("5. Save and Exit");
@@ -129,18 +129,18 @@ public class Main {
                         }
                         else
                         {
-                            admin.DisplayRoomType();
                             System.out.print("Rooms: 1.Create 2.Read 3.Update 4.Delete: ");
                             String op = sc.nextLine();
 
                         try {
                             if (op.equals("1")) {
+
                                 System.out.print("Enter new Room Number: ");
                                 int roomNum = Integer.parseInt(sc.nextLine()); 
 
                                 System.out.print("Enter Floor Number: ");
                                 int floorNum = Integer.parseInt(sc.nextLine());
-
+                                admin.DisplayRoomType();
                                 System.out.print("Enter Room Type Name (From Available List): ");
                                 String typeName = sc.nextLine();
 
@@ -280,7 +280,7 @@ public class Main {
                                 System.out.print("Enter Room Type Name to search: ");
                                 String typeName = sc.nextLine();
                                 RoomType rt = admin.readRoomType(typeName);
-                                System.out.println("Found: " + rt.getTypeName() + " | Price: $" + rt.getEffectivePrice() + " | View: " + rt.getRoomView());
+                                System.out.println("Found: " + rt.getTypeName() + " | Price: $" + rt.getPricePerNight() + " | View: " + rt.getRoomView());
                             }
                             else if (op.equals("3"))
                             {
@@ -291,8 +291,8 @@ public class Main {
                                 RoomType existing = admin.readRoomType(typeName);
                                 if(existing!=null)
                                 {
-                                    System.out.print("Enter New Base Price (was " + existing.getBasePrice() + "): ");
-                                    existing.setBasePrice(Double.parseDouble(sc.nextLine()));
+                                    System.out.print("Enter New Base Price (was " + existing.getPricePerNight() + "): ");
+                                    existing.setPricePerNight(Double.parseDouble(sc.nextLine()));
                                     System.out.print("Enter New Room View (was " + existing.getRoomView() + "): ");
                                     existing.setRoomView(RoomView.valueOf(sc.nextLine()));
                                     System.out.print("Enter New Room Description (was " + existing.getDescription() + "): ");
