@@ -613,5 +613,24 @@ public class BookingEngine
         }
     }
 
+    public void addbalance( Guest guest, Scanner sc){
+        System.out.println("Your current balance : "+guest.getBalance());
+        System.out.println("Please enter the amount to be added to your balance, 0 to cancel");
+        double amount = sc.nextDouble();
+        while(amount<=0){
+            if(amount == 0){
+                return;
+            }
+            else{
+                System.out.println("Invalid value, Please re-enter the amount");
+                amount=sc.nextDouble();
+            }
+
+        }
+        guest.Newbalance(amount);
+        System.out.println(amount+"EGP has been added to balance, current balance :"+guest.getBalance());
+        Database.saveData();
+    }
 }
+
 
