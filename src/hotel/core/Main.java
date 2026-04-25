@@ -793,7 +793,7 @@ public class Main {
     
     //Prompts for an integer in [min, max].  Retries until valid
     private static int promptPositiveInt(String prompt, int min, int max) {
-        while (true) {
+        while (true) {  
             System.out.print("  " + prompt);
             String raw = sc.nextLine().trim();
             try {
