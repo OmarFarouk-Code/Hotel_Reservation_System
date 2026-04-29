@@ -1,5 +1,7 @@
 package hotel.core;
-
+import hotel.GUI.utils.*;
+import javafx.application.*;
+import javafx.stage.Stage;
 import hotel.model.entities.*;
 import hotel.model.enums.*;
 import hotel.model.staff.*;
@@ -11,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+public class Main extends Application {
     private static Scanner sc = new Scanner(System.in);
     private static BookingEngine engine = new BookingEngine();
 
@@ -23,13 +25,36 @@ public class Main {
             System.out.println("[SYSTEM] Database is empty. Seeding default hotel data...");
             Database.initializeHotelData();
         }
-
-        try {
-            showMainMenu();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        //LAUNCH GUIIIII
+        launch(args);
     }
+
+    @Override
+    public void start (Stage primaryStage) throws Exception
+    {
+       primaryStage.setTitle("Grand Azure Hotel - Digital Concierge");
+        // Give the SceneManager control of the main window
+        SceneManager.setPrimaryStage(primaryStage);
+        // LOADD Login Screen firstt
+        SceneManager.navigate("login-page.fxml"); 
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // --- 1. MAIN MENU ---
     public static void showMainMenu() {

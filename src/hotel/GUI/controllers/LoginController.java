@@ -1,5 +1,12 @@
-package
+package hotel.GUI.controllers;
 
+import hotel.GUI.utils.SceneManager;
+import hotel.core.Database;
+import hotel.model.enums.UserType;
+import hotel.model.staff.Admin;
+import hotel.model.staff.Receptionist;
+import hotel.model.users.Guest;
+import hotel.model.users.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
@@ -7,7 +14,6 @@ import javafx.scene.control.TextField;
 
 public class LoginController {
 
-    // 1. Link the Java variables to the Scene Builder fx:id's
     @FXML private Button btnGuest;
     @FXML private Button btnReceptionist;
     @FXML private Button btnAdmin;
@@ -15,58 +21,83 @@ public class LoginController {
     @FXML private PasswordField txtPassword;
     @FXML private Button btnSignIn;
 
-    // Store the currently selected role
-    private String selectedRole = "Guest"; 
+    private String selectedRole = "Guest";
 
-    // 2. The initialize method runs automatically when the screen loads
     @FXML
     public void initialize() {
-        // Wire up the click events for the role tabs
         btnGuest.setOnAction(event -> switchRole("Guest", btnGuest));
         btnReceptionist.setOnAction(event -> switchRole("Receptionist", btnReceptionist));
         btnAdmin.setOnAction(event -> switchRole("Admin", btnAdmin));
-
-        // Wire up the sign-in button
+        
         btnSignIn.setOnAction(event -> onSignIn());
 
-        // Set the initial visual state (Guest tab active)
         switchRole("Guest", btnGuest);
+        
+        // Ensure the database is seeded if launching directly to GUI
+        if (Database.getGuests().isEmpty() && Database.getAdmins().isEmpty()) {
+            Database.loadData();
+            if (Database.getGuests().isEmpty()) {
+                Database.initializeHotelData();
+            }
+        }
     }
 
-    // 3. Handle the visual tab switching
     private void switchRole(String role, Button clickedButton) {
         this.selectedRole = role;
 
-        // Remove the active class from ALL buttons first
         btnGuest.getStyleClass().remove("role-tab-active");
         btnReceptionist.getStyleClass().remove("role-tab-active");
         btnAdmin.getStyleClass().remove("role-tab-active");
 
-        // Add the active class ONLY to the clicked button
         if (!clickedButton.getStyleClass().contains("role-tab-active")) {
             clickedButton.getStyleClass().add("role-tab-active");
         }
     }
 
-    // 4. Handle the actual login action
     private void onSignIn() {
-        String username = txtUsername.getText();
+        String username = txtUsername.getText().trim();
         String password = txtPassword.getText();
 
-        // For now, print to the console to prove it works
-        System.out.println("Attempting login...");
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
-        System.out.println("Role: " + selectedRole);
+        if (username.isEmpty() || password.isEmpty()) {
+            System.out.println("Error: Please enter both username and password.");
+            return;
+        }
 
-        // Later, you will link this to your User classes and Database.
-        // Once validated, you'll use the SceneManager to navigate:
+        User loggedInUser = null;
+
+        // Use your backend User classes and the overloaded Login method!
         if (selectedRole.equals("Guest")) {
-            System.out.println("-> Would navigate to GuestDashboard.fxml");
+            Guest tempGuest = new Guest();
+            loggedInUser = tempGuest.Login(username, password, UserType.GUEST);
+            
+            if (loggedInUser != null) {
+                System.out.println("-> Navigating to Guest Dashboard...");
+                SceneManager.navigate("GuestDashboard.fxml");
+            }
+            
         } else if (selectedRole.equals("Receptionist")) {
-            System.out.println("-> Would navigate to ReceptionistDashboard.fxml");
+            Receptionist tempRec = new Receptionist();
+            loggedInUser = tempRec.Login(username, password, UserType.RECEPTIONIST);
+            
+            if (loggedInUser != null) {
+                System.out.println("-> Navigating to Receptionist Dashboard...");
+                SceneManager.navigate("ReceptionistDashboard.fxml");
+            }
+            
         } else if (selectedRole.equals("Admin")) {
-            System.out.println("-> Would navigate to AdminDashboard.fxml");
+            Admin tempAdmin = new Admin();
+            loggedInUser = tempAdmin.Login(username, password, UserType.ADMIN);
+            
+            if (loggedInUser != null) {
+                System.out.println("-> Navigating to Admin Dashboard...");
+                SceneManager.navigate("AdminDashboard.fxml");
+            }
+        }
+
+        if (loggedInUser == null) {
+            // The User.Login method already printed the failure reason to the console.
+            // Later, we can show a red error label on the GUI here.
+            System.out.println("GUI: Login sequence failed.");
         }
     }
 }
