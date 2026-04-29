@@ -28,11 +28,11 @@ public class LoginController {
         btnGuest.setOnAction(event -> switchRole("Guest", btnGuest));
         btnReceptionist.setOnAction(event -> switchRole("Receptionist", btnReceptionist));
         btnAdmin.setOnAction(event -> switchRole("Admin", btnAdmin));
-        
+
         btnSignIn.setOnAction(event -> onSignIn());
 
         switchRole("Guest", btnGuest);
-        
+
         // Ensure the database is seeded if launching directly to GUI
         if (Database.getGuests().isEmpty() && Database.getAdmins().isEmpty()) {
             Database.loadData();
@@ -69,25 +69,25 @@ public class LoginController {
         if (selectedRole.equals("Guest")) {
             Guest tempGuest = new Guest();
             loggedInUser = tempGuest.Login(username, password, UserType.GUEST);
-            
+
             if (loggedInUser != null) {
                 System.out.println("-> Navigating to Guest Dashboard...");
                 SceneManager.navigate("GuestDashboard.fxml");
             }
-            
+
         } else if (selectedRole.equals("Receptionist")) {
             Receptionist tempRec = new Receptionist();
             loggedInUser = tempRec.Login(username, password, UserType.RECEPTIONIST);
-            
+
             if (loggedInUser != null) {
                 System.out.println("-> Navigating to Receptionist Dashboard...");
                 SceneManager.navigate("ReceptionistDashboard.fxml");
             }
-            
+
         } else if (selectedRole.equals("Admin")) {
             Admin tempAdmin = new Admin();
             loggedInUser = tempAdmin.Login(username, password, UserType.ADMIN);
-            
+
             if (loggedInUser != null) {
                 System.out.println("-> Navigating to Admin Dashboard...");
                 SceneManager.navigate("AdminDashboard.fxml");
