@@ -4,7 +4,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.io.IOException;
 
 public class SceneManager 
 {
@@ -21,7 +20,7 @@ public class SceneManager
     {
         try
         {
-            FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("src/hotel/GUI/screens" + fxmlFileName));
+            FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource("/hotel/GUI/screens/" + fxmlFileName));
             Parent root = loader.load();
             //3AZABBBB HELP
             Scene scene = new Scene(root, 1280, 780);
