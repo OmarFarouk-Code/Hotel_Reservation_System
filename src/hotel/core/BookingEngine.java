@@ -9,6 +9,9 @@ import hotel.model.enums.RoomView;
 import hotel.model.staff.Receptionist;
 import hotel.model.users.Guest;
 import hotel.model.bookings.*;
+import hotel.model.customexceptions.InvalidBookingDatesException;
+import hotel.model.customexceptions.RoomCapacityExceededException;
+
 import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -633,6 +636,34 @@ public class BookingEngine
         System.out.println(amount+"EGP has been added to balance, current balance :"+guest.getBalance());
         Database.saveData();
     }
+
+
+
+    public void  validateCheckInDate ( LocalDate checkIn ) throws InvalidBookingDatesException
+    {
+        if (checkIn == null || checkIn.isBefore(LocalDate.now())) 
+        { 
+            throw new InvalidBookingDatesException("You can't check-in in the past!");
+        }
+    }
+
+    public void validateCheckOutDate(LocalDate checkIn, LocalDate checkOut) throws InvalidBookingDatesException 
+    {
+        if (checkOut == null || checkOut.isBefore(checkIn) || checkOut.isEqual(checkIn)) 
+        { 
+            throw new InvalidBookingDatesException("Check-out date must be at least one day after check-in.");
+        }
+    }
+
+    public void validateRoomCapacity (Room requestedRoom, int numberOfGuests) throws RoomCapacityExceededException
+    {
+        if (numberOfGuests > requestedRoom.getRoomType().getMaxCapacity())
+        {
+            throw new RoomCapacityExceededException("Capacity exceeded! A " + requestedRoom.getRoomType() + " room can only hold a maximum of " + requestedRoom.getRoomType().getMaxCapacity() + " guests.");
+        }
+    }
+
+
 }
 
 
