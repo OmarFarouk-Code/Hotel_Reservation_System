@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="780.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hotel.GUI.controllers.GuestDashboard">
+
+    <!-- 1. INJECT THE SIDEBAR -->
+    <fx:include fx:id="sideBar" source="side-bar.fxml" />
+
+    <VBox HBox.hgrow="ALWAYS">
+        <!-- 2. INJECT THE TOPBAR -->
+        <fx:include fx:id="topBar" source="top-bar.fxml" />
+
+        <!-- 3. MAIN DASHBOARD CONTENT -->
+        <ScrollPane fitToWidth="true" style="-fx-background-color: #FDF9F0;" VBox.vgrow="ALWAYS">
+            <padding>
+                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+            </padding>
+            <content>
+                <VBox spacing="25.0" style="-fx-background-color: #FDF9F0;">
+
+                    <!-- Welcome Header -->
+                    <HBox style="-fx-background-color: #F7F5EE; -fx-border-color: #2D5A27; -fx-border-width: 0 0 0 5;">
+                        <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblGreeting" text="Good Morning, Guest">
+                                <font><Font name="System Bold" size="24.0" /></font>
+                            </Label>
+                            <Label text="Welcome to your digital concierge." textFill="GREY" />
+                        </VBox>
+                        <Button mnemonicParsing="false" onAction="#onModifyStay"
+                                style="-fx-background-color: #003321;" text="Modify Stay" textFill="WHITE" />
+                    </HBox>
+
+                    <!-- Stats Row -->
+                    <HBox spacing="20.0">
+                        <!-- Active Reservations -->
+                        <VBox style="-fx-background-color: white; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+                            <effect><DropShadow color="#0000001a" radius="10" /></effect>
+                            <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
+                            <Label text="ACTIVE RESERVATIONS" textFill="GREY"><font><Font size="10.0" /></font></Label>
+                            <Label fx:id="lblActiveReservations" text="0">
+                                <font><Font name="System Bold" size="24.0" /></font>
+                            </Label>
+                        </VBox>
+
+                        <!-- Account Balance -->
+                        <VBox style="-fx-background-color: white; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+                            <effect><DropShadow color="#0000001a" radius="10" /></effect>
+                            <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
+                            <Label text="ACCOUNT BALANCE (EGP)" textFill="GREY"><font><Font size="10.0" /></font></Label>
+                            <Label fx:id="lblBalance" text="0.00">
+                                <font><Font name="System Bold" size="24.0" /></font>
+                            </Label>
+                        </VBox>
+
+                        <!-- Upcoming Check-In -->
+                        <VBox style="-fx-background-color: white; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+                            <effect><DropShadow color="#0000001a" radius="10" /></effect>
+                            <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
+                            <Label text="UPCOMING CHECK-IN" textFill="GREY"><font><Font size="10.0" /></font></Label>
+                            <Label fx:id="lblNextCheckIn" text="None">
+                                <font><Font name="System Bold" size="24.0" /></font>
+                            </Label>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Latest Reservation Section Title -->
+                    <Label text="Latest Reservation">
+                        <font><Font name="System Bold" size="22.0" /></font>
+                    </Label>
+
+                    <!-- Reservation Card -->
+                    <HBox fx:id="latestResBox"
+                          style="-fx-background-color: white; -fx-background-radius: 10;"
+                          minHeight="300.0">
+                        <effect><DropShadow color="#0000001a" radius="10" /></effect>
+
+                        <!-- LEFT: Info + Action Buttons -->
+                        <VBox HBox.hgrow="ALWAYS">
+
+                            <!-- Room Info -->
+                            <VBox spacing="10" VBox.vgrow="ALWAYS">
+                                <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                                <Label fx:id="lblRoomType" text="No Recent Bookings">
+                                    <font><Font name="System Bold" size="20.0" /></font>
+                                </Label>
+                                <Separator />
+                                <HBox spacing="40">
+                                    <VBox>
+                                        <Label text="CHECK-IN" textFill="GREY" />
+                                        <Label fx:id="lblCheckInDate" style="-fx-font-weight: bold;" text="-" />
+                                    </VBox>
+                                    <VBox>
+                                        <Label text="CHECK-OUT" textFill="GREY" />
+                                        <Label fx:id="lblCheckOutDate" style="-fx-font-weight: bold;" text="-" />
+                                    </VBox>
+                                </HBox>
+                            </VBox>
+
+                            <!-- Action Buttons pinned to bottom -->
+                            <HBox alignment="CENTER_LEFT" spacing="10.0"
+                                  style="-fx-background-color: #f9f9f9; -fx-background-radius: 0 0 0 10;">
+                                <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
+                                <Button mnemonicParsing="false" onAction="#onViewInvoice"
+                                        style="-fx-background-color: transparent; -fx-border-color: #2568bf; -fx-border-radius: 5;"
+                                        text="View Invoice" textFill="#2568bf" />
+                                <Button mnemonicParsing="false" onAction="#onCancelReservation"
+                                        style="-fx-background-color: transparent; -fx-border-color: #b9120f; -fx-border-radius: 5;"
+                                        text="Cancel Reservation" textFill="#b9120f" />
+                            </HBox>
+                        </VBox>
+
+                        <!-- RIGHT: Room image panel using background-size cover -->
+                        <Pane fx:id="roomImagePane"
+                              prefWidth="320.0"
+                              style="-fx-background-radius: 0 10 10 0;
+                                     -fx-background-size: cover;
+                                     -fx-background-position: center;" />
+
+                    </HBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </VBox>
+</HBox>
