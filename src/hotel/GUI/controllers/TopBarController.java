@@ -1,22 +1,18 @@
 package hotel.GUI.controllers;
 
-import hotel.GUI.utils.SceneManager;
+import java.util.ArrayList;
+import java.util.List;
+
 import hotel.GUI.utils.SessionManager;
 import hotel.core.Database;
 import hotel.model.bookings.Reservation;
 import hotel.model.entities.Room;
 import hotel.model.users.Guest;
 import hotel.model.users.User;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.ListView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Controller for top-bar.fxml
@@ -255,4 +251,3 @@ public class TopBarController {
         // SceneManager.navigate("ProfileScreen.fxml");
     }
 }
-    
