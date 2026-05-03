@@ -10,8 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="780.0" prefWidth="220.0" styleClass="sidebar" stylesheets="@../styles/theme.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="780.0" prefWidth="220.0" styleClass="sidebar" stylesheets="@../styles/theme.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hotel.GUI.controllers.TopBarController">
    <children>
       <Label alignment="CENTER" prefHeight="35.0" prefWidth="219.0" text="GRAND AZURE " textAlignment="CENTER" textFill="#fcf9f1">
          <font>
@@ -26,7 +25,7 @@
             <Insets bottom="32.0" left="10.0" right="10.0" />
          </padding>
       </Label>
-      <Button graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Concierge">
+      <Button fx:id="btnConcierge" graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Concierge">
          <styleClass>
             <String fx:value="sidebar-nav-item" />
             <String fx:value="sidebar-nav-item-active" />
@@ -39,7 +38,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sidebar-nav-item" text="Reservations">
+      <Button fx:id="btnReservations" graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sidebar-nav-item" text="Reservations">
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -48,7 +47,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sidebar-nav-item" text="Room Map">
+      <Button fx:id="btnRoomMap" graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sidebar-nav-item" text="Room Map">
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -57,7 +56,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sidebar-nav-item" text="Guest Profiles">
+      <Button fx:id="btnGuestProfiles" graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sidebar-nav-item" text="Guest Profiles">
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -66,7 +65,7 @@
             </ImageView>
          </graphic>
       </Button>
-      <Button graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sidebar-nav-item" text="Analytics">
+      <Button fx:id="btnAnalytics" graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sidebar-nav-item" text="Analytics">
          <graphic>
             <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -76,6 +75,6 @@
          </graphic>
       </Button>
       <Region prefHeight="359.0" prefWidth="220.0" VBox.vgrow="ALWAYS" />
-      <Button alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefWidth="220.0" styleClass="sidebar-nav-item" text="          + New Booking" />
+      <Button fx:id="btnNewBooking" alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefWidth="220.0" styleClass="sidebar-nav-item" text="          + New Booking" />
    </children>
 </VBox>
