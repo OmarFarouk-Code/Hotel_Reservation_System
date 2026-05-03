@@ -9,20 +9,19 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.text.Font?>
 
-
-<HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="64.0" prefWidth="1060.0" spacing="24.0" styleClass="top-bar" stylesheets="@../styles/theme.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<HBox alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="64.0" prefWidth="1060.0" spacing="24.0" styleClass="top-bar" stylesheets="@../styles/theme.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hotel.GUI.controllers.TopBarController">
    <padding>
       <Insets left="32.0" right="32.0" />
    </padding>
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="64.0" prefWidth="321.0" spacing="15.0">
          <children>
-            <Label prefHeight="25.0" prefWidth="210.0" style="-fx-font-weight: bold; -fx-text-fill: #00291c;" text="The Digital Concierge">
+            <Label fx:id="lblPageTitle" prefHeight="25.0" prefWidth="210.0" style="-fx-font-weight: bold; -fx-text-fill: #00291c;" text="The Digital Concierge">
                <font>
                   <Font size="16.0" />
                </font>
             </Label>
-            <Label prefHeight="25.0" prefWidth="103.0" style="-fx-text-fill: #43474e;" text="Dashboard">
+            <Label fx:id="lblPageSubtitle" prefHeight="25.0" prefWidth="103.0" style="-fx-text-fill: #43474e;" text="Dashboard">
                <font>
                   <Font size="16.0" />
                </font>
@@ -40,22 +39,22 @@
                   <Image url="@../assets/search_icon.png" />
                </image>
             </ImageView>
-            <TextField promptText="Search guests, rooms...." style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="txtSearch" promptText="Search guests, rooms...." style="-fx-background-color: transparent;" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="64.0" prefWidth="155.0" spacing="16.0">
          <children>
-            <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-background-color: transparent;">
+            <ImageView fx:id="imgBell" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-background-color: transparent;">
                <image>
                   <Image url="@../assets/icon_bell_notification.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="95.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imgSettings" fitHeight="30.0" fitWidth="30.0" layoutX="95.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../assets/icon_gear_settings.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="118.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imgHelp" fitHeight="30.0" fitWidth="30.0" layoutX="118.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../assets/icon_question_help.png" />
                </image>
@@ -64,12 +63,12 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" prefHeight="64.0" prefWidth="154.0" spacing="12.0">
          <children>
-            <Label text="Username" textFill="#43474e">
+            <Label fx:id="lblUsername" text="Username" textFill="#43474e">
                <font>
                   <Font name="Segoe UI Bold" size="14.0" />
                </font>
             </Label>
-            <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imgAvatar" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../assets/profile_blank.png" />
                </image>
