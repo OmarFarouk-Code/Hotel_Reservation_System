@@ -23,7 +23,7 @@ import hotel.model.enums.DiningPackage;
 
 import java.util.List;
 
-public class Guest_Dashboard {
+public class GuestDashboard {
 
     // --- FXML IDs (Match these in Scene Builder) ---
     @FXML private TableView<Room> roomTable;
