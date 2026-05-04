@@ -5,6 +5,7 @@ import hotel.core.BookingEngine;
 import hotel.core.Database;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -65,6 +66,21 @@ public class BookRoomController {
                 loadRoomCard(room);
                 matchCount++;
             }
+        }
+        if (matchCount == 0) {
+            Label noResultsLabel = new Label("No rooms found matching your search. \nTry a different date or price range.");
+
+            // تظبيط شكل الرسالة
+            noResultsLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #777777; -fx-padding: 50;");
+            noResultsLabel.setWrapText(true);
+            noResultsLabel.setAlignment(Pos.CENTER);
+
+            // عشان الرسالة تيجي في نص الشاشة بالظبط
+            resultsVBox.setAlignment(Pos.CENTER);
+            resultsVBox.getChildren().add(noResultsLabel);
+        } else {
+            // لو فيه نتائج، رجع الـ Alignment للطبيعي (TOP_LEFT مثلاً)
+            resultsVBox.setAlignment(Pos.TOP_LEFT);
         }
 
         System.out.println("Search completed. Found " + matchCount + " rooms matching your criteria.");
