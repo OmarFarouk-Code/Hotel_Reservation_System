@@ -14,7 +14,6 @@
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="780.0" prefWidth="1280.0" spacing="24.0" style="-fx-background-color: #fcf9f1;" stylesheets="@../styles/theme.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hotel.GUI.controllers.BookRoomController">
     <children>
-        <!-- قسم الفلتر الجانبي -->
         <BorderPane prefHeight="200.0" prefWidth="220.0">
             <center>
                 <VBox prefHeight="400.0" prefWidth="220.0" spacing="20.0" style="-fx-background-color: #f6f4eb; -fx-background-radius: 12;" styleClass="filter-panel" BorderPane.alignment="CENTER">
@@ -97,11 +96,9 @@
                 </VBox>
             </center>
         </BorderPane>
-
-        <!-- منطقة نتائج البحث مع خاصية التمرير (Scrolling) -->
-        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent; -fx-background: transparent;" HBox.hgrow="ALWAYS">
+        <ScrollPane fitToWidth="true" fitToHeight="false" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent; -fx-background: transparent;" HBox.hgrow="ALWAYS">
             <content>
-                <VBox fx:id="resultsVBox" prefHeight="200.0" spacing="20.0" style="-fx-background-color: transparent;">
+                <VBox fx:id="resultsVBox" spacing="20.0" style="-fx-background-color: transparent;">
                     <padding>
                         <Insets bottom="20.0" left="10.0" right="20.0" top="5.0" />
                     </padding>

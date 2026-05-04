@@ -17,65 +17,58 @@ public class BookRoomController {
     @FXML private DatePicker checkInPicker;
     @FXML private DatePicker checkOutPicker;
     @FXML private ComboBox<String> roomTypeCombo;
-    @FXML private ComboBox<String> viewCombo; // أضفنا الـ View
+    @FXML private ComboBox<String> viewCombo;
     @FXML private Slider priceSlider;
-    @FXML private Label priceValueLabel; // لعرض سعر السلايدر
-    @FXML private Label adultCountLabel; // لعداد الأشخاص
+    @FXML private Label priceValueLabel;
+    @FXML private Label adultCountLabel;
     @FXML private VBox resultsVBox;
 
-    private BookingEngine engine = new BookingEngine(); // محرك الحجز
-    private int adults = 1; // القيمة الافتراضية للضيوف
+    private BookingEngine engine = new BookingEngine();
+    private int adults = 1;
 
     @FXML
     public void initialize() {
-        // 1. تحميل أنواع الغرف من الداتا
         Database.getRoomTypes().forEach(type -> roomTypeCombo.getItems().add(type.getTypeName()));
-
-        // 2. تحميل أنواع الـ Views المتاحة
         viewCombo.getItems().addAll("SEA_VIEW", "GARDEN_VIEW", "CITY_VIEW", "POOL");
-
-        // 3. ضبط قيم افتراضية للتواريخ وعداد الأشخاص
         checkInPicker.setValue(LocalDate.now());
         checkOutPicker.setValue(LocalDate.now().plusDays(1));
         adultCountLabel.setText(String.valueOf(adults));
-
-        // 4. ربط السلايدر بالـ Label (Listener) ليعرض السعر فورياً
         priceSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             priceValueLabel.setText("$" + String.format("%.0f", newVal.doubleValue()));
         });
         priceValueLabel.setText("$" + String.format("%.0f", priceSlider.getValue()));
-
-        // 5. عرض الغرف المتاحة فور فتح الشاشة
         onSearchRooms();
     }
 
     @FXML
     void onSearchRooms() {
-        resultsVBox.getChildren().clear(); // مسح النتائج السابقة
+        resultsVBox.getChildren().clear();
 
         LocalDate checkIn = checkInPicker.getValue();
         LocalDate checkOut = checkOutPicker.getValue();
-
-        // جلب الغرف المتاحة من الـ Engine
         List<Room> availableRooms = engine.getAvailableRooms(checkIn, checkOut);
 
+        int matchCount = 0;
+
         for (Room room : availableRooms) {
-            // فلترة حسب النوع
-            boolean matchesType = (roomTypeCombo.getValue() == null ||
-                    roomTypeCombo.getValue().equals("Select Type") ||
-                    room.getRoomType().getTypeName().contains(roomTypeCombo.getValue()));
-
+            boolean matchesType = true;
+            if (roomTypeCombo.getValue() != null && !roomTypeCombo.getValue().isEmpty() && !roomTypeCombo.getValue().equals("Select Type")) {
+                matchesType = room.getRoomType().getTypeName().trim().equalsIgnoreCase(roomTypeCombo.getValue().trim());
+            }
             boolean matchesPrice = (room.getRoomType().getEffectivePrice() <= priceSlider.getValue());
-
-            boolean matchesView = (viewCombo.getValue() == null ||
-                    room.getRoomType().getRoomView().toString().equals(viewCombo.getValue()));
+            boolean matchesView = true;
+            if (viewCombo.getValue() != null && !viewCombo.getValue().isEmpty() && !viewCombo.getValue().equals("Select View")) {
+                matchesView = room.getRoomType().getRoomView().toString().trim().equalsIgnoreCase(viewCombo.getValue().trim());
+            }
 
             if (matchesType && matchesPrice && matchesView) {
                 loadRoomCard(room);
+                matchCount++;
             }
         }
-    }
 
+        System.out.println("Search completed. Found " + matchCount + " rooms matching your criteria.");
+    }
     private void loadRoomCard(Room room) {
         try {
             System.out.println("Displaying card for Room: " + room.getRoomNumber());

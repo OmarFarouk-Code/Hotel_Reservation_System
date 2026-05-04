@@ -1,6 +1,8 @@
 package hotel.GUI.controllers;
 
 import hotel.model.entities.Room;
+import javafx.scene.image.Image;
+import java.io.InputStream;
 import hotel.model.entities.Amenity;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -13,10 +15,7 @@ public class RoomViewController {
     @FXML private Label ratingLabel;
     @FXML private Label roomTitleLabel;
     @FXML private Label priceLabel;
-
-    // السطر اللي كان ناقص ومنور أحمر
     @FXML private Label descriptionLabel;
-
     @FXML private FlowPane amenitiesBox;
     @FXML private Button bookNowBtn;
 
@@ -24,23 +23,33 @@ public class RoomViewController {
 
     public void setRoomData(Room room) {
         this.currentRoom = room;
+        String typeName = room.getRoomType().getTypeName();
 
-        // 1. ربط اسم نوع الغرفة
-        roomTitleLabel.setText(room.getRoomType().getTypeName());
-
-        // 2. ربط السعر الحقيقي
+        roomTitleLabel.setText(typeName);
         priceLabel.setText("$" + (int)room.getRoomType().getEffectivePrice());
-
-        // 3. ربط الوصف (الآن لن يظهر أحمر)
         if (descriptionLabel != null) {
-            // سحب الوصف من الـ RoomType المخزن في الـ Database
             descriptionLabel.setText(room.getRoomType().getDescription());
         }
-
-        // 4. ربط التقييم الحقيقي من الريفيوهات
         ratingLabel.setText("⭐ " + String.format("%.1f", room.calculateAverageRating()));
 
-        // 5. الأيقونات (Amenities)
+        try {
+            String imagePath = "/hotel/GUI/assets/rooms/" + typeName + ".jpg";
+            InputStream imageStream = getClass().getResourceAsStream(imagePath);
+
+            if (imageStream != null) {
+                Image image = new Image(imageStream);
+                roomImage.setImage(image);
+            } else {
+                InputStream defaultStream = getClass().getResourceAsStream("/hotel/GUI/assets/rooms/default.jpg");
+                if (defaultStream != null) {
+                    roomImage.setImage(new Image(defaultStream));
+                }
+                System.out.println("The room photo is not available " + typeName);
+            }
+        } catch (Exception e) {
+            System.out.println("Problem in loading photo " + e.getMessage());
+        }
+
         amenitiesBox.getChildren().clear();
         room.getAmenities().forEach(a -> {
             Label chip = new Label(a.getAmenityName());
