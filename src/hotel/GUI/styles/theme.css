@@ -3,6 +3,31 @@
   -fx-font-family: "Inter", "Segoe UI", sans-serif;
 }
 
+
+.card .label {
+    -fx-text-fill: #1c1c17;
+    -fx-opacity: 1.0;
+}
+
+.card .display-sm {
+    -fx-text-fill: #00291c;
+    -fx-font-size: 18px;
+}
+
+.amenity-chip {
+    -fx-background-color: #eae8e0;
+    -fx-text-fill: #00412e;
+    -fx-padding: 4 10;
+    -fx-background-radius: 20;
+    -fx-font-size: 12px;
+}
+
+#descriptionLabel {
+    -fx-text-fill: #555555;
+    -fx-font-size: 13px;
+    -fx-wrap-text: true;
+    -fx-max-width: 350px;
+}
 /* Base Canvas & No-Line Rule styling */
 .root {
   -fx-background-color: #fcf9f1;
