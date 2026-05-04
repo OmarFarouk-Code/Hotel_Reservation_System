@@ -9,6 +9,7 @@ import hotel.model.users.*;
 import hotel.model.bookings.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import hotel.model.customexceptions.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -521,7 +522,7 @@ public class Main extends Application {
                     break;
                 }
                 case "6": {
-                    engine.addbalance(guest,sc);
+                    BookingEngine.addbalance(guest,sc);
                     break;
                 }
                 case "7": {
@@ -541,11 +542,21 @@ public class Main extends Application {
     
         //STEP 1 : Dates 
         LocalDate checkIn  = promptDate("Enter Check-In  Date (yyyy-MM-dd): ", DATE_FMT);
-        if (checkIn == null || checkIn.isBefore(LocalDate.now())) { System.out.println("Booking cancelled."); return; }
-    
+        try {
+            engine.validateCheckInDate(checkIn);
+        } catch (InvalidBookingDatesException e) { 
+            System.out.println("Booking Error: " + e.getMessage());
+            return;
+        }
+        
         LocalDate checkOut = promptDate("Enter Check-Out Date (yyyy-MM-dd): ", DATE_FMT);
-        if (checkOut == null || checkOut.isBefore(checkIn) || checkOut.isBefore(LocalDate.now())) { System.out.println("Booking cancelled."); return; }
-    
+        try{
+            engine.validateCheckOutDate(checkIn, checkOut);
+        } catch (InvalidBookingDatesException e) {
+            System.out.println("Booking Error: " + e.getMessage());
+            return;
+        }
+        
         if (!checkOut.isAfter(checkIn)) {
             System.out.println("Check-out must be at least one day after check-in. Returning to menu.");
             return;
@@ -556,7 +567,7 @@ public class Main extends Application {
     
         //STEP 2 : Choose Room
         printDivider("STEP 2 OF 5 : CHOOSE A ROOM");
-        List<Room> available = engine.getAvailableRooms(checkIn, checkOut);
+        List<Room> available = BookingEngine.getAvailableRooms(checkIn, checkOut);
         if (available.isEmpty()) {
             System.out.println("No rooms available for those dates. Try different dates.");
             return;
@@ -594,7 +605,15 @@ public class Main extends Application {
         printDivider("STEP 3 OF 5 : GUESTS & DINING PACKAGE");
     
         int adults   = promptPositiveInt("Number of Adults   : ", 1, srt.getMaxCapacity());
-        int children = promptPositiveInt("Number of Children : ", 0, srt.getMaxCapacity() - adults);
+        int children = promptPositiveInt("Number of Children : ", 0, srt.getMaxCapacity());
+        int noOfGuests = adults + children;
+
+        try{
+            engine.validateRoomCapacity( selectedRoom , noOfGuests);
+        } catch (RoomCapacityExceededException e)
+        {
+            System.out.println("An error occured with booking. "+ e.getMessage() );
+        }
     
     
         System.out.println("\n  Dining packages available:");
@@ -826,6 +845,8 @@ public class Main extends Application {
             }
         }
     }
+
+   
     
 
     //Prompts for a DiningPackage by number.  Retries on bad input.
