@@ -36,7 +36,8 @@ public class GuestDashboard {
     private BookingEngine engine;
     private Reservation latestReservation;
 
-    private static final String FALLBACK_IMAGE = "/hotel/GUI/assets/room-default.jpg";
+    private static final String ROOMS_ASSET_PATH = "/hotel/GUI/assets/rooms/";
+    private static final String DEFAULT_IMAGE     = ROOMS_ASSET_PATH + "default.jpg";
     @FXML
     public void initialize() {
         engine = new BookingEngine();
@@ -81,7 +82,7 @@ public class GuestDashboard {
             lblCheckOutDate.setText(latestReservation.getCheckoutDate().toString());
             lblNextCheckIn.setText(latestReservation.getCheckinDate().toString());
 
-            loadFallbackImage();
+            loadRoomImage(latestReservation.getRoom().getRoomType().getTypeName());
 
             latestResBox.setDisable(false);
             latestResBox.setOpacity(1.0);
@@ -94,20 +95,51 @@ public class GuestDashboard {
             lblCheckOutDate.setText("-");
             lblNextCheckIn.setText("None");
 
-            loadFallbackImage();
+            loadRoomImage(null);
 
             latestResBox.setDisable(true);
             latestResBox.setOpacity(0.5);
         }
     }
 
-    private void loadFallbackImage() {
+    /**
+     * Loads the image that matches the given room-type name from
+     * {@code /hotel/GUI/assets/rooms/<typeName>.jpg}.
+     * Falls back to {@code default.jpg} when the type-specific image is missing,
+     * and silently skips when {@code roomImageView} is null or {@code typeName}
+     * is null/blank (e.g. when there are no reservations).
+     *
+     * @param typeName the exact type name returned by {@code RoomType.getTypeName()},
+     *                 or {@code null} to load the default image directly.
+     */
+    private void loadRoomImage(String typeName) {
         if (roomImageView == null) return;
+
         try {
-            Image fallback = new Image(new java.io.File(FALLBACK_IMAGE).toURI().toString());
-            roomImageView.setImage(fallback);
+            java.io.InputStream imageStream = null;
+
+            // 1. Try the room-type specific image
+            if (typeName != null && !typeName.isBlank()) {
+                String imagePath = ROOMS_ASSET_PATH + typeName + ".jpg";
+                imageStream = getClass().getResourceAsStream(imagePath);
+                if (imageStream == null) {
+                    System.out.println("GuestDashboard: no image found for type \"" + typeName + "\", using default.");
+                }
+            }
+
+            // 2. Fall back to default.jpg
+            if (imageStream == null) {
+                imageStream = getClass().getResourceAsStream(DEFAULT_IMAGE);
+            }
+
+            if (imageStream != null) {
+                roomImageView.setImage(new Image(imageStream));
+            } else {
+                System.err.println("GuestDashboard: default room image also missing — check assets/rooms/default.jpg");
+            }
+
         } catch (Exception e) {
-            System.err.println("GuestDashboard: fallback image missing — " + e.getMessage());
+            System.err.println("GuestDashboard: failed to load room image — " + e.getMessage());
         }
     }
 
