@@ -15,7 +15,6 @@
       xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="hotel.GUI.controllers.RoomViewController">
     <children>
-        <!-- منطقة الصورة والتقييم -->
         <StackPane minWidth="200.0" prefWidth="200.0" style="-fx-background-color: #eee; -fx-background-radius: 12 0 0 12;">
             <children>
                 <ImageView fx:id="roomImage" fitHeight="220.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="false" />
@@ -26,8 +25,6 @@
                 </Label>
             </children>
         </StackPane>
-
-        <!-- منطقة تفاصيل الغرفة -->
         <VBox spacing="5.0" HBox.hgrow="ALWAYS">
             <padding>
                 <Insets bottom="15.0" left="10.0" right="15.0" top="15.0" />
