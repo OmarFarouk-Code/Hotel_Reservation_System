@@ -6,8 +6,8 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -43,7 +43,6 @@
 
                     <!-- Stats Row -->
                     <HBox spacing="20.0">
-                        <!-- Active Reservations -->
                         <VBox style="-fx-background-color: white; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                             <effect><DropShadow color="#0000001a" radius="10" /></effect>
                             <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
@@ -53,7 +52,6 @@
                             </Label>
                         </VBox>
 
-                        <!-- Account Balance -->
                         <VBox style="-fx-background-color: white; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                             <effect><DropShadow color="#0000001a" radius="10" /></effect>
                             <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
@@ -63,7 +61,6 @@
                             </Label>
                         </VBox>
 
-                        <!-- Upcoming Check-In -->
                         <VBox style="-fx-background-color: white; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                             <effect><DropShadow color="#0000001a" radius="10" /></effect>
                             <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
@@ -80,9 +77,7 @@
                     </Label>
 
                     <!-- Reservation Card -->
-                    <HBox fx:id="latestResBox"
-                          style="-fx-background-color: white; -fx-background-radius: 10;"
-                          minHeight="300.0">
+                    <HBox fx:id="latestResBox" minHeight="300.0" style="-fx-background-color: white; -fx-background-radius: 10;">
                         <effect><DropShadow color="#0000001a" radius="10" /></effect>
 
                         <!-- LEFT: Info + Action Buttons -->
@@ -107,7 +102,7 @@
                                 </HBox>
                             </VBox>
 
-                            <!-- Action Buttons pinned to bottom -->
+                            <!-- Action Buttons -->
                             <HBox alignment="CENTER_LEFT" spacing="10.0"
                                   style="-fx-background-color: #f9f9f9; -fx-background-radius: 0 0 0 10;">
                                 <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
@@ -120,14 +115,139 @@
                             </HBox>
                         </VBox>
 
-                        <!-- RIGHT: Room image panel using background-size cover -->
-                        <Pane fx:id="roomImagePane"
-                              prefWidth="320.0"
-                              style="-fx-background-radius: 0 10 10 0;
-                                     -fx-background-size: cover;
-                                     -fx-background-position: center;" />
-
+                        <!-- RIGHT: Room image -->
+                        <ImageView fx:id="roomImageView"
+                                   fitWidth="320.0"
+                                   fitHeight="300.0"
+                                   preserveRatio="false"
+                                   smooth="true"
+                                   pickOnBounds="true" />
                     </HBox>
+
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- INVOICE PANEL (hidden by default, shown on View Invoice) -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <VBox fx:id="invoicePanel" managed="false" visible="false"
+                          style="-fx-background-color: white; -fx-background-radius: 10;">
+                        <effect><DropShadow color="#0000001a" radius="10" /></effect>
+
+                        <!-- Invoice Header Bar -->
+                        <HBox style="-fx-background-color: #003321; -fx-background-radius: 10 10 0 0;"
+                              alignment="CENTER_LEFT">
+                            <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0" /></padding>
+                            <VBox HBox.hgrow="ALWAYS">
+                                <Label fx:id="lblInvoiceTitle" text="Invoice #—"
+                                       style="-fx-text-fill: white;">
+                                    <font><Font name="System Bold" size="18.0" /></font>
+                                </Label>
+                                <Label fx:id="lblInvoiceStatus" text="PAID"
+                                       style="-fx-text-fill: #90EE90;">
+                                    <font><Font size="11.0" /></font>
+                                </Label>
+                            </VBox>
+                            <Button mnemonicParsing="false" onAction="#onCloseInvoice"
+                                    text="✕  Close"
+                                    style="-fx-background-color: transparent; -fx-border-color: white;
+                                           -fx-border-radius: 5; -fx-text-fill: white;" />
+                        </HBox>
+
+                        <!-- Invoice Body -->
+                        <HBox spacing="0">
+
+                            <!-- LEFT COLUMN: Reservation details -->
+                            <VBox spacing="12" HBox.hgrow="ALWAYS">
+                                <padding><Insets bottom="20.0" left="25.0" right="20.0" top="20.0" /></padding>
+
+                                <Label text="RESERVATION DETAILS" textFill="GREY">
+                                    <font><Font size="10.0" /></font>
+                                </Label>
+                                <Separator />
+
+                                <HBox spacing="10">
+                                    <Label text="Room" textFill="GREY" minWidth="100" />
+                                    <Label fx:id="lblInvRoom" text="—" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Check-in" textFill="GREY" minWidth="100" />
+                                    <Label fx:id="lblInvCheckIn" text="—" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Check-out" textFill="GREY" minWidth="100" />
+                                    <Label fx:id="lblInvCheckOut" text="—" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Nights" textFill="GREY" minWidth="100" />
+                                    <Label fx:id="lblInvNights" text="—" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Dining" textFill="GREY" minWidth="100" />
+                                    <Label fx:id="lblInvDining" text="—" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Guests" textFill="GREY" minWidth="100" />
+                                    <Label fx:id="lblInvGuests" text="—" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Payment" textFill="GREY" minWidth="100" />
+                                    <Label fx:id="lblInvPayment" text="—" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Paid On" textFill="GREY" minWidth="100" />
+                                    <Label fx:id="lblInvPaymentDate" text="—" style="-fx-font-weight: bold;" />
+                                </HBox>
+                            </VBox>
+
+                            <!-- Divider -->
+                            <Separator orientation="VERTICAL" />
+
+                            <!-- RIGHT COLUMN: Cost breakdown -->
+                            <VBox spacing="12" HBox.hgrow="ALWAYS">
+                                <padding><Insets bottom="20.0" left="25.0" right="25.0" top="20.0" /></padding>
+
+                                <Label text="COST BREAKDOWN" textFill="GREY">
+                                    <font><Font size="10.0" /></font>
+                                </Label>
+                                <Separator />
+
+                                <HBox spacing="10">
+                                    <Label text="Room Cost" textFill="GREY" minWidth="130" />
+                                    <Label fx:id="lblInvRoomCost" text="EGP —" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Dining Cost" textFill="GREY" minWidth="130" />
+                                    <Label fx:id="lblInvDiningCost" text="EGP —" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Amenities" textFill="GREY" minWidth="130" />
+                                    <Label fx:id="lblInvAmenityCost" text="EGP —" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Promo Code" textFill="GREY" minWidth="130" />
+                                    <Label fx:id="lblInvPromo" text="—" style="-fx-font-weight: bold;" />
+                                </HBox>
+                                <HBox spacing="10">
+                                    <Label text="Discount" textFill="GREY" minWidth="130" />
+                                    <Label fx:id="lblInvDiscount" text="EGP 0.00"
+                                           style="-fx-font-weight: bold; -fx-text-fill: #2D5A27;" />
+                                </HBox>
+
+                                <Separator />
+
+                                <!-- Total -->
+                                <HBox alignment="CENTER_LEFT" spacing="10"
+                                      style="-fx-background-color: #F7F5EE; -fx-background-radius: 8; -fx-padding: 10;">
+                                    <Label text="TOTAL" style="-fx-font-weight: bold;" minWidth="130">
+                                        <font><Font size="14.0" /></font>
+                                    </Label>
+                                    <Label fx:id="lblInvTotal" text="EGP 0.00"
+                                           style="-fx-font-weight: bold; -fx-text-fill: #003321;">
+                                        <font><Font size="16.0" /></font>
+                                    </Label>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                    <!-- END INVOICE PANEL -->
 
                 </VBox>
             </content>
