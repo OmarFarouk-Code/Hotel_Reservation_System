@@ -139,7 +139,8 @@ public class SideBarController {
                 btnAnalytics.setManaged(false);
             }
             case "ADMIN" -> {
-                // Admins see everything — no changes needed
+                btnConcierge.setVisible(false);
+                btnConcierge.setManaged(false);
             }
         }
     }
