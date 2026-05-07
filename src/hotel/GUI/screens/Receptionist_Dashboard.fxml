@@ -1,534 +1,322 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.Font?>
 
-<HBox xmlns="http://javafx.com/javafx/21"
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="780.0" prefWidth="1280.0"
+      xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="hotel.GUI.controllers.Receptionist_Dashboard"
-      prefWidth="1280" prefHeight="800"
-      style="-fx-background-color: #f5f2eb;">
+      fx:controller="hotel.GUI.controllers.Receptionist_Dashboard">
 
-    <!-- ===================================================== -->
-    <!--  LEFT SIDEBAR                                         -->
-    <!-- ===================================================== -->
-    <VBox fx:id="sidebar" prefWidth="220" prefHeight="800"
-          style="-fx-background-color: #1a3228;">
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--  LEFT SIDEBAR (shared component)                        -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <fx:include fx:id="sideBar" source="side-bar.fxml" />
 
-        <!-- Hotel Branding -->
-        <VBox alignment="TOP_LEFT" style="-fx-padding: 28 24 20 24; -fx-spacing: 0;">
-            <Label text="GRAND"
-                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Georgia';"/>
-            <Label text="HERITAGE"
-                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white; -fx-font-family: 'Georgia';"/>
-            <Label text="Hotel &amp; Spa"
-                   style="-fx-font-size: 12px; -fx-text-fill: #8fbbaa;"/>
-        </VBox>
-
-        <Separator style="-fx-background-color: #2e4e3f; -fx-opacity: 0.5;"/>
-
-        <!-- Navigation Items -->
-        <VBox spacing="2" style="-fx-padding: 16 0 0 0;">
-
-            <!-- Concierge (Active by default) -->
-            <HBox fx:id="navConcierge" alignment="CENTER_LEFT" prefHeight="50" spacing="14"
-                  style="-fx-background-color: #2e5240; -fx-padding: 0 20 0 20; -fx-cursor: hand;"
-                  onMouseClicked="#onNavConcierge">
-                <Label text="⊞" style="-fx-font-size: 16px; -fx-text-fill: white;"/>
-                <Label text="Concierge"
-                       style="-fx-font-size: 14px; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            </HBox>
-
-            <!-- Reservations -->
-            <HBox fx:id="navReservations" alignment="CENTER_LEFT" prefHeight="50" spacing="14"
-                  style="-fx-padding: 0 20 0 20; -fx-cursor: hand;"
-                  onMouseClicked="#onNavReservations">
-                <Label text="📅" style="-fx-font-size: 15px; -fx-text-fill: #8fbbaa;"/>
-                <Label text="Reservations"
-                       style="-fx-font-size: 14px; -fx-text-fill: #8fbbaa;"/>
-            </HBox>
-
-            <!-- Room Map -->
-            <HBox fx:id="navRoomMap" alignment="CENTER_LEFT" prefHeight="50" spacing="14"
-                  style="-fx-padding: 0 20 0 20; -fx-cursor: hand;"
-                  onMouseClicked="#onNavRoomMap">
-                <Label text="🛏" style="-fx-font-size: 15px; -fx-text-fill: #8fbbaa;"/>
-                <Label text="Room Map"
-                       style="-fx-font-size: 14px; -fx-text-fill: #8fbbaa;"/>
-            </HBox>
-
-            <!-- Guest Profiles -->
-            <HBox fx:id="navGuestProfiles" alignment="CENTER_LEFT" prefHeight="50" spacing="14"
-                  style="-fx-padding: 0 20 0 20; -fx-cursor: hand;"
-                  onMouseClicked="#onNavGuestProfiles">
-                <Label text="👥" style="-fx-font-size: 15px; -fx-text-fill: #8fbbaa;"/>
-                <Label text="Guest Profiles"
-                       style="-fx-font-size: 14px; -fx-text-fill: #8fbbaa;"/>
-            </HBox>
-
-            <!-- Analytics -->
-            <HBox fx:id="navAnalytics" alignment="CENTER_LEFT" prefHeight="50" spacing="14"
-                  style="-fx-padding: 0 20 0 20; -fx-cursor: hand;"
-                  onMouseClicked="#onNavAnalytics">
-                <Label text="📊" style="-fx-font-size: 15px; -fx-text-fill: #8fbbaa;"/>
-                <Label text="Analytics"
-                       style="-fx-font-size: 14px; -fx-text-fill: #8fbbaa;"/>
-            </HBox>
-
-            <!-- Billing -->
-            <HBox fx:id="navBilling" alignment="CENTER_LEFT" prefHeight="50" spacing="14"
-                  style="-fx-padding: 0 20 0 20; -fx-cursor: hand;"
-                  onMouseClicked="#onNavBilling">
-                <Label text="💳" style="-fx-font-size: 15px; -fx-text-fill: #8fbbaa;"/>
-                <Label text="Billing"
-                       style="-fx-font-size: 14px; -fx-text-fill: #8fbbaa;"/>
-            </HBox>
-
-            <!-- Housekeeping -->
-            <HBox fx:id="navHousekeeping" alignment="CENTER_LEFT" prefHeight="50" spacing="14"
-                  style="-fx-padding: 0 20 0 20; -fx-cursor: hand;"
-                  onMouseClicked="#onNavHousekeeping">
-                <Label text="🧹" style="-fx-font-size: 15px; -fx-text-fill: #8fbbaa;"/>
-                <Label text="Housekeeping"
-                       style="-fx-font-size: 14px; -fx-text-fill: #8fbbaa;"/>
-            </HBox>
-        </VBox>
-
-        <Region VBox.vgrow="ALWAYS"/>
-
-        <!-- Notification badge row -->
-        <HBox alignment="CENTER_LEFT" style="-fx-padding: 0 20 12 20;" spacing="10">
-            <Label text="🔔" style="-fx-font-size: 14px; -fx-text-fill: #8fbbaa;"/>
-            <Label fx:id="lblSidebarNotifBadge" text="7 Pending"
-                   style="-fx-font-size: 12px; -fx-text-fill: #e67e22;"/>
-        </HBox>
-
-        <Separator style="-fx-background-color: #2e4e3f; -fx-opacity: 0.4;"/>
-
-        <!-- Staff Info + Logout -->
-        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 14 20 14 20;">
-            <Circle fx:id="sidebarAvatar" radius="18"
-                    style="-fx-fill: #8da89e;"/>
-            <VBox spacing="1" HBox.hgrow="ALWAYS">
-                <Label text="Mark Karim"
-                       style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-                <Label text="Receptionist"
-                       style="-fx-font-size: 10px; -fx-text-fill: #8fbbaa;"/>
-            </VBox>
-            <Button fx:id="btnLogout" text="⏻" onAction="#onLogout"
-                    style="-fx-background-color: transparent; -fx-text-fill: #8fbbaa;
-                           -fx-font-size: 16px; -fx-cursor: hand; -fx-padding: 4;"/>
-        </HBox>
-
-        <!-- New Booking Button -->
-        <VBox style="-fx-padding: 0 16 20 16;">
-            <Button fx:id="btnNewBooking" text="＋  New Booking"
-                    prefWidth="188" prefHeight="44"
-                    onAction="#onNewBooking"
-                    style="-fx-background-color: #2e8b57; -fx-text-fill: white; -fx-font-size: 14px;
-                           -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"/>
-        </VBox>
-    </VBox>
-
-    <!-- ===================================================== -->
-    <!--  MAIN CONTENT AREA                                    -->
-    <!-- ===================================================== -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--  MAIN CONTENT AREA                                      -->
+    <!-- ═══════════════════════════════════════════════════════ -->
     <VBox HBox.hgrow="ALWAYS" style="-fx-background-color: #f5f2eb;">
 
-        <!-- ─── TOP BAR ─────────────────────────────────────── -->
-        <HBox fx:id="topBar" prefHeight="64" alignment="CENTER_LEFT"
-              style="-fx-background-color: #f5f2eb; -fx-padding: 0 28 0 28;
-                     -fx-border-color: #e2ddd4; -fx-border-width: 0 0 1 0;">
+        <!-- TOP BAR (shared component) -->
+        <fx:include fx:id="topBar" source="top-bar.fxml" />
 
-            <Label text="Dashboard"
-                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <!-- Search Bar -->
-            <HBox alignment="CENTER_LEFT" spacing="8"
-                  style="-fx-background-color: white; -fx-background-radius: 22;
-                         -fx-padding: 7 16 7 16; -fx-border-color: #ddd8cf;
-                         -fx-border-radius: 22; -fx-border-width: 1;">
-                <Label text="🔍" style="-fx-font-size: 13px; -fx-text-fill: #999;"/>
-                <TextField fx:id="searchField" promptText="Search guests, rooms…" prefWidth="220"
-                           onKeyReleased="#onSearch"
-                           style="-fx-background-color: transparent; -fx-border-width: 0;
-                                  -fx-font-size: 13px;"/>
-            </HBox>
-
-            <!-- Icon Buttons -->
-            <HBox spacing="4" style="-fx-padding: 0 16 0 16;" alignment="CENTER">
-                <Button fx:id="btnNotifications" text="🔔" onAction="#onNotifications"
-                        style="-fx-background-color: transparent; -fx-font-size: 17px; -fx-cursor: hand;"/>
-                <Button fx:id="btnSettings" text="⚙" onAction="#onSettings"
-                        style="-fx-background-color: transparent; -fx-font-size: 17px; -fx-cursor: hand;"/>
-                <Button fx:id="btnHelp" text="❓" onAction="#onHelp"
-                        style="-fx-background-color: transparent; -fx-font-size: 17px; -fx-cursor: hand;"/>
-            </HBox>
-
-            <!-- User Info -->
-            <HBox alignment="CENTER" spacing="10">
-                <VBox alignment="CENTER_RIGHT">
-                    <Label text="Mark Karim"
-                           style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #1a3228;"/>
-                    <Label text="RECEPTIONIST"
-                           style="-fx-font-size: 10px; -fx-text-fill: #888; -fx-letter-spacing: 1;"/>
-                </VBox>
-                <Circle fx:id="userAvatar" radius="22" style="-fx-fill: #8da89e;"/>
-            </HBox>
-        </HBox>
-
-        <!-- ─── SCROLLABLE MAIN CONTENT ──────────────────────── -->
+        <!-- SCROLLABLE BODY -->
         <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
                     style="-fx-background-color: transparent; -fx-background: transparent;">
-            <VBox style="-fx-padding: 28 32 32 32;" spacing="26">
+            <VBox spacing="24.0" style="-fx-background-color: #f5f2eb;">
+                <padding>
+                    <Insets bottom="32.0" left="32.0" right="32.0" top="28.0" />
+                </padding>
 
-                <!-- GREETING ROW -->
+                <!-- ─── GREETING ROW ─────────────────────────────── -->
                 <HBox alignment="CENTER_LEFT">
-                    <VBox spacing="4">
-                        <Label fx:id="lblGreeting" text="Good morning, Mark."
-                               style="-fx-font-size: 28px; -fx-font-weight: bold;
-                                      -fx-text-fill: #1a3228; -fx-font-family: 'Georgia';"/>
-                        <Label fx:id="lblDateSubtitle" text="Here is the overview for today."
-                               style="-fx-font-size: 13px; -fx-text-fill: #777;"/>
+                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                        <Label fx:id="lblGreeting"
+                               text="Good morning."
+                               style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1a3228; -fx-font-family: 'Georgia';" />
+                        <Label fx:id="lblDateSubtitle"
+                               text="Here is the overview for today."
+                               style="-fx-font-size: 13px; -fx-text-fill: #777;" />
                     </VBox>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <VBox alignment="CENTER_RIGHT" spacing="2">
+                    <VBox alignment="CENTER_RIGHT" spacing="2.0">
                         <Label text="CURRENT LOCAL TIME"
-                               style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;"/>
-                        <Label fx:id="lblCurrentTime" text="08:42 AM"
-                               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
+                               style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;" />
+                        <Label fx:id="lblCurrentTime" text="--:-- --"
+                               style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
                     </VBox>
                 </HBox>
 
-                <!-- STAT CARDS ROW -->
-                <HBox spacing="16">
+                <!-- ─── RECEPTIONIST PROFILE BADGE ───────────────── -->
+                <HBox spacing="16.0" alignment="CENTER_LEFT"
+                      style="-fx-background-color: #1a3228; -fx-background-radius: 12; -fx-padding: 16 24 16 24;">
+                    <VBox spacing="2.0" HBox.hgrow="ALWAYS">
+                        <Label fx:id="lblProfileUsername"
+                               text="Username: —"
+                               style="-fx-font-size: 13px; -fx-text-fill: #8fbbaa;" />
+                        <Label fx:id="lblProfileRole"
+                               text="Role: Receptionist"
+                               style="-fx-font-size: 12px; -fx-text-fill: #8fbbaa;" />
+                        <Label fx:id="lblProfileStatus"
+                               text="Status: —"
+                               style="-fx-font-size: 12px; -fx-text-fill: #8fbbaa;" />
+                        <Label fx:id="lblProfileWorkHours"
+                               text="Working Hours: —"
+                               style="-fx-font-size: 12px; -fx-text-fill: #8fbbaa;" />
+                    </VBox>
+                    <VBox alignment="CENTER_RIGHT" spacing="4.0">
+                        <Label fx:id="lblPendingBadge" text="7 Pending"
+                               style="-fx-font-size: 12px; -fx-text-fill: #e67e22; -fx-font-weight: bold;" />
+                        <Button fx:id="btnLogout" text="⏻  Logout"
+                                onAction="#onLogout"
+                                style="-fx-background-color: #c0392b; -fx-text-fill: white;
+                                       -fx-font-size: 12px; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 6 14 6 14;" />
+                    </VBox>
+                </HBox>
+
+                <!-- ─── KPI STAT CARDS ROW ────────────────────────── -->
+                <HBox spacing="16.0">
 
                     <!-- Check-Ins -->
                     <VBox fx:id="cardCheckIns"
                           style="-fx-background-color: white; -fx-background-radius: 12;
-                                 -fx-padding: 22 26 22 26;
+                                 -fx-padding: 20 24 20 24;
                                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);"
-                          prefWidth="200" spacing="6">
-                        <Label text="CHECK-INS"
-                               style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;"/>
-                        <HBox alignment="BASELINE_LEFT" spacing="8">
-                            <Label fx:id="lblCheckInCount" text="4"
-                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
+                          prefWidth="195" spacing="6.0" HBox.hgrow="ALWAYS">
+                        <Label text="CHECK-INS TODAY"
+                               style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;" />
+                        <HBox alignment="BASELINE_LEFT" spacing="8.0">
+                            <Label fx:id="lblCheckInCount" text="0"
+                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
                             <Label text="Expected"
-                                   style="-fx-font-size: 13px; -fx-text-fill: #999;"/>
+                                   style="-fx-font-size: 13px; -fx-text-fill: #999;" />
                         </HBox>
                         <Label fx:id="lblCheckInDone" text="0 completed"
-                               style="-fx-font-size: 11px; -fx-text-fill: #2e8b57;"/>
+                               style="-fx-font-size: 11px; -fx-text-fill: #2e8b57;" />
                     </VBox>
 
                     <!-- Check-Outs -->
                     <VBox fx:id="cardCheckOuts"
                           style="-fx-background-color: white; -fx-background-radius: 12;
-                                 -fx-padding: 22 26 22 26;
+                                 -fx-padding: 20 24 20 24;
                                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);"
-                          prefWidth="200" spacing="6">
-                        <Label text="CHECK-OUTS"
-                               style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;"/>
-                        <HBox alignment="BASELINE_LEFT" spacing="8">
-                            <Label fx:id="lblCheckOutCount" text="3"
-                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
+                          prefWidth="195" spacing="6.0" HBox.hgrow="ALWAYS">
+                        <Label text="CHECK-OUTS TODAY"
+                               style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;" />
+                        <HBox alignment="BASELINE_LEFT" spacing="8.0">
+                            <Label fx:id="lblCheckOutCount" text="0"
+                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
                             <Label text="Pending"
-                                   style="-fx-font-size: 13px; -fx-text-fill: #999;"/>
+                                   style="-fx-font-size: 13px; -fx-text-fill: #999;" />
                         </HBox>
                         <Label fx:id="lblCheckOutDone" text="0 completed"
-                               style="-fx-font-size: 11px; -fx-text-fill: #2e8b57;"/>
+                               style="-fx-font-size: 11px; -fx-text-fill: #2e8b57;" />
                     </VBox>
 
                     <!-- Pending Requests -->
                     <VBox fx:id="cardPendingRequests"
                           style="-fx-background-color: white; -fx-background-radius: 12;
-                                 -fx-padding: 22 26 22 26;
+                                 -fx-padding: 20 24 20 24;
                                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
                                  -fx-border-color: #e67e22; -fx-border-width: 0 0 3 0; -fx-border-radius: 12;"
-                          prefWidth="220" spacing="6">
-                        <HBox alignment="CENTER_LEFT" spacing="6">
-                            <Label text="⚠" style="-fx-font-size: 12px; -fx-text-fill: #e67e22;"/>
-                            <Label text="PENDING REQUESTS"
-                                   style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;"/>
+                          prefWidth="220" spacing="6.0" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                            <Label text="⚠" style="-fx-font-size: 12px; -fx-text-fill: #e67e22;" />
+                            <Label text="PENDING RESERVATIONS"
+                                   style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;" />
                         </HBox>
-                        <HBox alignment="BASELINE_LEFT" spacing="8">
-                            <Label fx:id="lblPendingCount" text="7"
-                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
+                        <HBox alignment="BASELINE_LEFT" spacing="8.0">
+                            <Label fx:id="lblPendingCount" text="0"
+                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
                             <Label text="Needs Attention"
-                                   style="-fx-font-size: 13px; -fx-text-fill: #e67e22;"/>
+                                   style="-fx-font-size: 13px; -fx-text-fill: #e67e22;" />
                         </HBox>
-                        <Button text="Resolve All" onAction="#onResolveAllPending"
-                                style="-fx-background-color: transparent; -fx-text-fill: #e67e22;
-                                       -fx-font-size: 11px; -fx-cursor: hand; -fx-border-color: #e67e22;
-                                       -fx-border-radius: 4; -fx-padding: 3 8 3 8;"/>
                     </VBox>
 
                     <!-- Occupancy -->
                     <VBox fx:id="cardOccupancy"
                           style="-fx-background-color: #1a3228; -fx-background-radius: 12;
-                                 -fx-padding: 22 26 22 26;
+                                 -fx-padding: 20 24 20 24;
                                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 10, 0, 0, 3);"
-                          HBox.hgrow="ALWAYS" spacing="6">
+                          HBox.hgrow="ALWAYS" spacing="6.0">
                         <Label text="OCCUPANCY"
-                               style="-fx-font-size: 10px; -fx-text-fill: #8fbbaa; -fx-letter-spacing: 1;"/>
-                        <HBox alignment="BASELINE_LEFT" spacing="8">
-                            <Label fx:id="lblOccupancyPercent" text="68%"
-                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                               style="-fx-font-size: 10px; -fx-text-fill: #8fbbaa; -fx-letter-spacing: 1;" />
+                        <HBox alignment="BASELINE_LEFT" spacing="8.0">
+                            <Label fx:id="lblOccupancyPercent" text="0%"
+                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: white;" />
                             <Label text="Tonight"
-                                   style="-fx-font-size: 13px; -fx-text-fill: #8fbbaa;"/>
+                                   style="-fx-font-size: 13px; -fx-text-fill: #8fbbaa;" />
                         </HBox>
-                        <Label fx:id="lblOccupancyRooms" text="54 / 80 rooms"
-                               style="-fx-font-size: 11px; -fx-text-fill: #8fbbaa;"/>
+                        <Label fx:id="lblOccupancyRooms" text="0 / 0 rooms"
+                               style="-fx-font-size: 11px; -fx-text-fill: #8fbbaa;" />
                     </VBox>
 
-                    <!-- Available Rooms (extra card) -->
+                    <!-- Available Rooms -->
                     <VBox fx:id="cardAvailableRooms"
                           style="-fx-background-color: white; -fx-background-radius: 12;
-                                 -fx-padding: 22 26 22 26;
+                                 -fx-padding: 20 24 20 24;
                                  -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);"
-                          prefWidth="180" spacing="6">
+                          prefWidth="175" spacing="6.0" HBox.hgrow="ALWAYS">
                         <Label text="AVAILABLE"
-                               style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;"/>
-                        <HBox alignment="BASELINE_LEFT" spacing="8">
-                            <Label fx:id="lblAvailableRooms" text="26"
-                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #2e8b57;"/>
+                               style="-fx-font-size: 10px; -fx-text-fill: #999; -fx-letter-spacing: 1;" />
+                        <HBox alignment="BASELINE_LEFT" spacing="8.0">
+                            <Label fx:id="lblAvailableRooms" text="0"
+                                   style="-fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: #2e8b57;" />
                             <Label text="Rooms"
-                                   style="-fx-font-size: 13px; -fx-text-fill: #999;"/>
+                                   style="-fx-font-size: 13px; -fx-text-fill: #999;" />
                         </HBox>
                         <Label text="Ready for booking"
-                               style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
+                               style="-fx-font-size: 11px; -fx-text-fill: #888;" />
                     </VBox>
+
                 </HBox>
 
-                <!-- CHECK-INS & CHECK-OUTS TABLES -->
-                <HBox spacing="24" alignment="TOP_LEFT">
-
-                    <!-- ── CHECK-INS TODAY ─────────────────────── -->
-                    <VBox HBox.hgrow="ALWAYS" spacing="12">
-                        <HBox alignment="CENTER_LEFT">
-                            <Label text="Check-ins Today"
-                                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <Hyperlink fx:id="lnkViewAllCheckIns" text="View All"
-                                       onAction="#onViewAllCheckIns"
-                                       style="-fx-font-size: 12px; -fx-text-fill: #2e8b57;
-                                              -fx-border-color: transparent;"/>
-                        </HBox>
-
-                        <!-- Eleanor James -->
-                        <HBox fx:id="rowEleanor" alignment="CENTER_LEFT" spacing="14" prefHeight="66"
-                              style="-fx-background-color: white; -fx-background-radius: 10;
-                                     -fx-padding: 12 16 12 16;
-                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);">
-                            <Label text="EJ" prefWidth="40" prefHeight="40" alignment="CENTER"
-                                   style="-fx-background-color: #d5e8dc; -fx-background-radius: 20;
-                                          -fx-font-weight: bold; -fx-text-fill: #1a3228; -fx-font-size: 13px;"/>
-                            <VBox spacing="2" HBox.hgrow="ALWAYS">
-                                <Label text="Eleanor James"
-                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                                <Label text="ID: #RES-8921 • Room 402"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
-                            </VBox>
-                            <Label fx:id="lblEleanorStatus" text="CONFIRMED"
-                                   style="-fx-font-size: 10px; -fx-text-fill: #555; -fx-letter-spacing: 0.5;"/>
-                            <Button fx:id="btnCheckInEleanor" text="Check In"
-                                    onAction="#onCheckInEleanor"
-                                    style="-fx-background-color: #1a3228; -fx-text-fill: white;
-                                           -fx-font-size: 12px; -fx-background-radius: 6;
-                                           -fx-cursor: hand; -fx-padding: 7 16 7 16;"/>
-                        </HBox>
-
-                        <!-- Marcus Reed -->
-                        <HBox fx:id="rowMarcus" alignment="CENTER_LEFT" spacing="14" prefHeight="66"
-                              style="-fx-background-color: white; -fx-background-radius: 10;
-                                     -fx-padding: 12 16 12 16;
-                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);">
-                            <Label text="MR" prefWidth="40" prefHeight="40" alignment="CENTER"
-                                   style="-fx-background-color: #d5e8dc; -fx-background-radius: 20;
-                                          -fx-font-weight: bold; -fx-text-fill: #1a3228; -fx-font-size: 13px;"/>
-                            <VBox spacing="2" HBox.hgrow="ALWAYS">
-                                <Label text="Marcus Reed"
-                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                                <Label text="ID: #RES-8924 • Room 215"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
-                            </VBox>
-                            <Label fx:id="lblMarcusStatus" text="CONFIRMED"
-                                   style="-fx-font-size: 10px; -fx-text-fill: #555; -fx-letter-spacing: 0.5;"/>
-                            <Button fx:id="btnCheckInMarcus" text="Check In"
-                                    onAction="#onCheckInMarcus"
-                                    style="-fx-background-color: #1a3228; -fx-text-fill: white;
-                                           -fx-font-size: 12px; -fx-background-radius: 6;
-                                           -fx-cursor: hand; -fx-padding: 7 16 7 16;"/>
-                        </HBox>
-
-                        <!-- Sarah Williams -->
-                        <HBox fx:id="rowSarah" alignment="CENTER_LEFT" spacing="14" prefHeight="66"
-                              style="-fx-background-color: white; -fx-background-radius: 10;
-                                     -fx-padding: 12 16 12 16;
-                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);">
-                            <Label text="SW" prefWidth="40" prefHeight="40" alignment="CENTER"
-                                   style="-fx-background-color: #d5e8dc; -fx-background-radius: 20;
-                                          -fx-font-weight: bold; -fx-text-fill: #1a3228; -fx-font-size: 13px;"/>
-                            <VBox spacing="2" HBox.hgrow="ALWAYS">
-                                <Label text="Sarah Williams"
-                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                                <Label text="ID: #RES-8930 • Room 510"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
-                            </VBox>
-                            <Label fx:id="lblSarahStatus" text="CONFIRMED"
-                                   style="-fx-font-size: 10px; -fx-text-fill: #555; -fx-letter-spacing: 0.5;"/>
-                            <Button fx:id="btnCheckInSarah" text="Check In"
-                                    onAction="#onCheckInSarah"
-                                    style="-fx-background-color: #1a3228; -fx-text-fill: white;
-                                           -fx-font-size: 12px; -fx-background-radius: 6;
-                                           -fx-cursor: hand; -fx-padding: 7 16 7 16;"/>
-                        </HBox>
-
-                        <!-- Liam Turner (4th expected) -->
-                        <HBox fx:id="rowLiam" alignment="CENTER_LEFT" spacing="14" prefHeight="66"
-                              style="-fx-background-color: white; -fx-background-radius: 10;
-                                     -fx-padding: 12 16 12 16;
-                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);">
-                            <Label text="LT" prefWidth="40" prefHeight="40" alignment="CENTER"
-                                   style="-fx-background-color: #fce8d5; -fx-background-radius: 20;
-                                          -fx-font-weight: bold; -fx-text-fill: #8b3a1a; -fx-font-size: 13px;"/>
-                            <VBox spacing="2" HBox.hgrow="ALWAYS">
-                                <Label text="Liam Turner"
-                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                                <Label text="ID: #RES-8935 • Room 318"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
-                            </VBox>
-                            <Label fx:id="lblLiamStatus" text="CONFIRMED"
-                                   style="-fx-font-size: 10px; -fx-text-fill: #555; -fx-letter-spacing: 0.5;"/>
-                            <Button fx:id="btnCheckInLiam" text="Check In"
-                                    onAction="#onCheckInLiam"
-                                    style="-fx-background-color: #1a3228; -fx-text-fill: white;
-                                           -fx-font-size: 12px; -fx-background-radius: 6;
-                                           -fx-cursor: hand; -fx-padding: 7 16 7 16;"/>
-                        </HBox>
-                    </VBox>
-
-                    <!-- ── CHECK-OUTS TODAY ────────────────────── -->
-                    <VBox prefWidth="360" spacing="12">
-                        <HBox alignment="CENTER_LEFT">
-                            <Label text="Check-outs Today"
-                                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <Hyperlink fx:id="lnkViewAllCheckOuts" text="View All"
-                                       onAction="#onViewAllCheckOuts"
-                                       style="-fx-font-size: 12px; -fx-text-fill: #2e8b57;
-                                              -fx-border-color: transparent;"/>
-                        </HBox>
-
-                        <!-- David Chen -->
-                        <HBox fx:id="rowDavidCheckout" alignment="CENTER_LEFT" spacing="14" prefHeight="66"
-                              style="-fx-background-color: white; -fx-background-radius: 10;
-                                     -fx-padding: 12 16 12 16;
-                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);">
-                            <Label text="DC" prefWidth="40" prefHeight="40" alignment="CENTER"
-                                   style="-fx-background-color: #d5e8dc; -fx-background-radius: 20;
-                                          -fx-font-weight: bold; -fx-text-fill: #1a3228; -fx-font-size: 13px;"/>
-                            <VBox spacing="2" HBox.hgrow="ALWAYS">
-                                <Label text="Room 102"
-                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                                <Label text="David Chen"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
-                            </VBox>
-                            <Label text="PAID"
-                                   style="-fx-font-size: 10px; -fx-text-fill: #2e8b57; -fx-letter-spacing: 0.5;
-                                          -fx-font-weight: bold;"/>
-                            <Button fx:id="btnCheckOutDavid" text="Check Out"
-                                    onAction="#onCheckOutDavid"
-                                    style="-fx-background-color: transparent; -fx-text-fill: #1a3228;
-                                           -fx-font-size: 12px; -fx-background-radius: 6;
-                                           -fx-cursor: hand; -fx-padding: 7 14 7 14;
-                                           -fx-border-color: #1a3228; -fx-border-radius: 6; -fx-border-width: 1;"/>
-                        </HBox>
-
-                        <!-- Amanda Smith (OVERDUE) -->
-                        <HBox fx:id="rowAmandaCheckout" alignment="CENTER_LEFT" spacing="14" prefHeight="66"
-                              style="-fx-background-color: #fff8f6; -fx-background-radius: 10;
-                                     -fx-padding: 12 16 12 16;
-                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);
-                                     -fx-border-color: #c0392b; -fx-border-width: 0 0 0 3; -fx-border-radius: 10;">
-                            <Label text="AS" prefWidth="40" prefHeight="40" alignment="CENTER"
-                                   style="-fx-background-color: #fcd8d5; -fx-background-radius: 20;
-                                          -fx-font-weight: bold; -fx-text-fill: #7b1a1a; -fx-font-size: 13px;"/>
-                            <VBox spacing="2" HBox.hgrow="ALWAYS">
-                                <Label text="Room 305"
-                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                                <Label text="Amanda Smith"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
-                            </VBox>
-                            <Label fx:id="lblAmandaStatus" text="OVERDUE"
-                                   style="-fx-background-color: #c0392b; -fx-text-fill: white;
-                                          -fx-font-size: 10px; -fx-background-radius: 10;
-                                          -fx-padding: 3 8 3 8; -fx-font-weight: bold;"/>
-                            <Button fx:id="btnCheckOutAmanda" text="Resolve"
-                                    onAction="#onCheckOutAmanda"
-                                    style="-fx-background-color: #c0392b; -fx-text-fill: white;
-                                           -fx-font-size: 12px; -fx-background-radius: 6;
-                                           -fx-cursor: hand; -fx-padding: 7 14 7 14;"/>
-                        </HBox>
-
-                        <!-- Robert Fox -->
-                        <HBox fx:id="rowRobertCheckout" alignment="CENTER_LEFT" spacing="14" prefHeight="66"
-                              style="-fx-background-color: white; -fx-background-radius: 10;
-                                     -fx-padding: 12 16 12 16;
-                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);">
-                            <Label text="RF" prefWidth="40" prefHeight="40" alignment="CENTER"
-                                   style="-fx-background-color: #d5e8dc; -fx-background-radius: 20;
-                                          -fx-font-weight: bold; -fx-text-fill: #1a3228; -fx-font-size: 13px;"/>
-                            <VBox spacing="2" HBox.hgrow="ALWAYS">
-                                <Label text="Room 612"
-                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                                <Label text="Robert Fox"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #888;"/>
-                            </VBox>
-                            <Label text="PAID"
-                                   style="-fx-font-size: 10px; -fx-text-fill: #2e8b57; -fx-letter-spacing: 0.5;
-                                          -fx-font-weight: bold;"/>
-                            <Button fx:id="btnCheckOutRobert" text="Check Out"
-                                    onAction="#onCheckOutRobert"
-                                    style="-fx-background-color: transparent; -fx-text-fill: #1a3228;
-                                           -fx-font-size: 12px; -fx-background-radius: 6;
-                                           -fx-cursor: hand; -fx-padding: 7 14 7 14;
-                                           -fx-border-color: #1a3228; -fx-border-radius: 6; -fx-border-width: 1;"/>
-                        </HBox>
-                    </VBox>
+                <!-- ─── SEARCH BAR ────────────────────────────────── -->
+                <HBox alignment="CENTER_LEFT" spacing="12.0"
+                      style="-fx-background-color: white; -fx-background-radius: 8;
+                             -fx-padding: 10 16 10 16;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0, 0, 2);">
+                    <Label text="🔍" style="-fx-font-size: 14px; -fx-text-fill: #999;" />
+                    <TextField fx:id="searchField"
+                               promptText="Search guests, reservation IDs, room numbers…"
+                               HBox.hgrow="ALWAYS"
+                               onKeyReleased="#onSearch"
+                               style="-fx-background-color: transparent; -fx-border-width: 0; -fx-font-size: 13px;" />
                 </HBox>
 
                 <!-- SEARCH RESULTS PANEL (hidden by default) -->
-                <VBox fx:id="searchResultsPanel" spacing="8" managed="false" visible="false"
+                <VBox fx:id="searchResultsPanel" spacing="8.0" managed="false" visible="false"
                       style="-fx-background-color: white; -fx-background-radius: 10;
                              -fx-padding: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
                     <Label text="Search Results"
-                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
                     <Label fx:id="lblSearchResults" text=""
-                           style="-fx-font-size: 13px; -fx-text-fill: #555;" wrapText="true"/>
+                           style="-fx-font-size: 13px; -fx-text-fill: #555;" wrapText="true" />
                 </VBox>
 
-                <!-- RECENT ACTIVITY LOG -->
-                <VBox spacing="12">
+                <!-- ─── CHECK-INS & CHECK-OUTS TABLES ────────────── -->
+                <HBox spacing="24.0" alignment="TOP_LEFT">
+
+                    <!-- ── CHECK-INS TODAY ─── -->
+                    <VBox HBox.hgrow="ALWAYS" spacing="12.0">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Check-ins Today"
+                                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Hyperlink text="View All" onAction="#onViewAllCheckIns"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #2e8b57; -fx-border-color: transparent;" />
+                        </HBox>
+                        <!-- Dynamic list of check-in rows -->
+                        <VBox fx:id="checkInsContainer" spacing="8.0" />
+                        <Label fx:id="lblNoCheckIns" text="No check-ins today."
+                               style="-fx-font-size: 12px; -fx-text-fill: #aaa; -fx-font-style: italic;"
+                               managed="false" visible="false" />
+                    </VBox>
+
+                    <!-- ── CHECK-OUTS TODAY ─── -->
+                    <VBox prefWidth="380.0" spacing="12.0">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="Check-outs Today"
+                                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Hyperlink text="View All" onAction="#onViewAllCheckOuts"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #2e8b57; -fx-border-color: transparent;" />
+                        </HBox>
+                        <!-- Dynamic list of check-out rows -->
+                        <VBox fx:id="checkOutsContainer" spacing="8.0" />
+                        <Label fx:id="lblNoCheckOuts" text="No check-outs today."
+                               style="-fx-font-size: 12px; -fx-text-fill: #aaa; -fx-font-style: italic;"
+                               managed="false" visible="false" />
+                    </VBox>
+
+                </HBox>
+
+                <!-- ─── PENDING RESERVATIONS TABLE ───────────────── -->
+                <VBox spacing="12.0">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Pending Reservations — Awaiting Action"
+                               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button text="Resolve All" onAction="#onResolveAllPending"
+                                style="-fx-background-color: transparent; -fx-text-fill: #e67e22;
+                                       -fx-font-size: 11px; -fx-cursor: hand; -fx-border-color: #e67e22;
+                                       -fx-border-radius: 4; -fx-padding: 4 10 4 10;" />
+                    </HBox>
+                    <VBox fx:id="pendingContainer" spacing="8.0"
+                          style="-fx-background-color: white; -fx-background-radius: 10;
+                                 -fx-padding: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0, 0, 2);">
+                        <Label fx:id="lblNoPending" text="No pending reservations."
+                               style="-fx-font-size: 12px; -fx-text-fill: #aaa; -fx-font-style: italic;" />
+                    </VBox>
+                </VBox>
+
+                <!-- ─── CHECK-IN DIALOG (hidden) ─────────────────── -->
+                <VBox fx:id="checkInDialog" managed="false" visible="false" spacing="12.0"
+                      style="-fx-background-color: white; -fx-background-radius: 12;
+                             -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0, 0, 4);
+                             -fx-border-color: #1a3228; -fx-border-width: 2; -fx-border-radius: 12;">
+                    <Label fx:id="lblDialogTitle" text="Confirm Check-In"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
+                    <Label fx:id="lblDialogInfo" text=""
+                           style="-fx-font-size: 13px; -fx-text-fill: #555;" wrapText="true" />
+                    <HBox spacing="12.0">
+                        <Button fx:id="btnDialogConfirm" text="✔  Confirm Check-In"
+                                onAction="#onDialogConfirm"
+                                style="-fx-background-color: #1a3228; -fx-text-fill: white;
+                                       -fx-font-size: 13px; -fx-background-radius: 7; -fx-cursor: hand; -fx-padding: 8 18 8 18;" />
+                        <Button text="✕  Cancel"
+                                onAction="#onDialogCancel"
+                                style="-fx-background-color: transparent; -fx-text-fill: #888;
+                                       -fx-font-size: 13px; -fx-border-color: #ccc; -fx-border-radius: 7;
+                                       -fx-cursor: hand; -fx-padding: 8 18 8 18;" />
+                    </HBox>
+                </VBox>
+
+                <!-- ─── CHECK-OUT DIALOG (hidden) ────────────────── -->
+                <VBox fx:id="checkOutDialog" managed="false" visible="false" spacing="12.0"
+                      style="-fx-background-color: white; -fx-background-radius: 12;
+                             -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 12, 0, 0, 4);
+                             -fx-border-color: #c0392b; -fx-border-width: 2; -fx-border-radius: 12;">
+                    <Label fx:id="lblCheckOutDialogTitle" text="Confirm Check-Out"
+                           style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
+                    <Label fx:id="lblCheckOutDialogInfo" text=""
+                           style="-fx-font-size: 13px; -fx-text-fill: #555;" wrapText="true" />
+                    <HBox spacing="12.0">
+                        <Button fx:id="btnCheckOutConfirm" text="✔  Confirm Check-Out"
+                                onAction="#onCheckOutConfirm"
+                                style="-fx-background-color: #c0392b; -fx-text-fill: white;
+                                       -fx-font-size: 13px; -fx-background-radius: 7; -fx-cursor: hand; -fx-padding: 8 18 8 18;" />
+                        <Button text="✕  Cancel"
+                                onAction="#onCheckOutDialogCancel"
+                                style="-fx-background-color: transparent; -fx-text-fill: #888;
+                                       -fx-font-size: 13px; -fx-border-color: #ccc; -fx-border-radius: 7;
+                                       -fx-cursor: hand; -fx-padding: 8 18 8 18;" />
+                    </HBox>
+                </VBox>
+
+                <!-- ─── FEEDBACK LABEL ────────────────────────────── -->
+                <Label fx:id="lblFeedback" text="" wrapText="true"
+                       style="-fx-font-size: 13px; -fx-text-fill: #2e8b57;"
+                       managed="false" visible="false" />
+
+                <!-- ─── RECENT ACTIVITY LOG ───────────────────────── -->
+                <VBox spacing="12.0">
                     <HBox alignment="CENTER_LEFT">
                         <Label text="Recent Activity"
-                               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a3228;"/>
-                        <Region HBox.hgrow="ALWAYS"/>
+                               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a3228;" />
+                        <Region HBox.hgrow="ALWAYS" />
                         <Button text="Clear Log" onAction="#onClearLog"
                                 style="-fx-background-color: transparent; -fx-text-fill: #888;
-                                       -fx-font-size: 11px; -fx-cursor: hand;"/>
+                                       -fx-font-size: 11px; -fx-cursor: hand;" />
                     </HBox>
-                    <VBox fx:id="activityLog" spacing="6"
+                    <VBox fx:id="activityLog" spacing="6.0"
                           style="-fx-background-color: white; -fx-background-radius: 10;
-                                 -fx-padding: 16;
-                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0, 0, 2);">
+                                 -fx-padding: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 6, 0, 0, 2);">
                         <Label text="No activity yet today."
-                               style="-fx-font-size: 12px; -fx-text-fill: #aaa; -fx-font-style: italic;"/>
+                               style="-fx-font-size: 12px; -fx-text-fill: #aaa; -fx-font-style: italic;" />
                     </VBox>
                 </VBox>
 
