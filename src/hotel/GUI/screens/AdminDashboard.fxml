@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import java.net.URL?>
+
+<HBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hotel.GUI.controllers.AdminController">
+    <stylesheets>
+        <URL value="@../styles/theme.css"/>
+    </stylesheets>
+
+    <fx:include source="side-bar.fxml"/>
+
+    <BorderPane HBox.hgrow="ALWAYS">
+        <top>
+            <fx:include source="top-bar.fxml"/>
+        </top>
+
+        <center>
+            <ScrollPane fitToWidth="true" style="-fx-background-color: #fcf9f1; -fx-border-color: transparent;">
+                <VBox style="-fx-padding: 32 40 48 40;" spacing="32">
+                    
+                    <Label text="Dashboard" styleClass="display-sm"/>
+
+                    <HBox spacing="20">
+                        <VBox styleClass="card" HBox.hgrow="ALWAYS" style="-fx-padding: 16;">
+                            <Label text="TOTAL REVENUE" styleClass="label-upper"/>
+                            <Label fx:id="totalRevenueLabel" text="0.00" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        <VBox styleClass="card" HBox.hgrow="ALWAYS" style="-fx-padding: 16;">
+                            <Label text="OCCUPANCY" styleClass="label-upper"/>
+                            <Label fx:id="occupancyLabel" text="0%" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        <VBox styleClass="card" HBox.hgrow="ALWAYS" style="-fx-padding: 16;">
+                            <Label text="ACTIVE RESERVATIONS" styleClass="label-upper"/>
+                            <Label fx:id="activeReservationsLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        <VBox styleClass="card" HBox.hgrow="ALWAYS" style="-fx-padding: 16;">
+                            <Label text="REGISTERED GUESTS" styleClass="label-upper"/>
+                            <Label fx:id="registeredGuestsLabel" text="0" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                        </VBox>
+                    </HBox>
+
+                    <VBox styleClass="card" style="-fx-padding: 24;">
+                        <Label text="Revenue Overview" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                        <LineChart fx:id="revenueChart" prefHeight="300">
+                            <xAxis>
+                                <CategoryAxis fx:id="xAxis" label="Weeks"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis fx:id="yAxis" lowerBound="0" upperBound="50000" tickUnit="10000"/>
+                            </yAxis>
+                        </LineChart>
+                    </VBox>
+
+                    <HBox spacing="32">
+                        <VBox style="-fx-background-color: #f6f4eb; -fx-background-radius: 4px; -fx-padding: 16;" HBox.hgrow="ALWAYS">
+                            <Label text="Recent Invoices" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                            <VBox fx:id="invoiceList" spacing="12">
+                            </VBox>
+                        </VBox>
+
+                        <VBox style="-fx-background-color: #f6f4eb; -fx-background-radius: 4px; -fx-padding: 16;" prefWidth="360">
+                            <Label text="Quick Actions" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                            <GridPane hgap="16" vgap="16" alignment="CENTER" style="-fx-padding: 16 0 0 0;">
+                                <Button text="Add Room" onAction="#onAddRoom" GridPane.columnIndex="0" GridPane.rowIndex="0" prefWidth="150" prefHeight="80" styleClass="card"/>
+                                <Button text="Add Type" onAction="#onAddType" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="150" prefHeight="80" styleClass="card"/>
+                                <Button text="Add Amenity" onAction="#onAddAmenity" GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="150" prefHeight="80" styleClass="card"/>
+                                <Button text="Create Promo" onAction="#onCreatePromo" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="150" prefHeight="80" styleClass="card"/>
+                            </GridPane>
+                        </VBox>
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+        </center>
+    </BorderPane>
+</HBox>

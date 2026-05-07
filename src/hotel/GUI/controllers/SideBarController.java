@@ -3,6 +3,7 @@ package hotel.GUI.controllers;
 import hotel.GUI.utils.SceneManager;
 import hotel.GUI.utils.SessionManager;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 
 /**
@@ -27,6 +28,7 @@ public class SideBarController {
     @FXML private Button btnAnalytics;
     @FXML private Button btnNewBooking;
 
+    @FXML private Button btnLogout;
     // ── Current role injected by the parent dashboard controller ─────────────
     private String currentRole = "GUEST"; // default; overridden via setRole()
 
@@ -43,6 +45,7 @@ public class SideBarController {
         btnGuestProfiles.setOnAction(e  -> navigateTo("guest-profiles",  btnGuestProfiles));
         btnAnalytics.setOnAction(e      -> navigateTo("analytics",       btnAnalytics));
         btnNewBooking.setOnAction(e     -> onNewBooking());
+        btnLogout.setOnAction(e      -> navigateTo("Logout",       btnLogout));
 
         // Concierge / Dashboard is active by default
         setActive(btnConcierge);
@@ -71,7 +74,9 @@ public class SideBarController {
             case "room-map"       -> setActive(btnRoomMap);
             case "guest-profiles" -> setActive(btnGuestProfiles);
             case "analytics"      -> setActive(btnAnalytics);
-        }
+            case "Logout"          -> setActive(btnLogout);
+            case "new-booking"    -> setActive(btnNewBooking);
+        }   
     }
 
     // ── Private helpers ──────────────────────────────────────────────────────
@@ -83,14 +88,29 @@ public class SideBarController {
         // Add new screen mappings here as you build them.
         String fxml = switch (section) {
             case "concierge"      -> resolveDashboardFxml();
-            case "reservations"   -> "ReservationsScreen.fxml";
-            case "room-map"       -> "RoomMapScreen.fxml";
-            case "guest-profiles" -> "GuestProfilesScreen.fxml";
-            case "analytics"      -> "AnalyticsScreen.fxml";
+            case "reservations"   -> "UNDER_CONSTRUCTION";
+            case "room-map"       -> "UNDER_CONSTRUCTION";
+            case "guest-profiles" -> "UNDER_CONSTRUCTION";
+            case "analytics"      -> "UNDER_CONSTRUCTION";
+            case "Logout"         -> "Logout.fxml";
             default               -> resolveDashboardFxml();
         };
 
+        if (fxml.equals("UNDER_CONSTRUCTION")) {
+            showComingSoonAlert(section);
+        } else {
+            SceneManager.navigate(fxml);
+        }
+
         SceneManager.navigate(fxml);
+    }
+
+    private void showComingSoonAlert(String feature) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Feature in Development");
+        alert.setHeaderText("Coming Soon!");
+        alert.setContentText("The '" + feature + "' module is currently under construction.");
+        alert.showAndWait();
     }
 
     /**
@@ -114,7 +134,7 @@ public class SideBarController {
 
         return switch (role) {
             case "ADMIN"        -> "AdminDashboard.fxml";
-            case "RECEPTIONIST" -> "ReceptionistDashboard.fxml";
+            case "RECEPTIONIST" -> "Receptionist_Dashboard.fxml";
             default             -> "GuestDashboard.fxml";
         };
     }
@@ -123,27 +143,27 @@ public class SideBarController {
     private void applyRoleVisibility() {
         switch (currentRole) {
             case "GUEST" -> {
-                // Guests cannot see Analytics or Guest Profiles list
                 btnAnalytics.setVisible(false);
                 btnAnalytics.setManaged(false);
                 btnGuestProfiles.setVisible(false);
                 btnGuestProfiles.setManaged(false);
             }
             case "RECEPTIONIST" -> {
-                // Receptionists cannot see Analytics
                 btnAnalytics.setVisible(false);
                 btnAnalytics.setManaged(false);
             }
             case "ADMIN" -> {
-                // Admins see everything — no changes needed
+                btnConcierge.setVisible(false); 
+                btnConcierge.setManaged(false);
+                btnNewBooking.setVisible(false); 
+                btnNewBooking.setManaged(false);
             }
         }
     }
 
     /** Clears active style from all buttons, then applies it to the clicked one. */
     private void setActive(Button target) {
-        Button[] all = { btnConcierge, btnReservations, btnRoomMap,
-                         btnGuestProfiles, btnAnalytics };
+        Button[] all = { btnConcierge, btnReservations, btnRoomMap, btnGuestProfiles, btnAnalytics , btnLogout , btnNewBooking };
 
         for (Button btn : all) {
             btn.getStyleClass().remove(ACTIVE);

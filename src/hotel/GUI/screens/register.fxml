@@ -160,7 +160,7 @@
                               <Insets bottom="30.0" />
                            </padding>
                         </VBox>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="8.0">
+                           <Label fx:id="registerErrorLabel" managed="false" visible="false" maxWidth="1.7976931348623157E308" wrapText="true" style="-fx-text-fill: #b9120f; -fx-background-color: #fdecea; -fx-background-radius: 4; -fx-padding: 8 12 8 12;" text="" />                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="8.0">
                            <children>
                               <Button fx:id="createAccountButton" alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="50.0" prefWidth="307.0" style="-fx-text-fill: white; -fx-background-color: linear-gradient(to bottom, #00291c, #00412e); -fx-background-radius: 5;" text="Create Account">
                                  <VBox.margin>

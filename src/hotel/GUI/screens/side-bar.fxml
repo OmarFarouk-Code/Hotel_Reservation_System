@@ -74,6 +74,15 @@
             </ImageView>
          </graphic>
       </Button>
+      <Button fx:id="btnLogout" graphicTextGap="16.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="sidebar-nav-item" text="Logout">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/icon_logout.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
       <Region prefHeight="359.0" prefWidth="220.0" VBox.vgrow="ALWAYS" />
       <Button fx:id="btnNewBooking" alignment="BOTTOM_CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefWidth="220.0" styleClass="sidebar-nav-item" text="          + New Booking" />
    </children>

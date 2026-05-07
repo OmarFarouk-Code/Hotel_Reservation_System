@@ -54,14 +54,6 @@ public class LoginController {
 
         // Default tab
         switchRole("Guest", btnGuest);
-
-        // Seed data if the database is empty
-        if (Database.getGuests().isEmpty() && Database.getAdmins().isEmpty()) {
-            Database.loadData();
-            if (Database.getGuests().isEmpty()) {
-                Database.initializeHotelData();
-            }
-        }
     }
 
     // ── Role Tab Switching ────────────────────────────────────────────────────
@@ -121,9 +113,12 @@ public class LoginController {
             }
         }
 
-        if (loggedInUser == null) {
+        if (loggedInUser == null) 
+        {
             showError("Invalid username or password. Please try again.");
+            txtPassword.clear();
         }
+
     }
 
     // ── Error Label Helpers ───────────────────────────────────────────────────
