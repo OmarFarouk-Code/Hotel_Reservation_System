@@ -34,7 +34,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Grand Azure Hotel - Digital Concierge");
         SceneManager.setPrimaryStage(primaryStage);
-        SceneManager.navigate("Receptionist_Dashboard.fxml");
+        SceneManager.navigate("register.fxml");
     }
 
 
