@@ -121,9 +121,12 @@ public class LoginController {
             }
         }
 
-        if (loggedInUser == null) {
+        if (loggedInUser == null) 
+        {
             showError("Invalid username or password. Please try again.");
+            txtPassword.clear();
         }
+
     }
 
     // ── Error Label Helpers ───────────────────────────────────────────────────
