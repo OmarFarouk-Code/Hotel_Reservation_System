@@ -54,14 +54,6 @@ public class LoginController {
 
         // Default tab
         switchRole("Guest", btnGuest);
-
-        // Seed data if the database is empty
-        if (Database.getGuests().isEmpty() && Database.getAdmins().isEmpty()) {
-            Database.loadData();
-            if (Database.getGuests().isEmpty()) {
-                Database.initializeHotelData();
-            }
-        }
     }
 
     // ── Role Tab Switching ────────────────────────────────────────────────────
