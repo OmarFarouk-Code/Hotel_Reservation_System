@@ -27,6 +27,7 @@ public class SideBarController {
     @FXML private Button btnAnalytics;
     @FXML private Button btnNewBooking;
 
+    @FXML private Button btnLogout;
     // ── Current role injected by the parent dashboard controller ─────────────
     private String currentRole = "GUEST"; // default; overridden via setRole()
 
@@ -43,6 +44,7 @@ public class SideBarController {
         btnGuestProfiles.setOnAction(e  -> navigateTo("guest-profiles",  btnGuestProfiles));
         btnAnalytics.setOnAction(e      -> navigateTo("analytics",       btnAnalytics));
         btnNewBooking.setOnAction(e     -> onNewBooking());
+        btnLogout.setOnAction(e      -> navigateTo("Logout",       btnLogout));
 
         // Concierge / Dashboard is active by default
         setActive(btnConcierge);
@@ -71,7 +73,8 @@ public class SideBarController {
             case "room-map"       -> setActive(btnRoomMap);
             case "guest-profiles" -> setActive(btnGuestProfiles);
             case "analytics"      -> setActive(btnAnalytics);
-        }
+            case "Logout"          -> setActive(btnLogout);
+        }   
     }
 
     // ── Private helpers ──────────────────────────────────────────────────────
@@ -87,6 +90,7 @@ public class SideBarController {
             case "room-map"       -> "RoomMapScreen.fxml";
             case "guest-profiles" -> "GuestProfilesScreen.fxml";
             case "analytics"      -> "AnalyticsScreen.fxml";
+            case "Logout"         -> "Logout.fxml";
             default               -> resolveDashboardFxml();
         };
 
@@ -143,7 +147,7 @@ public class SideBarController {
     /** Clears active style from all buttons, then applies it to the clicked one. */
     private void setActive(Button target) {
         Button[] all = { btnConcierge, btnReservations, btnRoomMap,
-                         btnGuestProfiles, btnAnalytics };
+                         btnGuestProfiles, btnAnalytics , btnLogout };
 
         for (Button btn : all) {
             btn.getStyleClass().remove(ACTIVE);
