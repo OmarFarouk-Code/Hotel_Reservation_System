@@ -69,17 +69,31 @@
 }
 
 /* Role Selector Tabs */
-.role-tab {
-  -fx-background-color: transparent;
-  -fx-text-fill: #43474e;
-  -fx-background-radius: 8px;
+.button.role-tab {
+  -fx-background-color: transparent; /* Forces it to ignore the global dark green */
+  -fx-text-fill: #43474e; /* Gray text */
+  -fx-background-radius: 6px;
   -fx-cursor: hand;
+  -fx-font-weight: normal;
+  -fx-padding: 8 16;
 }
-.role-tab-active {
+
+.button.role-tab-active {
   -fx-background-color: #ffffff;
-  -fx-text-fill: #00291c;
+  -fx-text-fill: #000000;
   -fx-font-weight: bold;
-  -fx-effect: dropshadow(gaussian, rgba(28, 28, 23, 0.06), 12, 0, 0, 2);
+  -fx-background-radius: 6px;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0, 0, 2);
+}
+
+.button.role-tab:hover {
+  -fx-background-color: rgba(0, 0, 0, 0.04); /* Very subtle gray on hover */
+  -fx-text-fill: #1c1c17;
+}
+
+/* 4. Prevent the hover effect from ruining the active tab's white background */
+.button.role-tab-active:hover {
+  -fx-background-color: #ffffff;
 }
 
 .display-sm {
@@ -105,7 +119,7 @@
 .overlay-tint {
   -fx-background-color: rgba(0, 41, 28, 0.85);
 }
-  
+
 .sidebar {
   -fx-background-color: #00291c;
   -fx-pref-width: 220px;

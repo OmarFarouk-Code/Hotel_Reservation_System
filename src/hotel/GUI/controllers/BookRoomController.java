@@ -28,7 +28,6 @@ public class BookRoomController {
     @FXML private SideBarController sideBarController;
     @FXML private TopBarController topBarController;
 
-    private BookingEngine engine = new BookingEngine();
     private int adults = 1;
 
    @FXML
@@ -70,7 +69,7 @@ public class BookRoomController {
 
         LocalDate checkIn = checkInPicker.getValue();
         LocalDate checkOut = checkOutPicker.getValue();
-        List<Room> availableRooms = engine.getAvailableRooms(checkIn, checkOut);
+        List<Room> availableRooms = BookingEngine.getAvailableRooms(checkIn, checkOut);
 
         int matchCount = 0;
 
