@@ -91,6 +91,7 @@
                               <Hyperlink alignment="CENTER_RIGHT" text="Forgot password?" textAlignment="RIGHT" textFill="#3fb68b" />
                            </children>
                         </HBox>
+                        <Label fx:id="lblError" managed="false" visible="false" maxWidth="1.7976931348623157E308" wrapText="true" style="-fx-text-fill: #b9120f; -fx-background-color: #fdecea; -fx-background-radius: 4; -fx-padding: 8 12 8 12;" text="" />
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <Button fx:id="btnSignIn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="48.0" prefWidth="388.0" styleClass="btn-primary" text="Sign In" HBox.hgrow="ALWAYS" />
