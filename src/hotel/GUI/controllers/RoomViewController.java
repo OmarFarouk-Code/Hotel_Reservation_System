@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 
 public class RoomViewController {
+
     @FXML private ImageView roomImage;
     @FXML private Label ratingLabel;
     @FXML private Label roomTitleLabel;
@@ -19,13 +20,17 @@ public class RoomViewController {
     @FXML private Button bookNowBtn;
 
     private Room currentRoom;
+    private Runnable bookAction;
+    public void setBookAction(Runnable action) {
+        this.bookAction = action;
+    }
 
     public void setRoomData(Room room) {
         this.currentRoom = room;
         String typeName = room.getRoomType().getTypeName();
 
         roomTitleLabel.setText(typeName);
-        priceLabel.setText("$" + (int)room.getRoomType().getEffectivePrice());
+        priceLabel.setText("$" + (int) room.getRoomType().getEffectivePrice());
         if (descriptionLabel != null) {
             descriptionLabel.setText(room.getRoomType().getDescription());
         }
@@ -59,6 +64,10 @@ public class RoomViewController {
 
     @FXML
     private void onBookNow() {
-        System.out.println("Booking room: " + currentRoom.getRoomNumber());
+        if (bookAction != null) {
+            bookAction.run();
+        } else {
+            System.out.println("Booking action not set for room: " + currentRoom.getRoomNumber());
+        }
     }
 }
