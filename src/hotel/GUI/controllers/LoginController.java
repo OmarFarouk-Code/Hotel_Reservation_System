@@ -2,7 +2,6 @@ package hotel.GUI.controllers;
 
 import hotel.GUI.utils.SceneManager;
 import hotel.GUI.utils.SessionManager;
-import hotel.core.Database;
 import hotel.model.enums.UserType;
 import hotel.model.staff.Admin;
 import hotel.model.staff.Receptionist;

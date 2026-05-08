@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.swing.Icon;
-
 public class Main extends Application {
     private static Scanner sc = new Scanner(System.in);
     private static BookingEngine engine = new BookingEngine();
@@ -47,7 +45,7 @@ public class Main extends Application {
         {
             System.err.println("Notice: Could not load the app icon. Check the path.");
         }
-        SceneManager.navigate("register.fxml");
+        SceneManager.navigate("Checkout.fxml");
     }
 
 

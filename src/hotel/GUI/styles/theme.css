@@ -104,7 +104,7 @@
 
 .register-left-panel {
   -fx-background-color: #00291c;
-  -fx-background-image: url("../assets/rooms/default.jpg.png");
+  -fx-background-image: url("../assets/rooms/default.jpg");
   -fx-background-size: cover;
   -fx-background-position: center center;
 }
