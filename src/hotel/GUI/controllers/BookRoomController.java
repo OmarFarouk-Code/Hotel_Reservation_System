@@ -2,10 +2,7 @@ package hotel.GUI.controllers;
 
 import hotel.GUI.utils.SessionManager;
 import hotel.model.users.User;
-import hotel.model.users.Guest;
 import hotel.model.entities.Room;
-import hotel.model.bookings.Reservation;
-import hotel.model.enums.ReservationStatus;
 import hotel.core.BookingEngine;
 import hotel.core.Database;
 
@@ -171,15 +168,6 @@ public class BookRoomController {
             CheckoutController.setPendingReservation(newReservation);
             hotel.GUI.utils.SceneManager.navigate("Checkout.fxml");
         }
-    }
-
-    
-    private void showInfo(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     private void showError(String title, String message) {
