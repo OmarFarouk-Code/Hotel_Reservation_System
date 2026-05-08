@@ -1,18 +1,25 @@
 package hotel.GUI.controllers;
+
 import hotel.GUI.utils.SessionManager;
 import hotel.model.users.User;
+import hotel.model.users.Guest;
 import hotel.model.entities.Room;
+import hotel.model.bookings.Reservation;
+import hotel.model.enums.ReservationStatus;
 import hotel.core.BookingEngine;
 import hotel.core.Database;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public class BookRoomController {
 
@@ -32,7 +39,6 @@ public class BookRoomController {
 
    @FXML
     public void initialize() {
-        // Initialize Sidebar and Topbar
         if (sideBarController != null) {
             User activeUser = SessionManager.getLoggedInUser();
             if (activeUser != null) {
@@ -48,7 +54,6 @@ public class BookRoomController {
             topBarController.refresh();
         }
 
-        // Initialize Existing Filters
         Database.getRoomTypes().forEach(type -> roomTypeCombo.getItems().add(type.getTypeName()));
         viewCombo.getItems().addAll("SEA_VIEW", "GARDEN_VIEW", "CITY_VIEW", "POOL");
         checkInPicker.setValue(LocalDate.now());
@@ -110,12 +115,71 @@ public class BookRoomController {
             cardNode.setMinWidth(600);
             RoomViewController itemController = loader.getController();
             itemController.setRoomData(room);
+            itemController.setBookAction(() -> handleBookingConfirmation(room));
 
             resultsVBox.getChildren().add(cardNode);
 
         } catch (IOException e) {
             System.err.println("Problem in loading the card: " + e.getMessage());
         }
+    }
+
+    private void handleBookingConfirmation(Room room) {
+        User loggedInUser = SessionManager.getLoggedInUser();
+
+        if (!(loggedInUser instanceof hotel.model.users.Guest)) {
+            showError("Booking Failed", "Only registered guests can make a booking.");
+            return;
+        }
+
+        hotel.model.users.Guest guest = (hotel.model.users.Guest) loggedInUser;
+        LocalDate checkIn = checkInPicker.getValue();
+        LocalDate checkOut = checkOutPicker.getValue();
+
+        // 1. Create the Confirmation Popup
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm Booking");
+        confirm.setHeaderText("Complete Your Reservation");
+        confirm.setContentText("Are you sure you want to book " + room.getRoomType().getTypeName() +
+                " (Room " + room.getRoomNumber() + ") \nFrom: " + checkIn + "\nTo: " + checkOut + "?");
+
+        Optional<ButtonType> result = confirm.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            int newResId = Database.getReservations().size() + 1;
+
+            // Create the new reservation with all 8 required parameters in the correct order
+            hotel.model.bookings.Reservation newReservation = new hotel.model.bookings.Reservation(
+                    newResId,
+                    guest,
+                    room,
+                    checkIn,
+                    checkOut,
+                    null,
+                    0,
+                    adults
+            );
+
+            newReservation.setStatus(hotel.model.enums.ReservationStatus.CONFIRMED);
+            Database.getReservations().add(newReservation);
+            showInfo("Booking Successful", "Your reservation has been confirmed and added to your dashboard.");
+            onSearchRooms();
+        }
+    }
+    private void showInfo(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showError(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML

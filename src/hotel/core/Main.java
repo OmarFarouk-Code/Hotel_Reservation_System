@@ -45,7 +45,7 @@ public class Main extends Application {
         {
             System.err.println("Notice: Could not load the app icon. Check the path.");
         }
-        SceneManager.navigate("Checkout.fxml");
+        SceneManager.navigate("register.fxml");
     }
 
 
