@@ -65,7 +65,16 @@ public class GuestDashboard {
     private Reservation latestReservation;
 
     private static final String ROOMS_ASSET_PATH = "/hotel/GUI/assets/rooms/";
-    private static final String DEFAULT_IMAGE     = ROOMS_ASSET_PATH + "default.jpg";
+
+    // All possible extensions to try for each image, in order
+    private static final String[] EXTENSIONS = {".jpg", ".jpg.jpg", ".png", ".jpeg"};
+
+    // The default image has a wrong extension in the project: default.jpg.png
+    private static final String[] DEFAULT_CANDIDATES = {
+            ROOMS_ASSET_PATH + "default.jpg",
+            ROOMS_ASSET_PATH + "default.jpg.png",
+            ROOMS_ASSET_PATH + "default.png"
+    };
 
     @FXML
     public void initialize() {
@@ -92,14 +101,12 @@ public class GuestDashboard {
     // -------------------------------------------------------------------------
 
     private void populateDashboard(Guest guest) {
-        // Time-aware greeting
         int hour = LocalTime.now().getHour();
         String timeGreeting = (hour < 12) ? "Good Morning" : (hour < 17) ? "Good Afternoon" : "Good Evening";
         lblGreeting.setText(timeGreeting + ", " + guest.getUserName());
 
         lblBalance.setText(String.format("%,.2f", guest.getBalance()));
 
-        // Filter to only this guest's active reservations
         List<Reservation> guestRes = engine.getReservationsForGuest(guest)
                 .stream()
                 .filter(r -> r.getGuest().equals(guest))
@@ -143,12 +150,11 @@ public class GuestDashboard {
             latestResBox.setOpacity(0.5);
         }
 
-        // Always hide the invoice panel when the dashboard refreshes
         hideInvoicePanel();
     }
 
     // -------------------------------------------------------------------------
-    // Image loading
+    // Image loading — tries multiple extensions to handle misnamed files
     // -------------------------------------------------------------------------
 
     private void loadRoomImage(String typeName) {
@@ -157,22 +163,36 @@ public class GuestDashboard {
         try {
             java.io.InputStream imageStream = null;
 
+            // 1. Try the room-type specific image with all known extensions
             if (typeName != null && !typeName.isBlank()) {
-                String imagePath = ROOMS_ASSET_PATH + typeName + ".jpg";
-                imageStream = getClass().getResourceAsStream(imagePath);
+                for (String ext : EXTENSIONS) {
+                    String path = ROOMS_ASSET_PATH + typeName + ext;
+                    imageStream = getClass().getResourceAsStream(path);
+                    if (imageStream != null) {
+                        System.out.println("GuestDashboard: loaded image -> " + path);
+                        break;
+                    }
+                }
                 if (imageStream == null) {
-                    System.out.println("GuestDashboard: no image found for type \"" + typeName + "\", using default.");
+                    System.out.println("GuestDashboard: no image found for \"" + typeName + "\", trying default.");
                 }
             }
 
+            // 2. Fall back to default — try all known default filename variants
             if (imageStream == null) {
-                imageStream = getClass().getResourceAsStream(DEFAULT_IMAGE);
+                for (String candidate : DEFAULT_CANDIDATES) {
+                    imageStream = getClass().getResourceAsStream(candidate);
+                    if (imageStream != null) {
+                        System.out.println("GuestDashboard: using default image -> " + candidate);
+                        break;
+                    }
+                }
             }
 
             if (imageStream != null) {
                 roomImageView.setImage(new Image(imageStream));
             } else {
-                System.err.println("GuestDashboard: default room image also missing — check assets/rooms/default.jpg");
+                System.err.println("GuestDashboard: no image found at all — check assets/rooms/");
             }
 
         } catch (Exception e) {
@@ -189,7 +209,6 @@ public class GuestDashboard {
 
         Reservation res = latestReservation;
 
-        // Header
         lblInvoiceTitle.setText("Invoice  #" + invoice.getInvoiceID()
                 + "   —   Reservation #" + res.getReservationID());
         lblInvoiceStatus.setText(invoice.isPaid() ? "✔  PAID" : "⚠  UNPAID");
@@ -197,7 +216,6 @@ public class GuestDashboard {
                 ? "-fx-text-fill: #90EE90;"
                 : "-fx-text-fill: #FFD700;");
 
-        // Left column — reservation details
         lblInvRoom.setText(res.getRoom().getRoomType().getTypeName()
                 + "  (Room " + res.getRoom().getRoomNumber() + ")");
         lblInvCheckIn.setText(res.getCheckinDate().toString());
@@ -212,9 +230,8 @@ public class GuestDashboard {
         lblInvPaymentDate.setText(invoice.getPaymentDate() != null
                 ? invoice.getPaymentDate().toString() : "—");
 
-        // Right column — cost breakdown
-        double roomCost  = engine.calculateRoomCost(res.getRoom(), res.getCheckinDate(), res.getCheckoutDate());
-        double diningCost = engine.calculateDiningCost(res.getDiningpackage(), res.calcnights());
+        double roomCost    = engine.calculateRoomCost(res.getRoom(), res.getCheckinDate(), res.getCheckoutDate());
+        double diningCost  = engine.calculateDiningCost(res.getDiningpackage(), res.calcnights());
         double amenityCost = engine.calculateAmenityCost(res.getSelectedAmenities());
 
         lblInvRoomCost.setText(String.format("EGP %,.2f", roomCost));
@@ -226,7 +243,6 @@ public class GuestDashboard {
         lblInvDiscount.setText(String.format("- EGP %,.2f", invoice.getDiscountAmount()));
         lblInvTotal.setText(String.format("EGP %,.2f", invoice.getTotalAmount()));
 
-        // Show the panel
         invoicePanel.setVisible(true);
         invoicePanel.setManaged(true);
     }
@@ -245,7 +261,6 @@ public class GuestDashboard {
     private void onViewInvoice() {
         if (latestReservation == null) return;
 
-        // If invoice panel is already open, toggle it closed
         if (invoicePanel.isVisible()) {
             hideInvoicePanel();
             return;
