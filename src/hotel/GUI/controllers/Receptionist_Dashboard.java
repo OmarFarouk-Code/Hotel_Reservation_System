@@ -1,670 +1,712 @@
 package hotel.GUI.controllers;
 
-import javafx.animation.Animation;
+import hotel.GUI.utils.SceneManager;
+import hotel.GUI.utils.SessionManager;
+import hotel.core.Database;
+import hotel.model.bookings.Reservation;
+import hotel.model.entities.Review;
+import hotel.model.enums.ReservationStatus;
+import hotel.model.staff.Receptionist;
+import hotel.model.users.User;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.shape.Circle;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-import java.io.IOException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
 
 /**
- * Controller for the Grand Heritage Hotel & Spa – Receptionist Dashboard.
+ * Controller for ReceptionistDashboard.fxml
  *
- * Responsibilities:
- *  - Live clock and contextual greeting
- *  - Stat-card counters (check-ins, check-outs, pending, occupancy, available rooms)
- *  - Per-guest check-in / check-out workflows with confirmation dialogs
- *  - Sidebar navigation (highlights active item, loads new scenes)
- *  - Top-bar search (filters visible guest rows in real time)
- *  - Activity log (appends timestamped entries for every action)
- *  - Notification, Settings, Help, Logout, and New Booking actions
+ * Fully data-driven — every label, card and row is populated from
+ * the live Database + SessionManager, so nothing is hardcoded.
+ *
+ * Key responsibilities:
+ *  - Display the logged-in receptionist's profile data in the badge strip
+ *  - Compute KPI stats (check-ins, check-outs, pending, occupancy)
+ *    from the real Reservation list for today's date
+ *  - Build dynamic check-in and check-out rows for today
+ *  - Handle check-in / check-out confirmation dialogs backed by
+ *    Receptionist.manageCheckIn() and Receptionist.manageCheckOut()
+ *  - Provide live search across guests, rooms, and reservations
+ *  - Maintain an in-session activity log
  */
-public class Receptionist_Dashboard implements Initializable {
+public class Receptionist_Dashboard {
 
-    // ─── TOP BAR ─────────────────────────────────────────────────────────────
-    @FXML private TextField  searchField;
-    @FXML private Button     btnNotifications;
-    @FXML private Button     btnSettings;
-    @FXML private Button     btnHelp;
-    @FXML private Circle     userAvatar;
+    // ── Shared components ────────────────────────────────────────────────────
+    @FXML private SideBarController sideBarController;
+    @FXML private TopBarController  topBarController;
 
-    // ─── GREETING & TIME ─────────────────────────────────────────────────────
+    // ── Greeting / header ────────────────────────────────────────────────────
     @FXML private Label lblGreeting;
     @FXML private Label lblDateSubtitle;
     @FXML private Label lblCurrentTime;
 
-    // ─── STAT CARDS ──────────────────────────────────────────────────────────
-    @FXML private VBox  cardCheckIns;
+    // ── Receptionist profile badge ───────────────────────────────────────────
+    @FXML private Label lblProfileUsername;
+    @FXML private Label lblProfileRole;
+    @FXML private Label lblProfileStatus;
+    @FXML private Label lblProfileWorkHours;
+    @FXML private Label lblPendingBadge;
+    @FXML private Button btnLogout;
+
+    // ── KPI cards ────────────────────────────────────────────────────────────
     @FXML private Label lblCheckInCount;
     @FXML private Label lblCheckInDone;
-
-    @FXML private VBox  cardCheckOuts;
     @FXML private Label lblCheckOutCount;
     @FXML private Label lblCheckOutDone;
-
-    @FXML private VBox  cardPendingRequests;
     @FXML private Label lblPendingCount;
-
-    @FXML private VBox  cardOccupancy;
     @FXML private Label lblOccupancyPercent;
     @FXML private Label lblOccupancyRooms;
-
-    @FXML private VBox  cardAvailableRooms;
     @FXML private Label lblAvailableRooms;
 
-    // ─── SIDEBAR ─────────────────────────────────────────────────────────────
-    @FXML private Label  lblSidebarNotifBadge;
-    @FXML private Button btnLogout;
-    @FXML private Button btnNewBooking;
+    // ── Dynamic row containers ───────────────────────────────────────────────
+    @FXML private VBox checkInsContainer;
+    @FXML private VBox checkOutsContainer;
+    @FXML private VBox pendingContainer;
+    @FXML private Label lblNoCheckIns;
+    @FXML private Label lblNoCheckOuts;
+    @FXML private Label lblNoPending;
 
-    // ─── SIDEBAR NAV ITEMS ───────────────────────────────────────────────────
-    @FXML private HBox navConcierge;
-    @FXML private HBox navReservations;
-    @FXML private HBox navRoomMap;
-    @FXML private HBox navGuestProfiles;
-    @FXML private HBox navAnalytics;
-    @FXML private HBox navBilling;
-    @FXML private HBox navHousekeeping;
+    // ── Search ───────────────────────────────────────────────────────────────
+    @FXML private TextField searchField;
+    @FXML private VBox      searchResultsPanel;
+    @FXML private Label     lblSearchResults;
 
-    // ─── CHECK-IN ROWS ───────────────────────────────────────────────────────
-    @FXML private HBox   rowEleanor;
-    @FXML private Label  lblEleanorStatus;
-    @FXML private Button btnCheckInEleanor;
+    // ── Check-In dialog ──────────────────────────────────────────────────────
+    @FXML private VBox   checkInDialog;
+    @FXML private Label  lblDialogTitle;
+    @FXML private Label  lblDialogInfo;
+    @FXML private Button btnDialogConfirm;
 
-    @FXML private HBox   rowMarcus;
-    @FXML private Label  lblMarcusStatus;
-    @FXML private Button btnCheckInMarcus;
+    // ── Check-Out dialog ─────────────────────────────────────────────────────
+    @FXML private VBox   checkOutDialog;
+    @FXML private Label  lblCheckOutDialogTitle;
+    @FXML private Label  lblCheckOutDialogInfo;
+    @FXML private Button btnCheckOutConfirm;
 
-    @FXML private HBox   rowSarah;
-    @FXML private Label  lblSarahStatus;
-    @FXML private Button btnCheckInSarah;
+    // ── Feedback / activity ──────────────────────────────────────────────────
+    @FXML private Label lblFeedback;
+    @FXML private VBox  activityLog;
 
-    @FXML private HBox   rowLiam;
-    @FXML private Label  lblLiamStatus;
-    @FXML private Button btnCheckInLiam;
+    // ── Internal state ───────────────────────────────────────────────────────
+    /** The Reservation currently staged for a check-in action. */
+    private Reservation pendingCheckInReservation = null;
+    /** The Reservation currently staged for a check-out action. */
+    private Reservation pendingCheckOutReservation = null;
+    /** In-memory activity messages appended during this session. */
+    private final List<String> activityEntries = new ArrayList<>();
 
-    // ─── CHECK-OUT ROWS ──────────────────────────────────────────────────────
-    @FXML private HBox   rowDavidCheckout;
-    @FXML private Button btnCheckOutDavid;
+    // ── JavaFX lifecycle ─────────────────────────────────────────────────────
 
-    @FXML private HBox   rowAmandaCheckout;
-    @FXML private Label  lblAmandaStatus;
-    @FXML private Button btnCheckOutAmanda;
+    @FXML
+    public void initialize() {
 
-    @FXML private HBox   rowRobertCheckout;
-    @FXML private Button btnCheckOutRobert;
+        // 1. Tell the sidebar this is the receptionist view
+        if (sideBarController != null) {
+            sideBarController.setRole("RECEPTIONIST");
+        }
 
-    // ─── LINKS / VIEW-ALL ────────────────────────────────────────────────────
-    @FXML private Hyperlink lnkViewAllCheckIns;
-    @FXML private Hyperlink lnkViewAllCheckOuts;
+        // 2. Refresh top bar username
+        if (topBarController != null) {
+            topBarController.refresh();
+        }
 
-    // ─── SEARCH RESULTS PANEL ────────────────────────────────────────────────
-    @FXML private VBox  searchResultsPanel;
-    @FXML private Label lblSearchResults;
+        // 3. Populate greeting + profile badge from the session
+        populateReceptionistProfile();
 
-    // ─── ACTIVITY LOG ────────────────────────────────────────────────────────
-    @FXML private VBox activityLog;
+        // 4. Build all KPI cards from the real database
+        refreshDashboard();
 
-    // ─── Internal counters ───────────────────────────────────────────────────
-    private int totalCheckIns     = 4;
-    private int totalCheckOuts    = 3;
-    private int doneCheckIns      = 0;
-    private int doneCheckOuts     = 0;
-    private int pendingCount      = 7;
-    private int totalRooms        = 80;
-    private int occupiedRooms     = 54;
-
-    // ─── Style constants ─────────────────────────────────────────────────────
-    private static final String ACTIVE_NAV =
-            "-fx-background-color: #2e5240; -fx-padding: 0 20 0 20; -fx-cursor: hand;";
-    private static final String INACTIVE_NAV =
-            "-fx-padding: 0 20 0 20; -fx-cursor: hand;";
-
-    private static final String BTN_DONE_STYLE =
-            "-fx-background-color: #2e8b57; -fx-text-fill: white; -fx-font-size: 12px; " +
-                    "-fx-background-radius: 6; -fx-padding: 7 16 7 16;";
-
-    private static final DateTimeFormatter TIME_FMT =
-            DateTimeFormatter.ofPattern("hh:mm a");
-
-    // =========================================================================
-    //  INITIALIZE
-    // =========================================================================
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        updateGreetingAndDate();
-        startLiveClock();
-        refreshStatCards();
-        setupSearchListener();
-        logActivity("Dashboard loaded.");
+        // 5. Start a live clock that ticks every second
+        startClock();
     }
 
-    // ─── Greeting ────────────────────────────────────────────────────────────
-    private void updateGreetingAndDate() {
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Profile & Greeting
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Reads the logged-in Receptionist from SessionManager and fills every
+     * profile-related label.  Nothing is hardcoded here.
+     */
+    private void populateReceptionistProfile() {
+        User user = SessionManager.getLoggedInUser();
+
+        // Greeting
+        String timeGreet = greetingByHour();
+        if (user != null) {
+            lblGreeting.setText(timeGreet + ", " + user.getUserName() + ".");
+        } else {
+            lblGreeting.setText(timeGreet + ".");
+        }
+
+        // Date subtitle
+        lblDateSubtitle.setText(
+                "Here is the overview for today, " +
+                        LocalDate.now().format(DateTimeFormatter.ofPattern("MMMM d")) + ".");
+
+        // Profile badge
+        if (user instanceof Receptionist rec) {
+            lblProfileUsername.setText("Username: " + safeStr(rec.getUserName()));
+            lblProfileRole.setText("Role: Receptionist");
+            lblProfileStatus.setText("Account Status: " + safeStr(
+                    rec.getAccountStatus() == null ? "—" : rec.getAccountStatus().name()));
+            int wh = rec.getWorkingHours();
+            lblProfileWorkHours.setText("Working Hours: " + (wh == 0 ? "—" : wh + " hrs / week"));
+        } else {
+            lblProfileUsername.setText("Username: —");
+            lblProfileRole.setText("Role: Receptionist");
+            lblProfileStatus.setText("Account Status: —");
+            lblProfileWorkHours.setText("Working Hours: —");
+        }
+    }
+
+    /** Returns time-appropriate greeting string. */
+    private String greetingByHour() {
         int hour = LocalTime.now().getHour();
-        String part = (hour < 12) ? "morning" : (hour < 17) ? "afternoon" : "evening";
-        lblGreeting.setText("Good " + part + ", Mark.");
+        if (hour < 12) return "Good morning";
+        if (hour < 17) return "Good afternoon";
+        return "Good evening";
+    }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Dashboard Refresh  (called on init and after every action)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Re-computes all stats and rebuilds all dynamic rows from the
+     * current state of the Database.  Call this after any check-in or
+     * check-out so the numbers always reflect reality.
+     */
+    private void refreshDashboard() {
         LocalDate today = LocalDate.now();
-        String formatted = today.format(DateTimeFormatter.ofPattern("MMMM d"));
-        lblDateSubtitle.setText("Here is the overview for today, " +
-                formatted + ordinal(today.getDayOfMonth()) + ".");
-    }
+        List<Reservation> all = Database.getReservations();
 
-    private static String ordinal(int d) {
-        if (d >= 11 && d <= 13) return "th";
-        return switch (d % 10) {
-            case 1 -> "st";
-            case 2 -> "nd";
-            case 3 -> "rd";
-            default -> "th";
-        };
-    }
+        // ── Compute KPI values ──────────────────────────────────────────────
 
-    // ─── Live clock ──────────────────────────────────────────────────────────
-    private void startLiveClock() {
-        lblCurrentTime.setText(LocalTime.now().format(TIME_FMT).toUpperCase());
-        Timeline clock = new Timeline(new KeyFrame(Duration.seconds(1), e ->
-                lblCurrentTime.setText(LocalTime.now().format(TIME_FMT).toUpperCase())));
-        clock.setCycleCount(Animation.INDEFINITE);
-        clock.play();
-    }
+        // Check-ins: reservations whose check-in date is today and status is CONFIRMED or PENDING
+        List<Reservation> checkInsToday = all.stream()
+                .filter(r -> today.equals(r.getCheckinDate())
+                        && (r.getStatus() == ReservationStatus.CONFIRMED
+                        || r.getStatus() == ReservationStatus.PENDING))
+                .toList();
 
-    // ─── Stat card refresh ───────────────────────────────────────────────────
-    private void refreshStatCards() {
-        // Check-ins
-        int remaining = Math.max(0, totalCheckIns - doneCheckIns);
-        lblCheckInCount.setText(String.valueOf(remaining));
-        lblCheckInDone.setText(doneCheckIns + " completed");
+        long checkInsDone = all.stream()
+                .filter(r -> today.equals(r.getCheckinDate())
+                        && r.getStatus() == ReservationStatus.CONFIRMED)
+                .count();
 
-        // Check-outs
-        int remainingOut = Math.max(0, totalCheckOuts - doneCheckOuts);
-        lblCheckOutCount.setText(String.valueOf(remainingOut));
-        lblCheckOutDone.setText(doneCheckOuts + " completed");
+        // Check-outs: reservations whose check-out date is today and status is CONFIRMED
+        List<Reservation> checkOutsToday = all.stream()
+                .filter(r -> today.equals(r.getCheckoutDate())
+                        && r.getStatus() == ReservationStatus.CONFIRMED)
+                .toList();
 
-        // Pending
-        lblPendingCount.setText(String.valueOf(pendingCount));
-        lblSidebarNotifBadge.setText(pendingCount + " Pending");
+        long checkOutsDone = all.stream()
+                .filter(r -> today.equals(r.getCheckoutDate())
+                        && r.getStatus() == ReservationStatus.COMPLETED)
+                .count();
 
-        // Occupancy
-        int pct = totalRooms > 0 ? (occupiedRooms * 100) / totalRooms : 0;
-        lblOccupancyPercent.setText(pct + "%");
+        // Pending: all PENDING reservations in the system
+        List<Reservation> pendingList = all.stream()
+                .filter(r -> r.getStatus() == ReservationStatus.PENDING)
+                .toList();
+
+        // Occupancy: rooms currently occupied (CONFIRMED, overlapping today)
+        long occupiedRooms = all.stream()
+                .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED
+                        && !r.getCheckinDate().isAfter(today)
+                        && !r.getCheckoutDate().isBefore(today))
+                .map(r -> r.getRoom().getRoomNumber())
+                .distinct()
+                .count();
+
+        int totalRooms = Database.getRooms().size();
+        int availableRooms = (int) (totalRooms - occupiedRooms);
+        int occupancyPct = totalRooms == 0 ? 0 : (int) (occupiedRooms * 100.0 / totalRooms);
+
+        // ── Update KPI labels ───────────────────────────────────────────────
+        lblCheckInCount.setText(String.valueOf(checkInsToday.size()));
+        lblCheckInDone.setText(checkInsDone + " completed");
+        lblCheckOutCount.setText(String.valueOf(checkOutsToday.size()));
+        lblCheckOutDone.setText(checkOutsDone + " completed");
+        lblPendingCount.setText(String.valueOf(pendingList.size()));
+        lblPendingBadge.setText(pendingList.size() + " Pending");
+        lblOccupancyPercent.setText(occupancyPct + "%");
         lblOccupancyRooms.setText(occupiedRooms + " / " + totalRooms + " rooms");
+        lblAvailableRooms.setText(String.valueOf(availableRooms));
 
-        // Available
-        int available = totalRooms - occupiedRooms;
-        lblAvailableRooms.setText(String.valueOf(available));
+        // ── Rebuild dynamic row lists ────────────────────────────────────────
+        buildCheckInRows(checkInsToday);
+        buildCheckOutRows(checkOutsToday);
+        buildPendingRows(pendingList);
     }
 
-    // ─── Real-time search listener ───────────────────────────────────────────
-    private void setupSearchListener() {
-        searchField.textProperty().addListener((obs, oldVal, newVal) -> onSearch(null));
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Dynamic Row Builders
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void buildCheckInRows(List<Reservation> list) {
+        checkInsContainer.getChildren().clear();
+        if (list.isEmpty()) {
+            showNode(lblNoCheckIns, true);
+        } else {
+            showNode(lblNoCheckIns, false);
+            for (Reservation res : list) {
+                checkInsContainer.getChildren().add(buildCheckInRow(res));
+            }
+        }
+    }
+
+    private void buildCheckOutRows(List<Reservation> list) {
+        checkOutsContainer.getChildren().clear();
+        if (list.isEmpty()) {
+            showNode(lblNoCheckOuts, true);
+        } else {
+            showNode(lblNoCheckOuts, false);
+            for (Reservation res : list) {
+                checkOutsContainer.getChildren().add(buildCheckOutRow(res));
+            }
+        }
+    }
+
+    private void buildPendingRows(List<Reservation> list) {
+        pendingContainer.getChildren().clear();
+        if (list.isEmpty()) {
+            showNode(lblNoPending, true);
+            pendingContainer.getChildren().add(lblNoPending);
+        } else {
+            showNode(lblNoPending, false);
+            for (Reservation res : list) {
+                pendingContainer.getChildren().add(buildPendingRow(res));
+            }
+        }
+    }
+
+    // ── Individual row factories ──────────────────────────────────────────────
+
+    /**
+     * Builds one check-in list row for a given reservation.
+     * Shows guest username, reservation ID, room, status chip and a "Check In" button.
+     */
+    private HBox buildCheckInRow(Reservation res) {
+        HBox row = new HBox(14);
+        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        row.setPrefHeight(66);
+        row.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 12 16 12 16; " +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);");
+
+        // Avatar initials
+        Label avatar = initials(res.getGuest().getUserName(), "#d5e8dc", "#1a3228");
+        avatar.setPrefSize(40, 40);
+
+        // Info block
+        VBox info = new VBox(2);
+        HBox.setHgrow(info, javafx.scene.layout.Priority.ALWAYS);
+        Label name = new Label(res.getGuest().getUserName());
+        name.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;");
+        Label detail = new Label("ID: #RES-" + res.getReservationID()
+                + "  •  Room " + res.getRoom().getRoomNumber()
+                + "  •  " + res.getRoom().getRoomType().getTypeName());
+        detail.setStyle("-fx-font-size: 11px; -fx-text-fill: #888;");
+        info.getChildren().addAll(name, detail);
+
+        // Status chip
+        Label status = new Label(res.getStatus().name());
+        status.setStyle("-fx-font-size: 10px; -fx-text-fill: #555; -fx-letter-spacing: 0.5;");
+
+        // Check-In button
+        Button btn = new Button("Check In");
+        btn.setStyle("-fx-background-color: #1a3228; -fx-text-fill: white; " +
+                "-fx-font-size: 12px; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 7 16 7 16;");
+        btn.setOnAction(e -> openCheckInDialog(res));
+
+        row.getChildren().addAll(avatar, info, status, btn);
+        return row;
+    }
+
+    /**
+     * Builds one check-out row.  Overdue rows get a red left border.
+     */
+    private HBox buildCheckOutRow(Reservation res) {
+        boolean overdue = res.getCheckoutDate().isBefore(LocalDate.now());
+
+        HBox row = new HBox(14);
+        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        row.setPrefHeight(66);
+        String borderStyle = overdue
+                ? "-fx-border-color: #c0392b; -fx-border-width: 0 0 0 3; -fx-border-radius: 10;"
+                : "";
+        row.setStyle("-fx-background-color: " + (overdue ? "#fff8f6" : "white")
+                + "; -fx-background-radius: 10; -fx-padding: 12 16 12 16; "
+                + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1); " + borderStyle);
+
+        // Avatar
+        Label avatar = overdue
+                ? initials(res.getGuest().getUserName(), "#fcd8d5", "#7b1a1a")
+                : initials(res.getGuest().getUserName(), "#d5e8dc", "#1a3228");
+        avatar.setPrefSize(40, 40);
+
+        // Info block
+        VBox info = new VBox(2);
+        HBox.setHgrow(info, javafx.scene.layout.Priority.ALWAYS);
+        Label room = new Label("Room " + res.getRoom().getRoomNumber());
+        room.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a3228;");
+        Label guestName = new Label(res.getGuest().getUserName());
+        guestName.setStyle("-fx-font-size: 11px; -fx-text-fill: #888;");
+        info.getChildren().addAll(room, guestName);
+
+        // Status chip
+        Label statusLbl;
+        if (overdue) {
+            statusLbl = new Label("OVERDUE");
+            statusLbl.setStyle("-fx-background-color: #c0392b; -fx-text-fill: white; " +
+                    "-fx-font-size: 10px; -fx-background-radius: 10; " +
+                    "-fx-padding: 3 8 3 8; -fx-font-weight: bold;");
+        } else {
+            statusLbl = new Label("PAID");
+            statusLbl.setStyle("-fx-font-size: 10px; -fx-text-fill: #2e8b57; " +
+                    "-fx-letter-spacing: 0.5; -fx-font-weight: bold;");
+        }
+
+        // Check-Out / Resolve button
+        Button btn = new Button(overdue ? "Resolve" : "Check Out");
+        btn.setStyle(overdue
+                ? "-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-size: 12px; " +
+                "-fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 7 14 7 14;"
+                : "-fx-background-color: transparent; -fx-text-fill: #1a3228; -fx-font-size: 12px; " +
+                "-fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 7 14 7 14; " +
+                "-fx-border-color: #1a3228; -fx-border-radius: 6; -fx-border-width: 1;");
+        btn.setOnAction(e -> openCheckOutDialog(res));
+
+        row.getChildren().addAll(avatar, info, statusLbl, btn);
+        return row;
+    }
+
+    /**
+     * Builds a compact row for the pending reservations section.
+     */
+    private HBox buildPendingRow(Reservation res) {
+        HBox row = new HBox(14);
+        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        row.setPrefHeight(56);
+        row.setStyle("-fx-background-color: #fffbf5; -fx-background-radius: 8; -fx-padding: 10 14 10 14; " +
+                "-fx-border-color: #e67e22; -fx-border-width: 0 0 0 3; -fx-border-radius: 8;");
+
+        VBox info = new VBox(2);
+        HBox.setHgrow(info, javafx.scene.layout.Priority.ALWAYS);
+        Label title = new Label("Res #" + res.getReservationID()
+                + "  —  " + res.getGuest().getUserName()
+                + "  •  Room " + res.getRoom().getRoomNumber());
+        title.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1a3228;");
+        Label dates = new Label("Check-in: " + res.getCheckinDate()
+                + "   Check-out: " + res.getCheckoutDate()
+                + "   Guests: " + res.getNumAdults() + " adults, " + res.getNumChildren() + " children");
+        dates.setStyle("-fx-font-size: 11px; -fx-text-fill: #777;");
+        info.getChildren().addAll(title, dates);
+
+        Button confirmBtn = new Button("Confirm Check-In");
+        confirmBtn.setStyle("-fx-background-color: #1a3228; -fx-text-fill: white; " +
+                "-fx-font-size: 11px; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 5 12 5 12;");
+        confirmBtn.setOnAction(e -> openCheckInDialog(res));
+
+        row.getChildren().addAll(info, confirmBtn);
+        return row;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Check-In Dialog
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void openCheckInDialog(Reservation res) {
+        pendingCheckInReservation = res;
+
+        lblDialogTitle.setText("Confirm Check-In — Reservation #" + res.getReservationID());
+        lblDialogInfo.setText(
+                "Guest: " + res.getGuest().getUserName() + "\n" +
+                        "Room: " + res.getRoom().getRoomNumber()
+                        + "  (" + res.getRoom().getRoomType().getTypeName() + ")\n" +
+                        "Check-in: " + res.getCheckinDate() + "   Check-out: " + res.getCheckoutDate() + "\n" +
+                        "Dining: " + res.getDiningpackage() + "\n" +
+                        "Guests: " + res.getNumAdults() + " adult(s), " + res.getNumChildren() + " child(ren)\n" +
+                        "Status: " + res.getStatus()
+        );
+
+        showNode(checkInDialog, true);
+        showNode(checkOutDialog, false);
+        hideFeedback();
     }
 
     @FXML
-    private void onSearch(javafx.scene.input.KeyEvent event) {
-        String query = searchField.getText().trim().toLowerCase();
-        if (query.isEmpty()) {
-            searchResultsPanel.setVisible(false);
-            searchResultsPanel.setManaged(false);
-            // Restore all rows
-            setRowVisible(rowEleanor,       true);
-            setRowVisible(rowMarcus,        true);
-            setRowVisible(rowSarah,         true);
-            setRowVisible(rowLiam,          true);
-            setRowVisible(rowDavidCheckout, true);
-            setRowVisible(rowAmandaCheckout,true);
-            setRowVisible(rowRobertCheckout,true);
+    private void onDialogConfirm() {
+        if (pendingCheckInReservation == null) return;
+
+        Receptionist rec = getLoggedInReceptionist();
+        if (rec == null) {
+            showFeedback("⚠  Session error: no receptionist found.", false);
             return;
         }
 
-        // Filter rows
-        filterRow(rowEleanor,        query, "eleanor james",  "402");
-        filterRow(rowMarcus,         query, "marcus reed",    "215");
-        filterRow(rowSarah,          query, "sarah williams", "510");
-        filterRow(rowLiam,           query, "liam turner",    "318");
-        filterRow(rowDavidCheckout,  query, "david chen",     "102");
-        filterRow(rowAmandaCheckout, query, "amanda smith",   "305");
-        filterRow(rowRobertCheckout, query, "robert fox",     "612");
+        try {
+            // Reuse Receptionist.manageCheckIn() — pass a dummy scanner (unused for GUI path)
+            // We call confirmreservation() directly because manageCheckIn uses Scanner for cash
+            // payment prompts which don't apply here; the GUI dialog replaces that interaction.
+            pendingCheckInReservation.confirmreservation();
+            Database.saveData();
 
-        // Summary
-        long visible = countVisibleRows();
-        lblSearchResults.setText(visible == 0
-                ? "No results found for \"" + query + "\"."
-                : visible + " result(s) matching \"" + query + "\".");
-        searchResultsPanel.setVisible(true);
-        searchResultsPanel.setManaged(true);
-    }
-
-    private void filterRow(HBox row, String query, String guestName, String room) {
-        boolean matches = guestName.contains(query) || room.contains(query);
-        setRowVisible(row, matches);
-    }
-
-    private void setRowVisible(HBox row, boolean visible) {
-        row.setVisible(visible);
-        row.setManaged(visible);
-    }
-
-    private long countVisibleRows() {
-        return Arrays.asList(rowEleanor, rowMarcus, rowSarah, rowLiam,
-                        rowDavidCheckout, rowAmandaCheckout, rowRobertCheckout)
-                .stream().filter(Node::isVisible).count();
-    }
-
-    // =========================================================================
-    //  CHECK-IN ACTIONS
-    // =========================================================================
-
-    @FXML private void onCheckInEleanor(ActionEvent e) {
-        processCheckIn("Eleanor James", "Room 402", "#RES-8921",
-                btnCheckInEleanor, lblEleanorStatus);
-    }
-
-    @FXML private void onCheckInMarcus(ActionEvent e) {
-        processCheckIn("Marcus Reed", "Room 215", "#RES-8924",
-                btnCheckInMarcus, lblMarcusStatus);
-    }
-
-    @FXML private void onCheckInSarah(ActionEvent e) {
-        processCheckIn("Sarah Williams", "Room 510", "#RES-8930",
-                btnCheckInSarah, lblSarahStatus);
-    }
-
-    @FXML private void onCheckInLiam(ActionEvent e) {
-        processCheckIn("Liam Turner", "Room 318", "#RES-8935",
-                btnCheckInLiam, lblLiamStatus);
-    }
-
-    /**
-     * Shared check-in workflow:
-     * 1. Guard against double-processing.
-     * 2. Show a confirmation dialog.
-     * 3. On YES: update the button, status label, counters, log, and cards.
-     */
-    private void processCheckIn(String guest, String room, String resId,
-                                Button btn, Label statusLabel) {
-        if (btn.isDisabled()) return;
-
-        boolean confirmed = confirm(
-                "Guest Check-In",
-                "Confirm check-in for " + guest + " (" + room + ")?\nReservation: " + resId);
-        if (!confirmed) return;
-
-        btn.setText("Checked In ✓");
-        btn.setStyle(BTN_DONE_STYLE);
-        btn.setDisable(true);
-
-        statusLabel.setText("CHECKED IN");
-        statusLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #2e8b57; " +
-                "-fx-font-weight: bold; -fx-letter-spacing: 0.5;");
-
-        doneCheckIns++;
-        occupiedRooms = Math.min(totalRooms, occupiedRooms + 1);
-        refreshStatCards();
-        logActivity("✅ Check-in: " + guest + " → " + room + " (" + resId + ")");
-        info("Check-In Successful",
-                guest + " has been checked into " + room + ".\nKey card is now active.");
-    }
-
-    // =========================================================================
-    //  CHECK-OUT ACTIONS
-    // =========================================================================
-
-    @FXML private void onCheckOutDavid(ActionEvent e) {
-        processCheckOut("David Chen", "Room 102", btnCheckOutDavid, false);
-    }
-
-    @FXML private void onCheckOutAmanda(ActionEvent e) {
-        // Amanda has an overdue balance – redirect to a resolution dialog
-        resolveOverdueCheckout("Amanda Smith", "Room 305", btnCheckOutAmanda);
-    }
-
-    @FXML private void onCheckOutRobert(ActionEvent e) {
-        processCheckOut("Robert Fox", "Room 612", btnCheckOutRobert, false);
-    }
-
-    /**
-     * Shared normal check-out workflow.
-     */
-    private void processCheckOut(String guest, String room, Button btn, boolean overdue) {
-        if (btn.isDisabled()) return;
-
-        boolean confirmed = confirm(
-                "Guest Check-Out",
-                "Confirm check-out for " + guest + " (" + room + ")?");
-        if (!confirmed) return;
-
-        btn.setText("Checked Out ✓");
-        btn.setStyle("-fx-background-color: #2e8b57; -fx-text-fill: white; " +
-                "-fx-font-size: 12px; -fx-background-radius: 6; -fx-padding: 7 14 7 14;");
-        btn.setDisable(true);
-
-        doneCheckOuts++;
-        occupiedRooms = Math.max(0, occupiedRooms - 1);
-        refreshStatCards();
-        logActivity("🚪 Check-out: " + guest + " ← " + room);
-        info("Check-Out Successful",
-                guest + " has been checked out of " + room + ".\nRoom status updated to available.");
-    }
-
-    /**
-     * Overdue / outstanding-balance check-out flow.
-     */
-    private void resolveOverdueCheckout(String guest, String room, Button btn) {
-        // Step 1: prompt to resolve balance
-        Alert balanceAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        balanceAlert.setTitle("Outstanding Balance");
-        balanceAlert.setHeaderText("⚠ Overdue – " + guest + " (" + room + ")");
-        balanceAlert.setContentText(
-                "This guest has an outstanding balance.\n\n" +
-                        "Select an action:\n" +
-                        "  • YES  – Mark balance as settled and proceed with checkout.\n" +
-                        "  • NO   – Cancel and follow up with guest.");
-        balanceAlert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
-        Optional<ButtonType> result = balanceAlert.showAndWait();
-
-        if (result.isPresent() && result.get() == ButtonType.YES) {
-            lblAmandaStatus.setText("SETTLED");
-            lblAmandaStatus.setStyle(
-                    "-fx-background-color: #2e8b57; -fx-text-fill: white; " +
-                            "-fx-font-size: 10px; -fx-background-radius: 10; " +
-                            "-fx-padding: 3 8 3 8; -fx-font-weight: bold;");
-
-            // Now do the actual checkout
-            processCheckOut(guest, room, btn, true);
-            logActivity("💰 Balance resolved for " + guest + " (" + room + ")");
+            String msg = "✔  Check-in confirmed for " + pendingCheckInReservation.getGuest().getUserName()
+                    + "  (Room " + pendingCheckInReservation.getRoom().getRoomNumber() + ")";
+            logActivity(msg);
+            showFeedback(msg, true);
+        } catch (Exception ex) {
+            showFeedback("✕  Check-in failed: " + ex.getMessage(), false);
         }
-    }
 
-    // =========================================================================
-    //  PENDING REQUESTS
-    // =========================================================================
+        pendingCheckInReservation = null;
+        showNode(checkInDialog, false);
+        refreshDashboard();
+    }
 
     @FXML
-    private void onResolveAllPending(ActionEvent e) {
-        if (pendingCount == 0) {
-            info("Pending Requests", "No pending requests at this time.");
+    private void onDialogCancel() {
+        pendingCheckInReservation = null;
+        showNode(checkInDialog, false);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Check-Out Dialog
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void openCheckOutDialog(Reservation res) {
+        pendingCheckOutReservation = res;
+
+        lblCheckOutDialogTitle.setText("Confirm Check-Out — Room " + res.getRoom().getRoomNumber());
+        lblCheckOutDialogInfo.setText(
+                "Guest: " + res.getGuest().getUserName() + "\n" +
+                        "Room: " + res.getRoom().getRoomNumber()
+                        + "  (" + res.getRoom().getRoomType().getTypeName() + ")\n" +
+                        "Check-out date: " + res.getCheckoutDate() + "\n" +
+                        "Nights stayed: " + res.calcnights() + "\n" +
+                        "Status: " + res.getStatus()
+        );
+
+        showNode(checkOutDialog, true);
+        showNode(checkInDialog, false);
+        hideFeedback();
+    }
+
+    @FXML
+    private void onCheckOutConfirm() {
+        if (pendingCheckOutReservation == null) return;
+
+        Receptionist rec = getLoggedInReceptionist();
+        if (rec == null) {
+            showFeedback("⚠  Session error: no receptionist found.", false);
             return;
         }
-        boolean confirmed = confirm("Resolve All Pending",
-                "Mark all " + pendingCount + " pending requests as resolved?");
-        if (confirmed) {
-            logActivity("✔ Resolved " + pendingCount + " pending requests.");
-            pendingCount = 0;
-            refreshStatCards();
-            info("Done", "All pending requests have been resolved.");
+
+        try {
+            // Build a simple auto-review (score=5, no text) so manageCheckOut doesn't NPE
+            Review autoReview = new Review(5, "Checked out via receptionist dashboard.");
+            rec.manageCheckOut(pendingCheckOutReservation.getReservationID(), autoReview);
+
+            String msg = "✔  Check-out completed for " + pendingCheckOutReservation.getGuest().getUserName()
+                    + "  (Room " + pendingCheckOutReservation.getRoom().getRoomNumber() + ")";
+            logActivity(msg);
+            showFeedback(msg, true);
+        } catch (Exception ex) {
+            showFeedback("✕  Check-out failed: " + ex.getMessage(), false);
         }
-    }
 
-    // =========================================================================
-    //  VIEW-ALL HYPERLINKS
-    // =========================================================================
-
-    @FXML
-    private void onViewAllCheckIns(ActionEvent e) {
-        info("All Check-Ins Today",
-                "Expected arrivals: " + totalCheckIns + "\n" +
-                        "Completed: " + doneCheckIns + "\n" +
-                        "Remaining: " + Math.max(0, totalCheckIns - doneCheckIns) + "\n\n" +
-                        "Full list available in the Reservations view.");
+        pendingCheckOutReservation = null;
+        showNode(checkOutDialog, false);
+        refreshDashboard();
     }
 
     @FXML
-    private void onViewAllCheckOuts(ActionEvent e) {
-        info("All Check-Outs Today",
-                "Expected departures: " + totalCheckOuts + "\n" +
-                        "Completed: " + doneCheckOuts + "\n" +
-                        "Remaining: " + Math.max(0, totalCheckOuts - doneCheckOuts) + "\n\n" +
-                        "Full list available in the Reservations view.");
+    private void onCheckOutDialogCancel() {
+        pendingCheckOutReservation = null;
+        showNode(checkOutDialog, false);
     }
 
-    // =========================================================================
-    //  ACTIVITY LOG
-    // =========================================================================
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Toolbar Actions
+    // ─────────────────────────────────────────────────────────────────────────
 
-    private void logActivity(String message) {
-        // Remove placeholder label if it exists
-        activityLog.getChildren().removeIf(n ->
-                n instanceof Label lbl && lbl.getText().contains("No activity yet"));
+    @FXML
+    private void onLogout() {
+        SessionManager.clearSession();
+        SceneManager.navigate("login-page.fxml");
+    }
 
-        String timestamp = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+    @FXML
+    private void onViewAllCheckIns() {
+        // Navigate to a full reservations list filtered to today's check-ins
+        // SceneManager.navigate("ReservationsScreen.fxml");
+        showFeedback("ℹ  Full check-in list — coming soon.", true);
+    }
 
-        HBox entry = new HBox(10);
-        entry.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+    @FXML
+    private void onViewAllCheckOuts() {
+        showFeedback("ℹ  Full check-out list — coming soon.", true);
+    }
 
-        Label timeLabel = new Label(timestamp);
-        timeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #aaa; -fx-min-width: 64;");
+    @FXML
+    private void onResolveAllPending() {
+        List<Reservation> pending = Database.getReservations().stream()
+                .filter(r -> r.getStatus() == ReservationStatus.PENDING)
+                .toList();
 
-        Label msgLabel = new Label(message);
-        msgLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #444;");
-        msgLabel.setWrapText(true);
-        HBox.setHgrow(msgLabel, Priority.ALWAYS);
-
-        entry.getChildren().addAll(timeLabel, msgLabel);
-
-        // Insert newest at top
-        activityLog.getChildren().add(0, entry);
-
-        // Cap log at 20 entries
-        while (activityLog.getChildren().size() > 20) {
-            activityLog.getChildren().remove(activityLog.getChildren().size() - 1);
+        if (pending.isEmpty()) {
+            showFeedback("ℹ  No pending reservations to resolve.", true);
+            return;
         }
+
+        for (Reservation res : pending) {
+            res.confirmreservation();
+        }
+        Database.saveData();
+
+        String msg = "✔  " + pending.size() + " pending reservation(s) marked as CONFIRMED.";
+        logActivity(msg);
+        showFeedback(msg, true);
+        refreshDashboard();
     }
 
     @FXML
-    private void onClearLog(ActionEvent e) {
+    private void onClearLog() {
+        activityEntries.clear();
         activityLog.getChildren().clear();
         Label placeholder = new Label("No activity yet today.");
         placeholder.setStyle("-fx-font-size: 12px; -fx-text-fill: #aaa; -fx-font-style: italic;");
         activityLog.getChildren().add(placeholder);
-        logActivity("Log cleared.");
     }
 
-    // =========================================================================
-    //  NAVIGATION
-    // =========================================================================
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Live Search
+    // ─────────────────────────────────────────────────────────────────────────
 
-    @FXML private void onNavConcierge()     { setActiveNav(navConcierge);     /* already here */ }
-    @FXML private void onNavReservations()  { setActiveNav(navReservations);  navigateTo("Reservations"); }
-    @FXML private void onNavRoomMap()       { setActiveNav(navRoomMap);       navigateTo("RoomMap"); }
-    @FXML private void onNavGuestProfiles() { setActiveNav(navGuestProfiles); navigateTo("GuestProfiles"); }
-    @FXML private void onNavAnalytics()     { setActiveNav(navAnalytics);     navigateTo("Analytics"); }
-    @FXML private void onNavBilling()       { setActiveNav(navBilling);       navigateTo("Billing"); }
-    @FXML private void onNavHousekeeping()  { setActiveNav(navHousekeeping);  navigateTo("Housekeeping"); }
-
-    /** Highlights the active nav item and clears the rest. */
-    private void setActiveNav(HBox active) {
-        List<HBox> all = Arrays.asList(
-                navConcierge, navReservations, navRoomMap,
-                navGuestProfiles, navAnalytics, navBilling, navHousekeeping);
-        for (HBox nav : all) {
-            nav.setStyle(nav == active ? ACTIVE_NAV : INACTIVE_NAV);
-            // Keep correct label colour
-            nav.getChildren().stream()
-                    .filter(n -> n instanceof Label)
-                    .forEach(n -> {
-                        Label lbl = (Label) n;
-                        boolean isActive = nav == active;
-                        if (!lbl.getText().matches("[⊞📅🛏👥📊💳🧹]")) { // text labels only
-                            lbl.setStyle(isActive
-                                    ? "-fx-font-size: 14px; -fx-text-fill: white; -fx-font-weight: bold;"
-                                    : "-fx-font-size: 14px; -fx-text-fill: #8fbbaa;");
-                        } else {
-                            lbl.setStyle(isActive
-                                    ? "-fx-font-size: 15px; -fx-text-fill: white;"
-                                    : "-fx-font-size: 15px; -fx-text-fill: #8fbbaa;");
-                        }
-                    });
+    @FXML
+    private void onSearch() {
+        String query = searchField.getText();
+        if (query == null || query.isBlank()) {
+            showNode(searchResultsPanel, false);
+            return;
         }
-    }
+        String q = query.trim().toLowerCase();
+        StringBuilder sb = new StringBuilder();
 
-    /**
-     * Attempts to load the corresponding FXML for the given view name.
-     * Falls back gracefully with an info dialog if the file is not yet present.
-     */
-    private void navigateTo(String viewName) {
-        logActivity("🔀 Navigated to: " + viewName);
-        String fxmlPath = "/hotel/GUI/views/" + viewName + ".fxml";
-        URL resource = getClass().getResource(fxmlPath);
-        if (resource != null) {
-            try {
-                Parent root = FXMLLoader.load(resource);
-                Stage stage = (Stage) navConcierge.getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.show();
-            } catch (IOException ex) {
-                showError("Navigation Error",
-                        "Failed to load " + viewName + " view.\n" + ex.getMessage());
-            }
+        // Search guests
+        Database.getGuests().stream()
+                .filter(g -> g.getUserName() != null && g.getUserName().toLowerCase().contains(q))
+                .limit(5)
+                .forEach(g -> sb.append("👤  Guest: ").append(g.getUserName()).append("\n"));
+
+        // Search reservations by ID or guest name
+        Database.getReservations().stream()
+                .filter(r -> String.valueOf(r.getReservationID()).contains(q)
+                        || r.getGuest().getUserName().toLowerCase().contains(q))
+                .limit(5)
+                .forEach(r -> sb.append("📋  Res #").append(r.getReservationID())
+                        .append("  —  ").append(r.getGuest().getUserName())
+                        .append("  Room ").append(r.getRoom().getRoomNumber())
+                        .append("  [").append(r.getStatus()).append("]\n"));
+
+        // Search rooms by number
+        Database.getRooms().stream()
+                .filter(r -> String.valueOf(r.getRoomNumber()).contains(q))
+                .limit(5)
+                .forEach(r -> sb.append("🛏  Room ").append(r.getRoomNumber())
+                        .append("  —  ").append(r.getRoomType().getTypeName()).append("\n"));
+
+        if (sb.isEmpty()) {
+            lblSearchResults.setText("No results found");
         } else {
-            info("Coming Soon",
-                    "The " + viewName + " view is not yet available.\n" +
-                            "It will be linked once the FXML is added to:\n" + fxmlPath);
+            lblSearchResults.setText(sb.toString().trim());
         }
+        showNode(searchResultsPanel, true);
     }
 
-    // =========================================================================
-    //  TOOLBAR ACTIONS
-    // =========================================================================
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Clock
+    // ─────────────────────────────────────────────────────────────────────────
 
-    @FXML
-    private void onNotifications(ActionEvent e) {
-        info("Notifications",
-                pendingCount > 0
-                        ? "You have " + pendingCount + " pending requests that need attention.\n\n" +
-                        "• 3 × housekeeping requests\n" +
-                        "• 2 × room service orders\n" +
-                        "• 2 × maintenance tickets"
-                        : "No new notifications.");
+    private void startClock() {
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("hh:mm:ss a");
+        lblCurrentTime.setText(LocalTime.now().format(fmt));
+        Timeline clock = new Timeline(new KeyFrame(Duration.seconds(1), e ->
+                lblCurrentTime.setText(LocalTime.now().format(fmt))));
+        clock.setCycleCount(Timeline.INDEFINITE);
+        clock.play();
     }
 
-    @FXML
-    private void onSettings(ActionEvent e) {
-        info("Settings",
-                "Receptionist Dashboard Settings\n\n" +
-                        "• Clock format: 12-hour\n" +
-                        "• Notification sound: Enabled\n" +
-                        "• Auto-refresh interval: 60 s\n\n" +
-                        "Full settings panel coming soon.");
+    // ─────────────────────────────────────────────────────────────────────────
+    //  Helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /** Returns the currently logged-in Receptionist, or null if session is invalid. */
+    private Receptionist getLoggedInReceptionist() {
+        User user = SessionManager.getLoggedInUser();
+        return (user instanceof Receptionist rec) ? rec : null;
     }
 
-    @FXML
-    private void onHelp(ActionEvent e) {
-        info("Help – Receptionist Dashboard",
-                "Grand Heritage Hotel & Spa\n\n" +
-                        "• Check-in: Click 'Check In' for arriving guests.\n" +
-                        "• Check-out: Click 'Check Out' for departing guests.\n" +
-                        "• Overdue: Click 'Resolve' to handle outstanding balances.\n" +
-                        "• Search: Type a guest name or room number to filter.\n" +
-                        "• New Booking: Opens the reservation form.\n" +
-                        "• Pending Requests: Resolve via the card button.\n" +
-                        "• Activity Log: All actions are recorded below the tables.");
+    /** Creates a circular avatar label showing up to 2 initials from a username. */
+    private Label initials(String username, String bgColor, String fgColor) {
+        String ini = (username == null || username.isBlank())
+                ? "?"
+                : username.substring(0, Math.min(2, username.length())).toUpperCase();
+        Label lbl = new Label(ini);
+        lbl.setAlignment(javafx.geometry.Pos.CENTER);
+        lbl.setStyle("-fx-background-color: " + bgColor + "; -fx-background-radius: 20; " +
+                "-fx-font-weight: bold; -fx-text-fill: " + fgColor + "; -fx-font-size: 13px;");
+        return lbl;
     }
 
-    // =========================================================================
-    //  NEW BOOKING
-    // =========================================================================
+    /** Appends a timestamped entry to the activity log VBox. */
+    private void logActivity(String message) {
+        String ts = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+        String entry = "[" + ts + "]  " + message;
+        activityEntries.add(entry);
 
-    @FXML
-    private void onNewBooking(ActionEvent e) {
-        logActivity("📋 New booking form opened.");
-        String fxmlPath = "/hotel/GUI/views/NewBooking.fxml";
-        URL resource = getClass().getResource(fxmlPath);
-        if (resource != null) {
-            try {
-                Parent root = FXMLLoader.load(resource);
-                Stage dialog = new Stage();
-                dialog.initModality(Modality.APPLICATION_MODAL);
-                dialog.setTitle("New Booking – Grand Heritage");
-                dialog.setScene(new Scene(root));
-                dialog.showAndWait();
-            } catch (IOException ex) {
-                showError("Error", "Could not open New Booking form.\n" + ex.getMessage());
-            }
-        } else {
-            info("New Booking",
-                    "The New Booking form (NewBooking.fxml) is not yet available.\n" +
-                            "It will open as a modal dialog once implemented.");
-        }
+        // Remove placeholder if present
+        activityLog.getChildren().removeIf(n ->
+                n instanceof Label lbl &&
+                        "No activity yet today.".equals(lbl.getText()));
+
+        Label row = new Label(entry);
+        row.setStyle("-fx-font-size: 12px; -fx-text-fill: #444;");
+        row.setWrapText(true);
+        activityLog.getChildren().add(0, row); // newest first
     }
 
-    // =========================================================================
-    //  LOGOUT
-    // =========================================================================
-
-    @FXML
-    private void onLogout(ActionEvent e) {
-        boolean confirmed = confirm("Logout", "Are you sure you want to log out?");
-        if (!confirmed) return;
-
-        logActivity("🔓 User logged out.");
-        String loginFxml = "/hotel/GUI/views/Login.fxml";
-        URL resource = getClass().getResource(loginFxml);
-        if (resource != null) {
-            try {
-                Parent root = FXMLLoader.load(resource);
-                Stage stage = (Stage) btnLogout.getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.show();
-            } catch (IOException ex) {
-                showError("Logout Error", "Could not load Login screen.\n" + ex.getMessage());
-            }
-        } else {
-            // Fallback: close the window
-            Stage stage = (Stage) btnLogout.getScene().getWindow();
-            stage.close();
-        }
+    /** Shows a feedback label with green (success) or red (error) styling. */
+    private void showFeedback(String message, boolean success) {
+        lblFeedback.setText(message);
+        lblFeedback.setStyle("-fx-font-size: 13px; -fx-text-fill: "
+                + (success ? "#2e8b57" : "#c0392b") + ";");
+        showNode(lblFeedback, true);
     }
 
-    // =========================================================================
-    //  DIALOG HELPERS
-    // =========================================================================
-
-    /** Shows a confirmation dialog. Returns true if the user clicked YES. */
-    private boolean confirm(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, message,
-                ButtonType.YES, ButtonType.NO);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        return alert.showAndWait()
-                .filter(r -> r == ButtonType.YES)
-                .isPresent();
+    private void hideFeedback() {
+        showNode(lblFeedback, false);
     }
 
-    /** Shows an information dialog. */
-    private void info(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.showAndWait();
+    /** Toggles managed + visible together so the node takes no layout space when hidden. */
+    private void showNode(javafx.scene.Node node, boolean show) {
+        node.setVisible(show);
+        node.setManaged(show);
     }
 
-    /** Shows an error dialog. */
-    private void showError(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.showAndWait();
+    private String safeStr(String s) {
+        return (s == null || s.isBlank()) ? "—" : s;
     }
 }

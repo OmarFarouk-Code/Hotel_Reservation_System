@@ -1,6 +1,6 @@
-# Compiled Java class files
+production# Compiled Java class files
 *.class
-
+production
 # Package Files
 *.jar
 *.war
