@@ -332,12 +332,15 @@
                         <Label text="AMOUNT TO PAY"
                                style="-fx-font-size: 10px; -fx-text-fill: #888; -fx-letter-spacing: 1;"/>
                         <HBox alignment="CENTER_LEFT"
-                              style="-fx-background-color: #eeeae3; -fx-background-radius: 6;
+                              style="-fx-background-color: #eeeae3;
+                                     -fx-background-radius: 6;
                                      -fx-padding: 10 14 10 14;">
-                            <Label text="$ "
-                                   style="-fx-font-size: 14px; -fx-text-fill: #888;"/>
+                            <Label text="\$ "
+                                   style="-fx-font-size: 14px;
+                                          -fx-text-fill: #888;"/>
                             <Label fx:id="lblAmountToPay" text="0.00"
-                                   style="-fx-font-size: 14px; -fx-text-fill: #1a3228; -fx-font-weight: bold;"/>
+                                   style="-fx-font-size: 14px;
+                                          -fx-text-fill: #1a3228; -fx-font-weight: bold;"/>
                         </HBox>
                     </VBox>
                     <Button fx:id="btnPayWithCard" text="Pay with Card"

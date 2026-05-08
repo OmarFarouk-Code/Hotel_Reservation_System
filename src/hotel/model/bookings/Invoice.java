@@ -99,34 +99,33 @@ public class Invoice implements Payable , Serializable
         return totalAmount;
     }
 
-    @Override
+@Override
     public void pay(Guest guest, PaymentMethod method) {
-        if (method != PaymentMethod.CASH) {
+        if (method == PaymentMethod.ONLINE) {
+            // ONLINE acts as "Pay from internal Guest Balance"
             if (guest.getBalance() >= getTotal()) {
                 guest.setBalance(guest.getBalance() - getTotal());
                 this.isPaid = true;
                 this.paymentMethod = method;
                 this.paymentDate = LocalDate.now();
-                System.out.println("Payment successful.");
+                System.out.println("Payment successful from Account Balance.");
             } else {
                 System.out.println("Insufficient guest balance.");
             }
-        }else {
-            System.out.println("You can pay your invoice at check in ");
+        } else if (method == PaymentMethod.CREDIT_CARD) {
+            // CREDIT_CARD is external; it bypasses the internal account balance check
+            this.isPaid = true;
+            this.paymentMethod = method;
+            this.paymentDate = LocalDate.now();
+            System.out.println("Credit Card payment successful.");
+        } else {
+            // CASH
+            System.out.println("You can pay your invoice at check-in.");
             this.isPaid = false;
             this.paymentMethod = method;
             this.paymentDate = reservation.getCheckinDate();
-
         }
-
-
-
     }
-
-
-
-
-
 
 
     public String generateItemizedSummary() {
