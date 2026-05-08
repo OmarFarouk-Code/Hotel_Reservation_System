@@ -2,10 +2,7 @@ package hotel.GUI.controllers;
 
 import hotel.GUI.utils.SessionManager;
 import hotel.model.users.User;
-import hotel.model.users.Guest;
 import hotel.model.entities.Room;
-import hotel.model.bookings.Reservation;
-import hotel.model.enums.ReservationStatus;
 import hotel.core.BookingEngine;
 import hotel.core.Database;
 
@@ -155,23 +152,22 @@ public class BookRoomController {
                     room,
                     checkIn,
                     checkOut,
-                    null,
+                    null, // Default no dining package selected, handled later or empty for now
                     0,
                     adults
             );
 
-            newReservation.setStatus(hotel.model.enums.ReservationStatus.CONFIRMED);
+            // Set as pending since the payment isn't complete yet
+            newReservation.setStatus(hotel.model.enums.ReservationStatus.PENDING);
+            
+            // Add to database
             Database.getReservations().add(newReservation);
-            showInfo("Booking Successful", "Your reservation has been confirmed and added to your dashboard.");
-            onSearchRooms();
+            Database.saveData();
+
+            // Set the reservation in the CheckoutController and navigate to Checkout screen
+            CheckoutController.setPendingReservation(newReservation);
+            hotel.GUI.utils.SceneManager.navigate("Checkout.fxml");
         }
-    }
-    private void showInfo(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     private void showError(String title, String message) {

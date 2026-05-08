@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.swing.Icon;
-
 public class Main extends Application {
     private static Scanner sc = new Scanner(System.in);
     private static BookingEngine engine = new BookingEngine();

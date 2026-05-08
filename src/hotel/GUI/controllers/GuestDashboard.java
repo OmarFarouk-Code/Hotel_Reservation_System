@@ -1,5 +1,6 @@
 package hotel.GUI.controllers;
 
+import hotel.GUI.utils.SceneManager;
 import hotel.GUI.utils.SessionManager;
 import hotel.core.BookingEngine;
 import hotel.core.Database;
@@ -530,5 +531,20 @@ public class GuestDashboard {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void onProceedToCheckout() {
+        if (latestReservation == null) {
+            showInfo("No Reservation", "You have no active reservation to check out.");
+            return;
+        }
+        if (latestReservation.getStatus() == ReservationStatus.CONFIRMED) {
+            showInfo("Already Confirmed", "Reservation #" + latestReservation.getReservationID()
+                    + " is already confirmed. Use 'View Invoice' for your receipt.");
+            return;
+        }
+        CheckoutController.setPendingReservation(latestReservation);
+        SceneManager.navigate("Checkout.fxml");
     }
 }
