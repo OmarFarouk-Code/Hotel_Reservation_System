@@ -1,6 +1,7 @@
 package hotel.core;
 import hotel.GUI.utils.*;
 import javafx.application.*;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import hotel.model.entities.*;
 import hotel.model.enums.*;
@@ -13,6 +14,8 @@ import hotel.model.customexceptions.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.swing.Icon;
 
 public class Main extends Application {
     private static Scanner sc = new Scanner(System.in);
@@ -34,7 +37,17 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Grand Azure Hotel - Digital Concierge");
         SceneManager.setPrimaryStage(primaryStage);
-        SceneManager.navigate("login-page.fxml");
+
+        // --- NEW: Add the App Icon ---
+        try {
+            Image appIcon = new Image(getClass().getResourceAsStream("/hotel/GUI/assets/star_logo.png"));
+            primaryStage.getIcons().add(appIcon);
+        } 
+        catch (Exception e) 
+        {
+            System.err.println("Notice: Could not load the app icon. Check the path.");
+        }
+        SceneManager.navigate("register.fxml");
     }
 
 
@@ -56,7 +69,7 @@ public class Main extends Application {
     // --- 1. MAIN MENU ---
     public static void showMainMenu() {
         while (true) {
-            System.out.println("\n========== COZY PARADISE RESORT HOTEL ==========");
+            System.out.println("\n========== GRAND AZURE HOTEL ==========");
             System.out.println("1. Admin Portal      2. Receptionist Portal");
             System.out.println("3. Guest Portal      4. Global Occupancy Stats");
             System.out.println("5. Save and Exit");
